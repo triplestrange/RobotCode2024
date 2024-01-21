@@ -27,10 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final int LIMELIGHT = 18;
 
   public static final class SwerveConstants {
-
+// kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kMaxSpeedMetersPerSecond = 4.42; 
     public static final double autoAlignMaxSpeedMetersPerSecond = 1;
 
@@ -41,7 +40,7 @@ public final class Constants {
     public static final boolean backLeftSteerEncoderReversed = false;
     public static final boolean frontRightSteerEncoderReversed = false;
     public static final boolean backRightSteerEncoderReversed = false;
-
+    // TODO: fix ktrackwidth and kwheelbase
     // Distance between centers of right and left wheels on robot in meters
     public static final double kTrackWidth = 0.476;
     // Distance between centers of right and left wheels on robot
@@ -113,22 +112,27 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  public static final class Electrical {
+  public static final class CAN {
     // Swerve Motor Controller CAN ID's
-    public static final int FL_DRIVE = 13;
-    public static final int FR_DRIVE = 6;
-    public static final int BL_DRIVE = 11;
-    public static final int BR_DRIVE = 8;
-    public static final int FL_STEER = 12;
-    public static final int FR_STEER = 7;
-    public static final int BL_STEER = 10;
-    public static final int BR_STEER = 9;
+    public static final int FL_DRIVE = 1;
+    public static final int FR_DRIVE = 2;
+    public static final int BL_DRIVE = 3;
+    public static final int BR_DRIVE = 4;
+    public static final int FL_STEER = 5;
+    public static final int FR_STEER = 6;
+    public static final int BL_STEER = 7;
+    public static final int BR_STEER = 8;
 
-    public static final int SHOULDER = 14;
-    public static final int ELBOW = 15;
-    public static final int WRIST = 16;
-
-    public static final int ROLLERS = 17;
+    public static final int CLIMBL = 9;
+    public static final int CLIMBR = 10;
+    public static final int FLYWHEELL = 11;
+    public static final int FLYWHEELR = 12;
+    public static final int CONVEYOR = 13;
+    public static final int PIVOTL = 14;
+    public static final int PIVOTR = 15;
+    public static final int ELEVATOR = 16;
+    public static final int INTAKEPIVOT = 17;
+    public static final int ROLLERS = 18;
   }
 
   public static class JoystickButtons {

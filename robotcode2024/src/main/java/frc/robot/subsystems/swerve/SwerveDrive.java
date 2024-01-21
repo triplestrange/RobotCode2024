@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Electrical;
+import frc.robot.Constants.CAN;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Robot;
@@ -25,36 +25,34 @@ public class SwerveDrive extends SubsystemBase {
   private final Robot m_Robot;
   public double rotationPreset = 0;
   public boolean presetEnabled = false;
-  public double tvLeft = 0;
-  public double tvRight = 0;
+
   Pose2d visionPoseLeft = new Pose2d();
   Pose2d visionPoseRight = new Pose2d();
-  double[] tempRobotPoseLeft;
-  double[] tempRobotPoseRight;
+
   public Field2d m_field = new Field2d();
 
 
   // Robot swerve modules
-  private final SwerveModule m_frontLeft = new SwerveModule(Electrical.FL_DRIVE,
-      Electrical.FL_STEER,
+  private final SwerveModule m_frontLeft = new SwerveModule(CAN.FL_DRIVE,
+      CAN.FL_STEER,
       ModuleConstants.FL_ENCODER,
       SwerveConstants.frontLeftSteerEncoderReversed,
       ModuleConstants.FL_ENC_OFFSET);
 
-  private final SwerveModule m_rearLeft = new SwerveModule(Electrical.BL_DRIVE,
-      Electrical.BL_STEER,
+  private final SwerveModule m_rearLeft = new SwerveModule(CAN.BL_DRIVE,
+      CAN.BL_STEER,
       ModuleConstants.BL_ENCODER,
       SwerveConstants.backLeftSteerEncoderReversed,
       ModuleConstants.BL_ENC_OFFSET);
 
-  private final SwerveModule m_frontRight = new SwerveModule(Electrical.FR_DRIVE,
-      Electrical.FR_STEER,
+  private final SwerveModule m_frontRight = new SwerveModule(CAN.FR_DRIVE,
+      CAN.FR_STEER,
       ModuleConstants.FR_ENCODER,
       SwerveConstants.frontRightSteerEncoderReversed,
       ModuleConstants.FR_ENC_OFFSET);
 
-  private final SwerveModule m_rearRight = new SwerveModule(Electrical.BR_DRIVE,
-      Electrical.BR_STEER,
+  private final SwerveModule m_rearRight = new SwerveModule(CAN.BR_DRIVE,
+      CAN.BR_STEER,
       ModuleConstants.BR_ENCODER,
       SwerveConstants.backRightSteerEncoderReversed,
       ModuleConstants.BR_ENC_OFFSET);
@@ -118,9 +116,7 @@ public class SwerveDrive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Update the odometry in the periodic block
-    tvLeft = NetworkTableInstance.getDefault().getTable("limelight-left").getEntry("tv").getDouble(0);
-    tvRight = NetworkTableInstance.getDefault().getTable("limelight-right").getEntry("tv").getDouble(0);
+    // Update the odometry in the periodic block=
     m_odometry.update(
         getAngle(),
         new SwerveModulePosition[] {
@@ -226,42 +222,15 @@ public class SwerveDrive extends SubsystemBase {
 
     gyroReset = true;
   }
-
+  // TODO: why am i still here just to suffer
   // Calculates closest Apriltag for use in autoAlignCube
   public int optimalID() {
     Pose2d robotPose = getPose();
     return 0;
   }
-
+  // TODO: fix this
   public void updateOdometry() {
 
-    // if (m_Robot.allianceColor == Alliance.Blue) {
-    //   tempRobotPoseLeft = NetworkTableInstance.getDefault().getTable("limelight-left").getEntry("botpose_wpiblue")
-    //       .getDoubleArray(new double[1]);
-    //   tempRobotPoseRight = NetworkTableInstance.getDefault().getTable("limelight-right").getEntry("botpose_wpiblue")
-    //       .getDoubleArray(new double[1]);
-    // } else {
-    //   tempRobotPoseLeft = NetworkTableInstance.getDefault().getTable("limelight-left").getEntry("botpose_wpired")
-    //       .getDoubleArray(new double[1]);
-    //   tempRobotPoseRight = NetworkTableInstance.getDefault().getTable("limelight-right").getEntry("botpose_wpired")
-    //       .getDoubleArray(new double[1]);
-    // }
-
-    if (tvLeft > 0.5 && tempRobotPoseLeft.length > 1)
-
-    {
-      visionPoseLeft = new Pose2d(tempRobotPoseLeft[0], tempRobotPoseLeft[1], getPose().getRotation());
-      m_odometry.addVisionMeasurement(visionPoseLeft,
-          Timer.getFPGATimestamp() - tempRobotPoseLeft[6] / 1000.0 /*- (tl/1000.0) - (cl/1000.0)*/);
-    }
-    if (tvRight > 0.5 && tempRobotPoseRight.length > 1)
-
-    {
-      visionPoseRight = new Pose2d(tempRobotPoseRight[0], tempRobotPoseRight[1], getPose().getRotation());
-      m_odometry.addVisionMeasurement(visionPoseRight,
-          Timer.getFPGATimestamp() - tempRobotPoseRight[6] / 1000.0 /*- (tl/1000.0) - (cl/1000.0)*/);
-    }
-    // System.out.println(robotPose[0] + robotPose[1] + robotPose[5]);
   }
 
   /**
@@ -333,8 +302,6 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", navX.getAngle());
     SmartDashboard.putNumber("TurnRate", getTurnRate());
-    SmartDashboard.putNumber("Limelight Pipeline", NetworkTableInstance.getDefault()
-        .getTable("limelight").getEntry("getpipe").getDouble(0));
     // SmartDashboard.putNumber("Has Target?", tv);
     // SmartDashboard.putNumber("xSpeed", xAutoSpeed);
     // SmartDashboard.putNumber("ySpeed", yAutoSpeed);
