@@ -145,7 +145,7 @@ public class SwerveDrive extends SubsystemBase {
    *
    * @param pose The pose to which to set the odometry.
    */
-  public void resetOdometry(Pose2d pose) {
+  public void resemtOdoetry(Pose2d pose) {
     m_odometry.resetPosition(
         getAngle(),
         new SwerveModulePosition[] {
@@ -211,7 +211,17 @@ public class SwerveDrive extends SubsystemBase {
     m_frontRight.resetEncoders();
     m_rearRight.resetEncoders();
   }
-
+  public void resetOdometry(Pose2d pose) {
+      m_odometry.resetPosition(
+          getAngle(),
+          new SwerveModulePosition[] {
+              m_frontLeft.getPosition(),
+              m_frontRight.getPosition(),
+              m_rearLeft.getPosition(),
+              m_rearRight.getPosition()
+          },
+          pose);
+    }
   /**
    * Zeroes the heading of the robot.
    */
