@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.commands.DefaultDrive;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -35,9 +36,10 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_Robot = m_Robot;
                 m_robotDrive = new SwerveDrive(m_Robot);
+                configureButtonBindings();
              
         }
-
+        
         /**
          * Use this method to define your button->command mappings. Buttons can be
          * created by
@@ -47,9 +49,24 @@ public class RobotContainer {
          * passing it to a
          * {@link JoystickButton}.
          */
+
+        
         private void configureButtonBindings() {
 
                 // Driver Controls
+                 m_robotDrive.setDefaultCommand(
+                                // The left stick controls tran  slation of the robot.
+                                // Turning is controlled by the X axis of the right stick.
+                                new DefaultDrive(m_robotDrive, 1, 1));// 2.5, 1));
+                // m_robotDrive.setDefaultCommand(new FilteredDrive(m_robotDrive,
+                // XBOX
+                // () -> JoystickButtons.m_driverController.getLeftY() * 5,
+                // () -> JoystickButtons.m_driverController.getLeftX() * 5,
+                // () -> JoystickButtons.m_driverController.getRightX() * 5));
+                // Logitech
+                // () -> JoystickButtons.m_driverController.getLeftY() * 2,
+                // () -> JoystickButtons.m_driverController.getLeftX() * 2,
+                // () -> JoystickButtons.m_driverController.getRawAxis(2) * 5));
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 

@@ -61,7 +61,7 @@ public final class Constants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 10 * Math.PI;
     public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 10 * Math.PI;
     public static final double kDriveEncoderCPR = (EncoderConstants.maxCPR);
-    public static final double kSteerEncoderCPR = (EncoderConstants.maxCPR * 150d / 7);
+    public static final double kSteerEncoderCPR = (150.0d / 7);
 
     // adjust for calibration
     // 2/25/21 - 0.12584
@@ -77,10 +77,10 @@ public final class Constants {
     public static final int FR_ENCODER = 0;
     public static final int BL_ENCODER = 1;
     public static final int BR_ENCODER = 2;
-    public final static double FL_ENC_OFFSET = 0; // 183
-    public final static double FR_ENC_OFFSET = 0; // 179 141
-    public final static double BL_ENC_OFFSET = 0; // 221
-    public final static double BR_ENC_OFFSET = 0; // 241
+    public final static double FL_ENC_OFFSET = 153; // 183
+    public final static double FR_ENC_OFFSET = 13; // 179 141
+    public final static double BL_ENC_OFFSET = 56; // 221
+    public final static double BR_ENC_OFFSET = 322; // 241
   }
 
   public static final class VisionConstants {
