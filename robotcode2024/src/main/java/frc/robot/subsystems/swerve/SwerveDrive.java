@@ -26,8 +26,6 @@ public class SwerveDrive extends SubsystemBase {
   public double rotationPreset = 0;
   public boolean presetEnabled = false;
 
-  Pose2d visionPoseLeft = new Pose2d();
-  Pose2d visionPoseRight = new Pose2d();
 
   public Field2d m_field = new Field2d();
 
