@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -89,6 +92,53 @@ public final class Constants {
     public final static double BR_ENC_OFFSET = 322; // 241
   }
 
+  public static final class ShooterConstants  {
+    // pivot motor constants
+    
+    public final static double kMaxPivotSpeedMetersPerSecond = 0;
+    public final static double kMaxPivotAccelerationMetersPerSecondSquared = 0;
+
+    public final static double maxAngle = 0;
+    public final static double minAngle = 0;
+    public final static double safeZone = 0;
+
+    public final static int pivotkP = 0;
+    public final static int pivotkI = 0;
+    public final static int pivotkD = 0;
+
+    public final static double pivotkMaxOutput = 1;
+    public final static double pivotkMinOutput = -1;
+    public final static double pivotmaxRPM = 0;
+    public final static double pivotallowedErr = 0;
+    public final static double pivotmaxVel = 1;
+    public final static double pivotminVel = 1;
+    public final static double pivotmaxAcc = 1;
+
+    public final static double pivotPosConv = 71.4285714285;
+
+    public final static double pivotAbsConv = 2;
+    public final static double pivotAbsOffset = 0; 
+
+    // flywheel motor constants
+    
+    public final static double kMaxflyWheelSpeedMetersPerSecond = 0;
+    public final static double kMaxflyWheelAccelerationMetersPerSecondSquared = 0;
+
+    public final static int flyWheelkP = 0;
+    public final static int flyWheelkI = 0;
+    public final static int flyWheelkD = 0;
+    public final static double flyWheelkIz = 0; 
+    public final static double flyWheelkFF = 0;
+
+    public final static double flyWheelkMaxOutput = 1;
+    public final static double flyWheelkMinOutput = -1;
+    public final static double flyWheelmaxRPM = 0;
+    public final static double flyWheelallowedErr = 0;
+    public final static double flyWheelmaxVel = 1;
+    public final static double flyWheelminVel = 1;
+    public final static double flyWheelmaxAcc = 1;
+  }
+
   public static final class ElevatorConstants {
     public final static double kMaxSpeedMetersPerSecond = 0;
     public final static double kMaxAccelerationMetersPerSecondSquared = 0;
@@ -173,6 +223,8 @@ public final class Constants {
 
     public static final int conveyorDigitalInput = 0;
     public static final int intakeDigitalInput = 1;
+
+    public static final int pivotAbsInput = 0;
   }
 
   public static final class CAN {
@@ -193,12 +245,14 @@ public final class Constants {
 
     public static final int IPIVOT = 23;
 
+    public static final int FLYWHEELL = 8;
+    public static final int FLYWHEELR = 9;
+    public static final int PIVOTL = 15;
+    public static final int PIVOTR = 16;
+
     // public static final int CLIMBL = 9;
     // public static final int CLIMBR = 10;
-    // public static final int FLYWHEELL = 11;
-    // public static final int FLYWHEELR = 12;
-    // public static final int PIVOTL = 14;
-    // public static final int PIVOTR = 15;
+
 
   }
 
