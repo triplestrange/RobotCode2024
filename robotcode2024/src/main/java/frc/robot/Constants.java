@@ -29,6 +29,10 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
  */
 public final class Constants {
 
+  public static final class mechPositions {
+    // use for all mechanism pre programmed positions
+  }
+
   public static final class SwerveConstants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kMaxSpeedMetersPerSecond = 4.42;
@@ -111,7 +115,7 @@ public final class Constants {
     public final static double kMaxAngularSpeedMetersPerSecond = 0;
     public final static double kMaxAngularAccelerationMetersPerSecondSquared = 0;
 
-    public final static double intakeGR = 0;
+    public final static double intakeGR = 2 * 36;
     public final static int kP = 0;
     public final static int kI = 0;
     public final static int kD = 0;
@@ -127,10 +131,12 @@ public final class Constants {
     public final static double maxVel = 1;
     public final static double minVel = 1;
     public final static double maxAcc = 1;
+
+    public final static double intakeSpeed = 1;
+    public final static double conveyorSpeed = 1;
   }
 
   public static final class VisionConstants {
-    public final static String TABLE_NAME = "table";
 
     public static final Vector<N3> STATE_STD_DEVS = VecBuilder.fill(0.1, 0.1, 1);
     public static final Vector<N3> VISION_MEASUREMENT_STD_DEVS = VecBuilder.fill(0.005, 0.005, 1000000000);
@@ -156,8 +162,17 @@ public final class Constants {
   }
 
   public static final class ELECTRICAL {
+    public static final int swerveTurningCurrentLimit = 40;
+    public static final int swerveDrivingCurrentLimit = 40;
+
     public static final int elevatorCurrentLimit = 0;
     public static final int intakeCurrentLimit = 0;
+
+    public static final int rollerCurrentLimit = 0;
+    public static final int conveyorCurrentLimit = 0;
+
+    public static final int conveyorDigitalInput = 0;
+    public static final int intakeDigitalInput = 1;
   }
 
   public static final class CAN {
@@ -174,6 +189,7 @@ public final class Constants {
     public static final int ELEVATOR = 17;
 
     public static final int ROLLERS = 5;
+    public static final int CONVEYOR = 10;
 
     public static final int IPIVOT = 23;
 
@@ -181,7 +197,6 @@ public final class Constants {
     // public static final int CLIMBR = 10;
     // public static final int FLYWHEELL = 11;
     // public static final int FLYWHEELR = 12;
-    // public static final int CONVEYOR = 13;
     // public static final int PIVOTL = 14;
     // public static final int PIVOTR = 15;
 

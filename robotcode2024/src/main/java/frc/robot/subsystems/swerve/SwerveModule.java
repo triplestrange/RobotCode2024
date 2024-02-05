@@ -92,8 +92,8 @@ public class SwerveModule {
     m_pidController.setFF(kFF);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    m_driveMotor.setSmartCurrentLimit(40);
-    m_turningMotor.setSmartCurrentLimit(40);
+    m_driveMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit);
+    m_turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
     m_driveMotor.setIdleMode(IdleMode.kBrake);
     m_turningMotor.setIdleMode(IdleMode.kBrake);
 
