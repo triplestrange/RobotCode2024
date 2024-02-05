@@ -97,8 +97,29 @@ public final class Constants {
     public final static int kP = 0;
     public final static int kI = 0;
     public final static int kD = 0;
-    public final static int kIz = 0;
-    public final static int kFF = 0;
+
+    public final static double kMaxOutput = 1;
+    public final static double kMinOutput = -1;
+    public final static double maxRPM = 0;
+    public final static double allowedErr = 0;
+    public final static double maxVel = 1;
+    public final static double minVel = 1;
+    public final static double maxAcc = 1;
+  }
+
+  public static final class IntakeConstants {
+    public final static double kMaxAngularSpeedMetersPerSecond = 0;
+    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 0;
+
+    public final static double intakeGR = 0;
+    public final static int kP = 0;
+    public final static int kI = 0;
+    public final static int kD = 0;
+
+    public final static double maxAngle = 0;
+    public final static double minAngle = 0;
+    public final static double safeZone = 0;
+
     public final static double kMaxOutput = 1;
     public final static double kMinOutput = -1;
     public final static double maxRPM = 0;
@@ -136,6 +157,7 @@ public final class Constants {
 
   public static final class ELECTRICAL {
     public static final int elevatorCurrentLimit = 0;
+    public static final int intakeCurrentLimit = 0;
   }
 
   public static final class CAN {
@@ -151,6 +173,10 @@ public final class Constants {
 
     public static final int ELEVATOR = 17;
 
+    public static final int ROLLERS = 5;
+
+    public static final int IPIVOT = 23;
+
     // public static final int CLIMBL = 9;
     // public static final int CLIMBR = 10;
     // public static final int FLYWHEELL = 11;
@@ -159,8 +185,6 @@ public final class Constants {
     // public static final int PIVOTL = 14;
     // public static final int PIVOTR = 15;
 
-    // public static final int INTAKEPIVOT = 0;
-    // public static final int ROLLERS = 18;
   }
 
   public static class JoystickButtons {

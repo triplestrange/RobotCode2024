@@ -25,7 +25,7 @@ public class RobotContainer {
         // The robot's subsystems
         private final Robot m_Robot;
         public final SwerveDrive m_robotDrive;
-  
+
         // private final SendableChooser<Command> choose;
         // public final AutoMain m_Autos;
 
@@ -37,9 +37,9 @@ public class RobotContainer {
                 this.m_Robot = m_Robot;
                 m_robotDrive = new SwerveDrive(m_Robot);
                 configureButtonBindings();
-             
+
         }
-        
+
         /**
          * Use this method to define your button->command mappings. Buttons can be
          * created by
@@ -50,12 +50,11 @@ public class RobotContainer {
          * {@link JoystickButton}.
          */
 
-        
         private void configureButtonBindings() {
 
                 // Driver Controls
-                 m_robotDrive.setDefaultCommand(
-                                // The left stick controls tran  slation of the robot.
+                m_robotDrive.setDefaultCommand(
+                                // The left stick controls tran slation of the robot.
                                 // Turning is controlled by the X axis of the right stick.
                                 new DefaultDrive(m_robotDrive, 1, 1));// 2.5, 1));
                 // m_robotDrive.setDefaultCommand(new FilteredDrive(m_robotDrive,
@@ -92,7 +91,6 @@ public class RobotContainer {
                 // dD| cone lying: -56.45, -139.75, 95.84
                 // A | default: -0.6, -169.63, 137.6
                 // dL| feed slide -2.78, -73.08, -57.43
-        
 
                 // // JoystickButtons.oplWing.whileTrue(new InstantCommand(() -> {
                 // // m_robotDrive.setPresetEnabled(true, 0);

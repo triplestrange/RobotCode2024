@@ -20,6 +20,5 @@ public class AutoMain extends Command {
         }
 
         // Base Commands
-      
-        
+
 }
