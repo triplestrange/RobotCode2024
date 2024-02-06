@@ -137,19 +137,19 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    public void setIntakePosition(intakePosition position) {
-        elevSetpoint = position.elevPos;
-        intakeSetpoint = position.intakeAng;
+    public void setIntakePosition(IntakePosition position) {
+        elevSetpoint = position.getIntakeHeight();
+        intakeSetpoint = position.getIntakeAngle();
 
         elevPIDEnabled = true;
         intakePIDEnabled = true;
     }
 
-    public static class intakePosition {
-        public double elevPos;
-        public double intakeAng;
+    public static class IntakePosition {
+        private double elevPos;
+        private double intakeAng;
 
-        public intakePosition(double elevPos, double intakeAng) {
+        public IntakePosition(double elevPos, double intakeAng) {
             this.elevPos = elevPos;
             this.intakeAng = intakeAng;
         }

@@ -137,7 +137,31 @@ public final class Constants {
     public final static double flyWheelmaxVel = 1;
     public final static double flyWheelminVel = 1;
     public final static double flyWheelmaxAcc = 1;
+
+    public final static double flyWheelVelConv = EncoderConstants.neoCPR;
   }
+
+  public static final class ClimbConstants {
+    public final static double kMaxSpeedMetersPerSecond = 0;
+    public final static double kMaxAccelerationMetersPerSecondSquared = 0;
+
+    public final static double maxHeight = 0;
+    public final static double minHeight = 0;
+    public final static double safeZone = 0;
+
+    public final static double climbPosConv = 25 * EncoderConstants.neoCPR;
+    public final static int kP = 0;
+    public final static int kI = 0;
+    public final static int kD = 0;
+
+    public final static double kMaxOutput = 1;
+    public final static double kMinOutput = -1;
+    public final static double maxRPM = 0;
+    public final static double allowedErr = 0;
+    public final static double maxVel = 1;
+    public final static double minVel = 1;
+    public final static double maxAcc = 1;
+  }  
 
   public static final class ElevatorConstants {
     public final static double kMaxSpeedMetersPerSecond = 0;
@@ -221,10 +245,15 @@ public final class Constants {
     public static final int rollerCurrentLimit = 0;
     public static final int conveyorCurrentLimit = 0;
 
+    public static final int climbCurrentLimit = 0;
+
     public static final int conveyorDigitalInput = 0;
     public static final int intakeDigitalInput = 1;
 
     public static final int pivotAbsInput = 0;
+
+    public static final int shooterPivotCurrentLimit = 0;
+    public static final int flyWheelCurrentLimit = 0;
   }
 
   public static final class CAN {
