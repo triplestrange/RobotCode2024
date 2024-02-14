@@ -63,7 +63,7 @@ public final class Constants {
   public static final class EncoderConstants {
     public static final double talonCPR = 2048;
     public static final double flexCPR = 7168;
-    public static final double neoCPR = 42;
+    public static final double neoCPR = 1;
   }
 
   public static final class ModuleConstants {
@@ -92,9 +92,9 @@ public final class Constants {
     public final static double BR_ENC_OFFSET = 322; // 241
   }
 
-  public static final class ShooterConstants  {
+  public static final class ShooterConstants {
     // pivot motor constants
-    
+
     public final static double kMaxPivotSpeedMetersPerSecond = 0;
     public final static double kMaxPivotAccelerationMetersPerSecondSquared = 0;
 
@@ -114,20 +114,17 @@ public final class Constants {
     public final static double pivotminVel = 1;
     public final static double pivotmaxAcc = 1;
 
-    public final static double pivotPosConv = 71.4285714285;
-
-    public final static double pivotAbsConv = 2;
-    public final static double pivotAbsOffset = 0; 
+    public final static double pivotAbsOffset = 0;
 
     // flywheel motor constants
-    
+
     public final static double kMaxflyWheelSpeedMetersPerSecond = 0;
     public final static double kMaxflyWheelAccelerationMetersPerSecondSquared = 0;
 
     public final static int flyWheelkP = 0;
     public final static int flyWheelkI = 0;
     public final static int flyWheelkD = 0;
-    public final static double flyWheelkIz = 0; 
+    public final static double flyWheelkIz = 0;
     public final static double flyWheelkFF = 0;
 
     public final static double flyWheelkMaxOutput = 1;
@@ -137,8 +134,6 @@ public final class Constants {
     public final static double flyWheelmaxVel = 1;
     public final static double flyWheelminVel = 1;
     public final static double flyWheelmaxAcc = 1;
-
-    public final static double flyWheelVelConv = EncoderConstants.neoCPR;
   }
 
   public static final class ClimbConstants {
@@ -161,7 +156,7 @@ public final class Constants {
     public final static double maxVel = 1;
     public final static double minVel = 1;
     public final static double maxAcc = 1;
-  }  
+  }
 
   public static final class ElevatorConstants {
     public final static double kMaxSpeedMetersPerSecond = 0;
@@ -281,7 +276,6 @@ public final class Constants {
 
     // public static final int CLIMBL = 9;
     // public static final int CLIMBR = 10;
-
 
   }
 
