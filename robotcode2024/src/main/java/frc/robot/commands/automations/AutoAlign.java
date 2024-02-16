@@ -7,6 +7,7 @@ package frc.robot.commands.automations;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
@@ -16,9 +17,11 @@ public class AutoAlign extends Command {
   public double yAutoSpeed = 0;
   public double rAutoSpeed = 0;
   public double offset;
-  public PIDController transformX = new PIDController(5, 0.01, 0);
-  public PIDController transformY = new PIDController(3, 0.01, 0);
-  public PIDController rotation = new PIDController(7, 0.01, 0);
+  
+  public PIDController transformX = new PIDController(Constants.AutoAlign.kPXController, Constants.AutoAlign.kIXController, Constants.AutoAlign.kDXController);
+  public PIDController transformY = new PIDController(Constants.AutoAlign.kPYController, Constants.AutoAlign.kIYController, Constants.AutoAlign.kDYController);
+  public PIDController rotation = new PIDController(Constants.AutoAlign.kPThetaController, Constants.AutoAlign.kIThetaController, Constants.AutoAlign.kDThetaController);
+  
   private SwerveDrive m_SwerveDrive;
   private Robot m_Robot;
   private Pose2d tagPose;

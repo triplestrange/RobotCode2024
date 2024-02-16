@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.photonvision.PhotonCamera;
@@ -20,15 +21,10 @@ public class Vision extends SubsystemBase {
     private PhotonCamera camFront;
     private PhotonCamera camBack;
 
-    public Pose2d visionPoseLeftPose2d;
-    public Pose2d visionPoseRightPose2d;
-    public Pose2d visionPoseFrontPose2d;
-    public Pose2d visionPoseBackPose2d;
-
-    public boolean leftHasTarget;
-    public boolean rightHasTarget;
-    public boolean frontHasTarget;
-    public boolean backHasTarget;
+    public CameraInfo visionLeft;
+    public CameraInfo visionRight;
+    public CameraInfo visionFront;
+    public CameraInfo visionBack;
 
     public Vision(SwerveDrive m_SwerveDrive) {
         camLeft = new PhotonCamera("camLeft");
@@ -38,17 +34,22 @@ public class Vision extends SubsystemBase {
 
         this.m_SwerveDrive = m_SwerveDrive;
 
+        visionLeft = new CameraInfo(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)), 0, false);
+        visionRight = new CameraInfo(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)), 0, false);;
+        visionFront = new CameraInfo(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)), 0, false);;
+        visionBack = new CameraInfo(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)), 0, false);;
+
     }
 
     public class CameraInfo {
         private Pose2d pose2d;
         private double latency;
-        private PhotonPipelineResult result;
+        private boolean isPresent;
 
-        CameraInfo(Pose2d pose2d, double latency, PhotonPipelineResult) {
+        CameraInfo(Pose2d pose2d, double latency, boolean isPresent) {
             this.pose2d = pose2d;
             this.latency = latency;
-            this.result = result;
+            this.isPresent = isPresent;
         }
 
         public Pose2d getPose2d() {
@@ -58,22 +59,49 @@ public class Vision extends SubsystemBase {
         public double getLatency() {
             return latency;
         }
+
+          public boolean hasTag() {
+            return isPresent;
+        }
     }
 
-    public CameraInfo getVisionPose(PhotonCamera camera) {
+    public CameraInfo getVisionInfo(PhotonCamera camera) {
         var result = camera.getLatestResult();
 
         Transform3d fieldToCamera;
         Pose2d fieldToCameraPose2d;
         double cameraLatency;
-        if (result.getMultiTagResult().estimatedPose.isPresent) {
-            fieldToCamera = result.getMultiTagResult().estimatedPose.best;
-        }
+        boolean hasTag;
+
+        hasTag = result.getMultiTagResult().estimatedPose.isPresent;
+
+        fieldToCamera = result.getMultiTagResult().estimatedPose.best;
+
         fieldToCameraPose2d = new Pose2d(new Translation2d(fieldToCamera.getX(), fieldToCamera.getY()),
                 new Rotation2d(fieldToCamera.getRotation().getAngle()));
         cameraLatency = result.getLatencyMillis();
 
-        return new CameraInfo(fieldToCameraPose2d, cameraLatency);
+        return new CameraInfo(fieldToCameraPose2d, cameraLatency, hasTag);
+    }
+
+    public void addVisionMeasurement()  {
+        visionLeft = getVisionInfo(camLeft);
+        visionRight = getVisionInfo(camRight);
+        visionFront = getVisionInfo(camFront);
+        visionBack = getVisionInfo(camBack);
+
+        if (visionLeft.hasTag())   {
+        m_SwerveDrive.m_odometry.addVisionMeasurement(visionLeft.getPose2d(), Timer.getFPGATimestamp() - visionLeft.getLatency());
+        }
+        if (visionRight.hasTag())   {
+        m_SwerveDrive.m_odometry.addVisionMeasurement(visionRight.getPose2d(), Timer.getFPGATimestamp() - visionRight.getLatency());
+        }
+        if (visionFront.hasTag())   {
+        m_SwerveDrive.m_odometry.addVisionMeasurement(visionFront.getPose2d(), Timer.getFPGATimestamp() - visionFront.getLatency());
+        }
+        if (visionBack.hasTag())   {
+        m_SwerveDrive.m_odometry.addVisionMeasurement(visionBack.getPose2d(), Timer.getFPGATimestamp() - visionBack.getLatency());
+        }
     }
 
     public void updateSmartDashBoard() {
@@ -81,6 +109,8 @@ public class Vision extends SubsystemBase {
     }
 
     public void periodic() {
+
+       addVisionMeasurement();
 
     }
 }
