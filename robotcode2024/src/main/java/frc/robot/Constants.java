@@ -17,6 +17,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.Elevator.IntakePosition;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -34,6 +36,15 @@ public final class Constants {
 
   public static final class mechPositions {
     // use for all mechanism pre programmed positions
+    public static final IntakePosition groundIntakePos = new IntakePosition(0, 0);
+    public static final IntakePosition feederIntakePos = new IntakePosition(0, 0);
+    public static final IntakePosition ampIntakePos = new IntakePosition(0, 0);
+
+    public static final double underChainShooterPos= 0;
+    public static final double climbShooterPos = 0;
+
+    public static final double topRailPos = 0;
+    public static final double bottomRailPos = 0;
   }
 
   public static final class SwerveConstants {
