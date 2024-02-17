@@ -93,13 +93,13 @@ public final class Constants {
     public static final double kSteerEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
         (2 * Math.PI) / (double) kSteerEncoderCPR;
-    public static final int FL_ENCODER = 3;
+    public static final int FL_ENCODER = 1;
     public static final int FR_ENCODER = 0;
-    public static final int BL_ENCODER = 1;
+    public static final int BL_ENCODER = 3;
     public static final int BR_ENCODER = 2;
-    public final static double FL_ENC_OFFSET = 153; // 183
+    public final static double FL_ENC_OFFSET = 56; // 183
     public final static double FR_ENC_OFFSET = 13; // 179 141
-    public final static double BL_ENC_OFFSET = 56; // 221
+    public final static double BL_ENC_OFFSET = 153; // 221
     public final static double BR_ENC_OFFSET = 322; // 241
   }
 
