@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.proto.Wpimath;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -28,9 +29,13 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
  */
 public final class Constants {
 
+  public static final class mechPositions {
+    // use for all mechanism pre programmed positions
+  }
+
   public static final class SwerveConstants {
-// kraken = 5.21208, neo = 4.42, vortex = 5.88264
-    public static final double kMaxSpeedMetersPerSecond = 4.42; 
+    // kraken = 5.21208, neo = 4.42, vortex = 5.88264
+    public static final double kMaxSpeedMetersPerSecond = 4.42;
     public static final double autoAlignMaxSpeedMetersPerSecond = 1;
 
     public static final boolean kGyroReversed = true;
@@ -51,16 +56,17 @@ public final class Constants {
         new Translation2d(kWheelBase / 2, kTrackWidth / 2), new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2), new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
   }
+
   public static final class EncoderConstants {
-    public static final double talonCPR = 2048 * 6.25; 
-    public static final double flexCPR = 7168 * 6.25;
-    public static final double maxCPR = 1 * 6.25;
+    public static final double talonCPR = 2048;
+    public static final double flexCPR = 7168;
+    public static final double neoCPR = 42;
   }
 
-    public static final class ModuleConstants {
+  public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 10 * Math.PI;
     public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 10 * Math.PI;
-    public static final double kDriveEncoderCPR = (EncoderConstants.maxCPR);
+    public static final double kDriveEncoderCPR = EncoderConstants.neoCPR * 6.25;
     public static final double kSteerEncoderCPR = (150.0d / 7);
 
     // adjust for calibration
@@ -83,15 +89,60 @@ public final class Constants {
     public final static double BR_ENC_OFFSET = 322; // 241
   }
 
+  public static final class ElevatorConstants {
+    public final static double kMaxSpeedMetersPerSecond = 0;
+    public final static double kMaxAccelerationMetersPerSecondSquared = 0;
+
+    public final static double maxHeight = 0;
+    public final static double minHeight = 0;
+    public final static double safeZone = 0;
+
+    public final static double elevPosConv = (9 * EncoderConstants.neoCPR) / (Units.inchesToMeters(1.25) * Math.PI);
+    public final static int kP = 0;
+    public final static int kI = 0;
+    public final static int kD = 0;
+
+    public final static double kMaxOutput = 1;
+    public final static double kMinOutput = -1;
+    public final static double maxRPM = 0;
+    public final static double allowedErr = 0;
+    public final static double maxVel = 1;
+    public final static double minVel = 1;
+    public final static double maxAcc = 1;
+  }
+
+  public static final class IntakeConstants {
+    public final static double kMaxAngularSpeedMetersPerSecond = 0;
+    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 0;
+
+    public final static double intakeGR = 2 * 36;
+    public final static int kP = 0;
+    public final static int kI = 0;
+    public final static int kD = 0;
+
+    public final static double maxAngle = 0;
+    public final static double minAngle = 0;
+    public final static double safeZone = 0;
+
+    public final static double kMaxOutput = 1;
+    public final static double kMinOutput = -1;
+    public final static double maxRPM = 0;
+    public final static double allowedErr = 0;
+    public final static double maxVel = 1;
+    public final static double minVel = 1;
+    public final static double maxAcc = 1;
+
+    public final static double intakeSpeed = 1;
+    public final static double conveyorSpeed = 1;
+  }
+
   public static final class VisionConstants {
-    public final static String TABLE_NAME = "table";
 
     public static final Vector<N3> STATE_STD_DEVS = VecBuilder.fill(0.1, 0.1, 1);
     public static final Vector<N3> VISION_MEASUREMENT_STD_DEVS = VecBuilder.fill(0.005, 0.005, 1000000000);
 
   }
 
-  
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 1.5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 2;
@@ -110,6 +161,20 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
+  public static final class ELECTRICAL {
+    public static final int swerveTurningCurrentLimit = 40;
+    public static final int swerveDrivingCurrentLimit = 40;
+
+    public static final int elevatorCurrentLimit = 0;
+    public static final int intakeCurrentLimit = 0;
+
+    public static final int rollerCurrentLimit = 0;
+    public static final int conveyorCurrentLimit = 0;
+
+    public static final int conveyorDigitalInput = 0;
+    public static final int intakeDigitalInput = 1;
+  }
+
   public static final class CAN {
     // Swerve Motor Controller CAN ID's
     public static final int FL_DRIVE = 3;
@@ -121,16 +186,20 @@ public final class Constants {
     public static final int BL_STEER = 1;
     public static final int BR_STEER = 14;
 
+    public static final int ELEVATOR = 17;
+
+    public static final int ROLLERS = 5;
+    public static final int CONVEYOR = 10;
+
+    public static final int IPIVOT = 23;
+
     // public static final int CLIMBL = 9;
     // public static final int CLIMBR = 10;
     // public static final int FLYWHEELL = 11;
     // public static final int FLYWHEELR = 12;
-    // public static final int CONVEYOR = 13;
     // public static final int PIVOTL = 14;
     // public static final int PIVOTR = 15;
-    // public static final int ELEVATOR = 16;
-    // public static final int INTAKEPIVOT = 17;
-    // public static final int ROLLERS = 18;
+
   }
 
   public static class JoystickButtons {

@@ -26,11 +26,7 @@ public class SwerveDrive extends SubsystemBase {
   public double rotationPreset = 0;
   public boolean presetEnabled = false;
 
-  Pose2d visionPoseLeft = new Pose2d();
-  Pose2d visionPoseRight = new Pose2d();
-
   public Field2d m_field = new Field2d();
-
 
   // Robot swerve modules
   private final SwerveModule m_frontLeft = new SwerveModule(CAN.FL_DRIVE,
@@ -105,7 +101,6 @@ public class SwerveDrive extends SubsystemBase {
     return Rotation2d.fromDegrees((navX.getAngle()) * (SwerveConstants.kGyroReversed ? 1.0 : -1.0));
   }
 
- 
   public boolean getGyroReset() {
     return gyroReset;
   }
@@ -211,17 +206,19 @@ public class SwerveDrive extends SubsystemBase {
     m_frontRight.resetEncoders();
     m_rearRight.resetEncoders();
   }
+
   public void resetOdometry(Pose2d pose) {
-      m_odometry.resetPosition(
-          getAngle(),
-          new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_rearLeft.getPosition(),
-              m_rearRight.getPosition()
-          },
-          pose);
-    }
+    m_odometry.resetPosition(
+        getAngle(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+        pose);
+  }
+
   /**
    * Zeroes the heading of the robot.
    */
@@ -232,12 +229,14 @@ public class SwerveDrive extends SubsystemBase {
 
     gyroReset = true;
   }
+
   // TODO: why am i still here just to suffer
   // Calculates closest Apriltag for use in autoAlignCube
   public int optimalID() {
     Pose2d robotPose = getPose();
     return 0;
   }
+
   // TODO: fix this
   public void updateOdometry() {
 
@@ -271,7 +270,6 @@ public class SwerveDrive extends SubsystemBase {
 
   // Assuming this method is part of a drivetrain subsystem that provides the
   // necessary methods
-  
 
   public void setPresetEnabled(boolean enabled, double desiredHeading) {
     presetEnabled = enabled;
@@ -325,7 +323,7 @@ public class SwerveDrive extends SubsystemBase {
     // SmartDashboard.putNumber("Vision y", tempRobotPose[1]);
     // SmartDashboard.putNumber("Vision r", tempRobotPose[5]);
     // }
-    
+
     // SmartDashboard.putNumber("tempRobotPose length", tempRobotPose.length);
 
     SmartDashboard.putData("Field", m_field);
