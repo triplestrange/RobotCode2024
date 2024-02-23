@@ -2,17 +2,18 @@ package frc.robot.subsystems.cannon;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.AbsoluteEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class Shooter extends SubsystemBase {
 
@@ -28,9 +29,9 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax lPivot;
     private CANSparkMax rPivot;
 
-    private SparkPIDController lPController;
+    private ProfiledPIDController pivotController;
 
-    private SparkAbsoluteEncoder lPEncoder;
+    private DutyCycleEncoder pivotEncoder;
 
     private boolean shooterPIDEnabled;
 
@@ -41,7 +42,11 @@ public class Shooter extends SubsystemBase {
 
     private double pivotPower;
 
-    Shooter() {
+    /**
+     * Creates a new Shooter.
+     */
+
+    public Shooter() {
         super();
 
         lFlyWheel = new CANSparkMax(Constants.CAN.FLYWHEELL, MotorType.kBrushless);
@@ -65,8 +70,11 @@ public class Shooter extends SubsystemBase {
         rFWController = rFlyWheel.getPIDController();
         rFWEncoder = rFlyWheel.getEncoder();
 
-        lPController = lPivot.getPIDController();
-        lPEncoder = lPivot.getAbsoluteEncoder(Type.kDutyCycle);
+        pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
+                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(0, 0));
+        pivotEncoder = new DutyCycleEncoder(3);
+
+        pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
 
         lPivot.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
 
@@ -102,23 +110,11 @@ public class Shooter extends SubsystemBase {
         rFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
         rFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
                 smartMotionSlot);
-
-        // pivot pid
-        lPController.setP(Constants.ShooterConstants.pivotkP);
-        lPController.setI(Constants.ShooterConstants.pivotkI);
-        lPController.setD(Constants.ShooterConstants.pivotkD);
-        lPController.setOutputRange(Constants.ShooterConstants.pivotkMinOutput,
-                Constants.ShooterConstants.pivotkMaxOutput);
-
-        lPController.setSmartMotionMaxVelocity(Constants.ShooterConstants.pivotmaxVel, smartMotionSlot);
-        lPController.setSmartMotionMinOutputVelocity(Constants.ShooterConstants.pivotminVel, smartMotionSlot);
-        lPController.setSmartMotionMaxAccel(Constants.ShooterConstants.pivotmaxAcc, smartMotionSlot);
-        lPController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.pivotallowedErr, smartMotionSlot);
     }
 
     public double getAngle() {
         return MathUtil
-                .angleModulus(2 * Math.PI * lPEncoder.getPosition());
+                .angleModulus(2 * Math.PI * pivotEncoder.getAbsolutePosition());
     }
 
     public void moveShooter(double motorPivotPower) {
@@ -135,7 +131,7 @@ public class Shooter extends SubsystemBase {
             pivotPower = motorPivotPower;
             lPivot.set(pivotPower);
             pivotSetpoint = getAngle();
-            lPController.setReference(pivotSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            pivotController.reset(pivotSetpoint);
             shooterPIDEnabled = false;
         }
     }
@@ -153,12 +149,10 @@ public class Shooter extends SubsystemBase {
         return rFWEncoder.getVelocity();
     }
 
-    public void setLFWSpeed(double RPM) {
+    public void setFWSpeed(double RPM) {
         lFlyWheelSetpoint = RPM;
-    }
+        rFlyWheelSetpoint = -(RPM - Constants.ShooterConstants.rotationalSpeed);
 
-    public void setRFWSpeed(double RPM) {
-        rFlyWheelSetpoint = RPM;
     }
 
     public void flyWheelOff() {
@@ -169,14 +163,21 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() {
         if (shooterPIDEnabled) {
-            lPController.setReference(pivotSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            pivotPower = pivotController.calculate(getAngle(), pivotSetpoint);
         }
-        lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kSmartVelocity);
-        rFWController.setReference(rFlyWheelSetpoint, CANSparkMax.ControlType.kSmartVelocity);
+        if (!pivotEncoder.isConnected()) {
+            pivotPower = 0;
+        }
+        lPivot.set(pivotPower);
+        lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
+        rFWController.setReference(rFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
 
     }
 
     public void updateSmartDashBoard() {
+
+        SmartDashboard.putNumber("rpm", lFlyWheel.getEncoder().getVelocity());
+
 
     }
 
