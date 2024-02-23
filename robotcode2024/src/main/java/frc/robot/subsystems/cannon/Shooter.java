@@ -17,15 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends SubsystemBase {
 
-    private CANSparkMax lFlyWheel;
-    private CANSparkMax rFlyWheel;
-
-    private SparkPIDController lFWController;
-    private SparkPIDController rFWController;
-
-    private RelativeEncoder lFWEncoder;
-    private RelativeEncoder rFWEncoder;
-
     private CANSparkMax lPivot;
     private CANSparkMax rPivot;
 
@@ -37,9 +28,6 @@ public class Shooter extends SubsystemBase {
 
     private double pivotSetpoint;
 
-    private double lFlyWheelSetpoint;
-    private double rFlyWheelSetpoint;
-
     private double pivotPower;
 
     /**
@@ -49,26 +37,14 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         super();
 
-        lFlyWheel = new CANSparkMax(Constants.CAN.FLYWHEELL, MotorType.kBrushless);
-        rFlyWheel = new CANSparkMax(Constants.CAN.FLYWHEELR, MotorType.kBrushless);
         lPivot = new CANSparkMax(Constants.CAN.PIVOTL, MotorType.kBrushless);
         rPivot = new CANSparkMax(Constants.CAN.PIVOTR, MotorType.kBrushless);
 
-        lFlyWheel.restoreFactoryDefaults();
-        rFlyWheel.restoreFactoryDefaults();
         lPivot.restoreFactoryDefaults();
         rPivot.restoreFactoryDefaults();
 
-        lFlyWheel.setSmartCurrentLimit(Constants.ELECTRICAL.flyWheelCurrentLimit);
-        rFlyWheel.setSmartCurrentLimit(Constants.ELECTRICAL.flyWheelCurrentLimit);
         lPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
         rPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
-
-        lFWController = lFlyWheel.getPIDController();
-        lFWEncoder = lFlyWheel.getEncoder();
-
-        rFWController = rFlyWheel.getPIDController();
-        rFWEncoder = rFlyWheel.getEncoder();
 
         pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
                 Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(0, 0));
@@ -81,35 +57,6 @@ public class Shooter extends SubsystemBase {
         rPivot.follow(lPivot, true);
 
         int smartMotionSlot = 0;
-
-        // fly wheel
-        lFWController.setP(Constants.ShooterConstants.flyWheelkP);
-        lFWController.setI(Constants.ShooterConstants.flyWheelkI);
-        lFWController.setD(Constants.ShooterConstants.flyWheelkD);
-        lFWController.setIZone(Constants.ShooterConstants.flyWheelkIz);
-        lFWController.setFF(Constants.ShooterConstants.flyWheelkFF);
-        lFWController.setOutputRange(Constants.ShooterConstants.flyWheelkMinOutput,
-                Constants.ShooterConstants.flyWheelkMaxOutput);
-
-        lFWController.setSmartMotionMaxVelocity(Constants.ShooterConstants.flyWheelmaxVel, smartMotionSlot);
-        lFWController.setSmartMotionMinOutputVelocity(Constants.ShooterConstants.flyWheelminVel, smartMotionSlot);
-        lFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
-        lFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
-                smartMotionSlot);
-
-        rFWController.setP(Constants.ShooterConstants.flyWheelkP);
-        rFWController.setI(Constants.ShooterConstants.flyWheelkI);
-        rFWController.setD(Constants.ShooterConstants.flyWheelkD);
-        rFWController.setIZone(Constants.ShooterConstants.flyWheelkIz);
-        rFWController.setFF(Constants.ShooterConstants.flyWheelkFF);
-        rFWController.setOutputRange(Constants.ShooterConstants.flyWheelkMinOutput,
-                Constants.ShooterConstants.flyWheelkMaxOutput);
-
-        rFWController.setSmartMotionMaxVelocity(Constants.ShooterConstants.flyWheelmaxVel, smartMotionSlot);
-        rFWController.setSmartMotionMinOutputVelocity(Constants.ShooterConstants.flyWheelminVel, smartMotionSlot);
-        rFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
-        rFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
-                smartMotionSlot);
     }
 
     public double getAngle() {
@@ -141,25 +88,6 @@ public class Shooter extends SubsystemBase {
         shooterPIDEnabled = true;
     }
 
-    public double getLeftSpeed() {
-        return lFWEncoder.getVelocity();
-    }
-
-    public double getRightSpeed() {
-        return rFWEncoder.getVelocity();
-    }
-
-    public void setFWSpeed(double RPM) {
-        lFlyWheelSetpoint = RPM;
-        rFlyWheelSetpoint = -(RPM - Constants.ShooterConstants.rotationalSpeed);
-
-    }
-
-    public void flyWheelOff() {
-        lFlyWheelSetpoint = 0;
-        rFlyWheelSetpoint = 0;
-    }
-
     @Override
     public void periodic() {
         if (shooterPIDEnabled) {
@@ -169,15 +97,10 @@ public class Shooter extends SubsystemBase {
             pivotPower = 0;
         }
         lPivot.set(pivotPower);
-        lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
-        rFWController.setReference(rFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
 
     }
 
     public void updateSmartDashBoard() {
-
-        SmartDashboard.putNumber("rpm", lFlyWheel.getEncoder().getVelocity());
-
 
     }
 

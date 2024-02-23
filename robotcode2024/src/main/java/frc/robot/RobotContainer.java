@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
 import frc.robot.subsystems.cannon.Conveyor;
+import frc.robot.subsystems.cannon.FlyWheel;
 import frc.robot.subsystems.cannon.Rails;
 import frc.robot.subsystems.cannon.Shooter;
 import frc.robot.subsystems.intake.Elevator;
@@ -34,6 +35,7 @@ public class RobotContainer {
         public final Elevator m_elevator;
         public final Intake m_intake;
         public final Shooter m_shooter;
+        public final FlyWheel m_flywheel;
         public final Rails m_rails;
         public final Conveyor m_conveyor;
 
@@ -52,6 +54,7 @@ public class RobotContainer {
                 m_shooter = new Shooter();
                 m_rails = new Rails();
                 m_conveyor = new Conveyor();
+                m_flywheel = new FlyWheel();
 
                 configureButtonBindings();
 
@@ -107,8 +110,8 @@ public class RobotContainer {
                                                 0.2 * JoystickButtons.m_operatorController.getRightX()),
                                 m_shooter));
 
-                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_shooter.setFWSpeed(-5767), m_shooter));
-                JoystickButtons.drBump.whileFalse(new RunCommand(() -> m_shooter.flyWheelOff(), m_shooter));
+                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5767), m_shooter));
+                JoystickButtons.drBump.whileFalse(new RunCommand(() -> m_flywheel.flyWheelOff(), m_shooter));
                 // rails
 
                 // Conveyor
