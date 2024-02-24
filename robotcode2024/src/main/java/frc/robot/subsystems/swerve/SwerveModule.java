@@ -1,9 +1,11 @@
 package frc.robot.subsystems.swerve;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -13,7 +15,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
 
@@ -50,6 +51,7 @@ public class SwerveModule {
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
+    m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
     m_turningMotor.restoreFactoryDefaults();
 
     m_turningEncoder = m_turningMotor.getEncoder();
@@ -91,12 +93,16 @@ public class SwerveModule {
     m_pidController.setFF(kFF);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
+    m_driveMotor.getConfigurator().apply(new CurrentLimitsConfigs()
+        .withSupplyCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit).withSupplyCurrentLimitEnable(true));
     m_turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
+    m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
     m_turningMotor.setIdleMode(IdleMode.kBrake);
 
     m_turningMotor.setInverted(true);
+    m_driveMotor.setInverted(true);
 
-    m_driveMotor.clearStickyFaults();
+    // TODO: burn the flash but don't know the command so fix this
     m_turningMotor.burnFlash();
   }
 
@@ -107,8 +113,8 @@ public class SwerveModule {
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        (m_driveMotor.getVelocity().getValueAsDouble() * (ModuleConstants.kSteerEncoderDistancePerPulse
-            / 60.)) + m_turningEncoder.getVelocity() * ModuleConstants.kWheelDiameterMeters / 2,
+        m_driveMotor.getVelocity().getValueAsDouble() * (ModuleConstants.kDriveEncoderDistancePerPulse / 60.)
+            + m_turningEncoder.getVelocity() * ModuleConstants.kWheelDiameterMeters / 2,
         new Rotation2d(m_turningEncoder.getPosition()));
   }
 
@@ -171,7 +177,7 @@ public class SwerveModule {
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        (m_driveMotor.getPosition().getValueAsDouble() * ModuleConstants.kSteerEncoderDistancePerPulse),
+        m_driveMotor.getPosition().getValueAsDouble() * ModuleConstants.kDriveEncoderDistancePerPulse,
         new Rotation2d(m_turningEncoder.getPosition()));
   }
 }
