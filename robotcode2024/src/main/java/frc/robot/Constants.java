@@ -1,23 +1,15 @@
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.proto.Wpimath;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.Elevator.IntakePosition;
 
 /**
@@ -40,7 +32,7 @@ public final class Constants {
     public static final IntakePosition feederIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition ampIntakePos = new IntakePosition(0, 0);
 
-    public static final double underChainShooterPos= 0;
+    public static final double underChainShooterPos = 0;
     public static final double climbShooterPos = 0;
 
     public static final double topRailPos = 0;
@@ -51,6 +43,7 @@ public final class Constants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kMaxSpeedMetersPerSecond = 4.42;
     public static final double autoAlignMaxSpeedMetersPerSecond = 1;
+    public static final double autoAlignRotationalMaxSpeedMetersPerSecond = 1;
 
     public static final boolean kGyroReversed = true;
 
@@ -93,14 +86,19 @@ public final class Constants {
     public static final double kSteerEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
         (2 * Math.PI) / (double) kSteerEncoderCPR;
-    public static final int FL_ENCODER = 3;
+    public static final int FL_ENCODER = 1;
     public static final int FR_ENCODER = 0;
-    public static final int BL_ENCODER = 1;
+    public static final int BL_ENCODER = 3;
     public static final int BR_ENCODER = 2;
-    public final static double FL_ENC_OFFSET = 153; // 183
+    public final static double FL_ENC_OFFSET = 56; // 183
     public final static double FR_ENC_OFFSET = 13; // 179 141
-    public final static double BL_ENC_OFFSET = 56; // 221
+    public final static double BL_ENC_OFFSET = 153; // 221
     public final static double BR_ENC_OFFSET = 322; // 241
+
+    public final static boolean driveEnableCurrentLimit = true;
+    public final static int driveContinuousCurrentLimit = 35;
+    public final static int drivePeakCurrentLimit = 40;
+    public final static int drivePeakCurrentDuration = 1;
   }
 
   public static final class ShooterConstants {
@@ -136,15 +134,17 @@ public final class Constants {
     public final static int flyWheelkI = 0;
     public final static int flyWheelkD = 0;
     public final static double flyWheelkIz = 0;
-    public final static double flyWheelkFF = 0;
+    public final static double flyWheelkFF = 1. / 5767;
 
     public final static double flyWheelkMaxOutput = 1;
     public final static double flyWheelkMinOutput = -1;
     public final static double flyWheelmaxRPM = 0;
     public final static double flyWheelallowedErr = 0;
-    public final static double flyWheelmaxVel = 1;
-    public final static double flyWheelminVel = 1;
-    public final static double flyWheelmaxAcc = 1;
+    public final static double flyWheelmaxVel = 5767;
+    public final static double flyWheelminVel = -5767;
+    public final static double flyWheelmaxAcc = 5000;
+
+    public final static double rotationalSpeed = 300;
   }
 
   public static final class ClimbConstants {
@@ -195,7 +195,9 @@ public final class Constants {
     public final static double kMaxAngularSpeedMetersPerSecond = 0;
     public final static double kMaxAngularAccelerationMetersPerSecondSquared = 0;
 
-    public final static double intakeGR = 2 * 36;
+    public final static double intakeGR = Math.PI;
+    public final static double intakeAbsOffset = 0;
+
     public final static int kP = 0;
     public final static int kI = 0;
     public final static int kD = 0;
@@ -212,7 +214,7 @@ public final class Constants {
     public final static double minVel = 1;
     public final static double maxAcc = 1;
 
-    public final static double intakeSpeed = 1;
+    public final static double intakeSpeed = .5;
     public final static double conveyorSpeed = 1;
   }
 
@@ -241,41 +243,40 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-public static final class AutoAlign {
-  public static final double kMaxSpeedMetersPerSecond = 1.5;
-  public static final double kMaxAccelerationMetersPerSecondSquared = 2;
+  public static final class AutoAlign {
+    public static final double kMaxSpeedMetersPerSecond = 1.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
 
     public static final double kPXController = 2.8;
     public static final double kPYController = 2.8;
     public static final double kPThetaController = 3;
 
-
     public static final double kDXController = 0;
     public static final double kDYController = 0;
     public static final double kDThetaController = 0;
 
-
     public static final double kIXController = 0;
     public static final double kIYController = 0;
     public static final double kIThetaController = 0;
-}
+  }
 
   public static final class ELECTRICAL {
     public static final int swerveTurningCurrentLimit = 40;
     public static final int swerveDrivingCurrentLimit = 40;
 
     public static final int elevatorCurrentLimit = 0;
-    public static final int intakeCurrentLimit = 0;
+    public static final int intakeCurrentLimit = 30;
 
-    public static final int rollerCurrentLimit = 0;
-    public static final int conveyorCurrentLimit = 0;
+    public static final int rollerCurrentLimit = 80;
+    public static final int conveyorCurrentLimit = 20;
 
-    public static final int climbCurrentLimit = 0;
+    public static final int climbCurrentLimit = 40;
 
     public static final int conveyorDigitalInput = 0;
     public static final int intakeDigitalInput = 1;
 
-    public static final int pivotAbsInput = 0;
+    public static final int pivotAbsInput = 2;
+    public static final int intakeAbsInput = 3;
 
     public static final int shooterPivotCurrentLimit = 0;
     public static final int flyWheelCurrentLimit = 0;
@@ -292,20 +293,21 @@ public static final class AutoAlign {
     public static final int BL_STEER = 1;
     public static final int BR_STEER = 14;
 
-    public static final int ELEVATOR = 17;
+    public static final int ELEVATOR = 99;
 
     public static final int ROLLERS = 5;
     public static final int CONVEYOR = 10;
 
     public static final int IPIVOT = 23;
 
-    public static final int FLYWHEELL = 8;
-    public static final int FLYWHEELR = 9;
+    // flywheel L/R from intake perspective
+    public static final int FLYWHEELL = 7;
+    public static final int FLYWHEELR = 6;
     public static final int PIVOTL = 15;
     public static final int PIVOTR = 16;
 
-    // public static final int CLIMBL = 9;
-    // public static final int CLIMBR = 10;
+    public static final int CLIMBL = 17;
+    public static final int CLIMBR = 8;
 
   }
 

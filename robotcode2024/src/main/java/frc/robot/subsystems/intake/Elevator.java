@@ -6,6 +6,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -17,8 +20,8 @@ public class Elevator extends SubsystemBase {
     private SparkPIDController elevController;
     private RelativeEncoder elevRelativeEncoder;
 
-    private SparkPIDController intakeController;
-    private RelativeEncoder intakeRelativeEncoder;
+    private ProfiledPIDController intakeController;
+    private DutyCycleEncoder intakeEncoder;
 
     private boolean intakePIDEnabled;
     private double intakeSetpoint;
@@ -30,7 +33,10 @@ public class Elevator extends SubsystemBase {
 
     private double intakePower;
 
-    Elevator() {
+    /**
+     * Creates a new Elevator.
+     */
+    public Elevator() {
         super();
 
         elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
@@ -45,9 +51,11 @@ public class Elevator extends SubsystemBase {
         intake.setIdleMode(IdleMode.kBrake);
         intake.setSmartCurrentLimit(Constants.ELECTRICAL.intakeCurrentLimit);
 
-        intakeController = intake.getPIDController();
-        intakeRelativeEncoder = intake.getEncoder();
-        intakeRelativeEncoder.setPositionConversionFactor(Constants.IntakeConstants.intakeGR);
+        intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
+                Constants.IntakeConstants.kD,
+                new Constraints(Constants.IntakeConstants.maxVel, Constants.IntakeConstants.maxAcc));
+        intakeEncoder = new DutyCycleEncoder(2);
+        intakeEncoder.setPositionOffset(Constants.IntakeConstants.intakeAbsOffset);
 
         elevController = elev.getPIDController();
         elevRelativeEncoder = elev.getEncoder();
@@ -58,11 +66,6 @@ public class Elevator extends SubsystemBase {
         elevController.setI(Constants.ElevatorConstants.kI);
         elevController.setD(Constants.ElevatorConstants.kD);
         elevController.setOutputRange(Constants.ElevatorConstants.kMinOutput, Constants.ElevatorConstants.kMaxOutput);
-
-        intakeController.setP(Constants.IntakeConstants.kP);
-        intakeController.setI(Constants.IntakeConstants.kI);
-        intakeController.setD(Constants.IntakeConstants.kD);
-        intakeController.setOutputRange(Constants.IntakeConstants.kMinOutput, Constants.IntakeConstants.kMaxOutput);
 
         /**
          * Smart Motion coefficients are set on a SparkPIDController object
@@ -82,11 +85,6 @@ public class Elevator extends SubsystemBase {
         elevController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, smartMotionSlot);
         elevController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, smartMotionSlot);
 
-        intakeController.setSmartMotionMaxVelocity(Constants.IntakeConstants.maxVel, smartMotionSlot);
-        intakeController.setSmartMotionMinOutputVelocity(Constants.IntakeConstants.minVel, smartMotionSlot);
-        intakeController.setSmartMotionMaxAccel(Constants.IntakeConstants.maxAcc, smartMotionSlot);
-        intakeController.setSmartMotionAllowedClosedLoopError(Constants.IntakeConstants.allowedErr, smartMotionSlot);
-
         elev.burnFlash();
         intake.burnFlash();
     }
@@ -95,7 +93,7 @@ public class Elevator extends SubsystemBase {
         return elevRelativeEncoder.getPosition();
     }
 
-    public void moveElev(double motorElevPower) {
+    public void moveElev(double motorElevPower, double motorIntakePower) {
         if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone) {
             motorElevPower = 0;
         }
@@ -112,13 +110,7 @@ public class Elevator extends SubsystemBase {
             elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kSmartMotion);
             elevPIDEnabled = false;
         }
-    }
 
-    public double getIntakePos() {
-        return intakeRelativeEncoder.getPosition();
-    }
-
-    public void moveIntake(double motorIntakePower) {
         if (getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone) {
             motorIntakePower = 0;
         }
@@ -132,9 +124,13 @@ public class Elevator extends SubsystemBase {
             intakePower = motorIntakePower;
             intake.set(intakePower);
             intakeSetpoint = getIntakePos();
-            intakeController.setReference(intakeSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
         }
+    }
+
+    public double getIntakePos() {
+        return intakeEncoder.getAbsolutePosition();
     }
 
     public void setIntakePosition(IntakePosition position) {
@@ -170,8 +166,12 @@ public class Elevator extends SubsystemBase {
             elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kSmartMotion);
         }
         if (intakePIDEnabled) {
-            intakeController.setReference(intakeSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            intakePower = intakeController.calculate(getIntakePos(), intakeSetpoint);
         }
+        if (!intakeEncoder.isConnected()) {
+            intakePower = 0;
+        }
+        intake.set(intakePower);
     }
 
     public void updateSmartDashBoard() {
