@@ -101,6 +101,11 @@ public final class Constants {
     public final static double FR_ENC_OFFSET = 13; // 179 141
     public final static double BL_ENC_OFFSET = 56; // 221
     public final static double BR_ENC_OFFSET = 322; // 241
+
+    public final static boolean driveEnableCurrentLimit = true;
+    public final static int driveContinuousCurrentLimit = 35;
+    public final static int drivePeakCurrentLimit = 40;
+    public final static int drivePeakCurrentDuration = 1;
   }
 
   public static final class ShooterConstants {
@@ -275,7 +280,8 @@ public static final class AutoAlign {
     public static final int conveyorDigitalInput = 0;
     public static final int intakeDigitalInput = 1;
 
-    public static final int pivotAbsInput = 0;
+    public static final int pivotAbsInput = 2;
+    public static final int intakeAbsInput = 3;
 
     public static final int shooterPivotCurrentLimit = 0;
     public static final int flyWheelCurrentLimit = 0;

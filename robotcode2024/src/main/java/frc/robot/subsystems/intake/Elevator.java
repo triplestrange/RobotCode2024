@@ -45,9 +45,17 @@ public class Elevator extends SubsystemBase {
         intake.setIdleMode(IdleMode.kBrake);
         intake.setSmartCurrentLimit(Constants.ELECTRICAL.intakeCurrentLimit);
 
+<<<<<<< Updated upstream
         intakeController = intake.getPIDController();
         intakeRelativeEncoder = intake.getEncoder();
         intakeRelativeEncoder.setPositionConversionFactor(Constants.IntakeConstants.intakeGR);
+=======
+        intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
+                Constants.IntakeConstants.kD,
+                new Constraints(Constants.IntakeConstants.maxVel, Constants.IntakeConstants.maxAcc));
+        intakeEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.intakeAbsInput);
+        intakeEncoder.setPositionOffset(Constants.IntakeConstants.intakeAbsOffset);
+>>>>>>> Stashed changes
 
         elevController = elev.getPIDController();
         elevRelativeEncoder = elev.getEncoder();

@@ -1,6 +1,9 @@
 package frc.robot.subsystems.swerve;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -10,6 +13,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
 
@@ -17,11 +21,10 @@ import frc.robot.subsystems.AbsoluteEncoder;
 
 public class SwerveModule {
   // motors
-  private final CANSparkMax m_driveMotor;
+  private final TalonFX m_driveMotor;
   private final CANSparkMax m_turningMotor;
 
   // encoders
-  final RelativeEncoder m_driveEncoder;
   final RelativeEncoder m_turningEncoder;
   final AbsoluteEncoder m_absoluteEncoder;
 
@@ -44,13 +47,11 @@ public class SwerveModule {
   public SwerveModule(int driveMotorChannel, int turningMotorChannel, int absoluteEncoderChannel,
       boolean turningEncoderReversed, double angleOffset) {
 
-    m_driveMotor = new CANSparkMax(driveMotorChannel, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    m_driveMotor = new TalonFX(driveMotorChannel);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
-    m_driveMotor.restoreFactoryDefaults();
     m_turningMotor.restoreFactoryDefaults();
 
-    m_driveEncoder = m_driveMotor.getEncoder();
     m_turningEncoder = m_turningMotor.getEncoder();
     m_absoluteEncoder = new AbsoluteEncoder(absoluteEncoderChannel, angleOffset);
 
@@ -58,8 +59,6 @@ public class SwerveModule {
     // distance traveled for one rotation of the wheel divided by the encoder
     // resolution (ratio of distance traveled by wheel to distance traveled by
     // encoder shaft)
-    m_driveEncoder.setPositionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse);
-    m_driveEncoder.setVelocityConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse / 60.);
 
     // Set whether drive encoder should be reversed or not
 
@@ -92,15 +91,12 @@ public class SwerveModule {
     m_pidController.setFF(kFF);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    m_driveMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit);
     m_turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
-    m_driveMotor.setIdleMode(IdleMode.kBrake);
     m_turningMotor.setIdleMode(IdleMode.kBrake);
 
     m_turningMotor.setInverted(true);
-    m_driveMotor.setInverted(true);
 
-    m_driveMotor.burnFlash();
+    m_driveMotor.clearStickyFaults();
     m_turningMotor.burnFlash();
   }
 
@@ -111,7 +107,8 @@ public class SwerveModule {
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        m_driveEncoder.getVelocity() + m_turningEncoder.getVelocity() * ModuleConstants.kWheelDiameterMeters / 2,
+        (m_driveMotor.getVelocity().getValueAsDouble() * (ModuleConstants.kSteerEncoderDistancePerPulse
+            / 60.)) + m_turningEncoder.getVelocity() * ModuleConstants.kWheelDiameterMeters / 2,
         new Rotation2d(m_turningEncoder.getPosition()));
   }
 
@@ -159,7 +156,7 @@ public class SwerveModule {
    */
 
   public void resetEncoders() {
-    m_driveEncoder.setPosition(0);
+    m_driveMotor.setPosition(0);
     m_turningEncoder.setPosition(m_absoluteEncoder.getAngle());
   }
 
@@ -174,6 +171,7 @@ public class SwerveModule {
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        m_driveEncoder.getPosition(), new Rotation2d(m_turningEncoder.getPosition()));
+        (m_driveMotor.getPosition().getValueAsDouble() * ModuleConstants.kSteerEncoderDistancePerPulse),
+        new Rotation2d(m_turningEncoder.getPosition()));
   }
 }
