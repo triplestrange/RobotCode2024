@@ -78,12 +78,12 @@ public class RobotContainer {
                                 // swerve code
                                 // The left stick controls tran slation of the robot.
                                 // Turning is controlled by the X axis of the right stick.
-                                new DefaultDrive(m_robotDrive, 1, 1));// 2.5, 1));
+                                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
 
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 
-                new Trigger(() -> Math.abs(JoystickButtons.m_driverController.getLeftTriggerAxis()) > 0.05)
+         /*        new Trigger(() -> Math.abs(JoystickButtons.m_driverController.getLeftTriggerAxis()) > 0.05)
                                 .onTrue(new InstantCommand(() -> {
                                         m_robotDrive.setPresetEnabled(true, -180.0);
                                 }));
@@ -93,31 +93,37 @@ public class RobotContainer {
                                         m_robotDrive.setPresetEnabled(true, 0);
 
                                 }));
-
+*/
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));
 
-                // elevator controls
+                //elevator controls
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
-                                                0.2 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0.2 * JoystickButtons.m_operatorController.getLeftX()),
+                                                0.5 * JoystickButtons.m_operatorController.getLeftY(),
+                                                0.25 * JoystickButtons.m_operatorController.getRightY()),
                                 m_elevator));
 
-                // shooter controls
+                //shooter controls
                 m_shooter.setDefaultCommand(new RunCommand(
                                 () -> m_shooter.moveShooter(
-                                                0.2 * JoystickButtons.m_operatorController.getRightX()),
+                                                0.2 * (JoystickButtons.m_driverController.getRightTriggerAxis()-
+                                                JoystickButtons.m_driverController.getLeftTriggerAxis())),
                                 m_shooter));
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5767), m_shooter));
-                JoystickButtons.drBump.whileFalse(new RunCommand(() -> m_flywheel.flyWheelOff(), m_shooter));
-                // rails
-
+                JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOff(), m_shooter));
+               /* m_rails.setDefaultCommand(new RunCommand(
+                () -> m_rails.moveClimb(
+                -JoystickButtons.m_operatorController.getRightY(),
+                -JoystickButtons.m_operatorController.getLeftY()),
+                m_rails));
+*/
                 // Conveyor
-                JoystickButtons.opA.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
-                m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
-                JoystickButtons.opB.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor));
+                //JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
+                // JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
+                // m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor));
                 m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
         }
 

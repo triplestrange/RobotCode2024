@@ -41,7 +41,7 @@ public final class Constants {
 
   public static final class SwerveConstants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
-    public static final double kMaxSpeedMetersPerSecond = 4.42;
+    public static final double kMaxSpeedMetersPerSecond = 4.7244;
     public static final double autoAlignMaxSpeedMetersPerSecond = 1;
     public static final double autoAlignRotationalMaxSpeedMetersPerSecond = 1;
 
@@ -170,10 +170,10 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants {
-    public final static double kMaxSpeedMetersPerSecond = 0;
-    public final static double kMaxAccelerationMetersPerSecondSquared = 0;
+    public final static double kMaxSpeedMetersPerSecond = 0.5;
+    public final static double kMaxAccelerationMetersPerSecondSquared = .5;
 
-    public final static double maxHeight = 0;
+    public final static double maxHeight = 20;
     public final static double minHeight = 0;
     public final static double safeZone = 0;
 
@@ -270,7 +270,7 @@ public final class Constants {
     public static final int rollerCurrentLimit = 80;
     public static final int conveyorCurrentLimit = 20;
 
-    public static final int climbCurrentLimit = 40;
+    public static final int climbCurrentLimit = 80;
 
     public static final int conveyorDigitalInput = 0;
     public static final int intakeDigitalInput = 1;
@@ -293,7 +293,7 @@ public final class Constants {
     public static final int BL_STEER = 1;
     public static final int BR_STEER = 14;
 
-    public static final int ELEVATOR = 99;
+    public static final int ELEVATOR = 9;
 
     public static final int ROLLERS = 5;
     public static final int CONVEYOR = 10;
