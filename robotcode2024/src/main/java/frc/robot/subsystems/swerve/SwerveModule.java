@@ -3,9 +3,11 @@ package frc.robot.subsystems.swerve;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -67,6 +69,9 @@ public class SwerveModule {
     // Set the distance (in this case, angle) per pulse for the turning encoder.
     // This is the the angle through an entire rotation (2 * wpi::math::pi)
     // divided by the encoder resolution.
+
+    m_driveMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(ModuleConstants.kDriveEncoderDistancePerPulse));
+    
     m_turningEncoder.setPositionConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse);
     m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse / 60.);
     // m_absoluteEncoder.setPositionConversionFactor(encoderCPR);
@@ -102,7 +107,7 @@ public class SwerveModule {
     m_turningMotor.setInverted(true);
     m_driveMotor.setInverted(true);
 
-    // TODO: burn the flash but don't know the command so fix this
+    
     m_turningMotor.burnFlash();
   }
 
