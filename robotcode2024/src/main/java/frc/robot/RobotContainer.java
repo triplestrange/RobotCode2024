@@ -111,8 +111,8 @@ public class RobotContainer {
                                                 JoystickButtons.m_driverController.getLeftTriggerAxis())),
                                 m_shooter));
 
-                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5767), m_shooter));
-                JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOff(), m_shooter));
+                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5767), m_flywheel));
+                JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
                /* m_rails.setDefaultCommand(new RunCommand(
                 () -> m_rails.moveClimb(
                 -JoystickButtons.m_operatorController.getRightY(),
