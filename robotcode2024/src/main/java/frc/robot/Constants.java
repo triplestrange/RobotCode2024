@@ -64,16 +64,10 @@ public final class Constants {
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2), new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
   }
 
-  public static final class EncoderConstants {
-    public static final double talonCPR = 2048;
-    public static final double flexCPR = 7168;
-    public static final double neoCPR = 1;
-  }
-
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 10 * Math.PI;
     public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 10 * Math.PI;
-    public static final double kDriveEncoderCPR = EncoderConstants.neoCPR * 6.25;
+    public static final double kDriveEncoderCPR = 6.75;
     public static final double kSteerEncoderCPR = (150.0d / 7);
 
     // adjust for calibration
@@ -155,7 +149,7 @@ public final class Constants {
     public final static double minHeight = 0;
     public final static double safeZone = 0;
 
-    public final static double climbPosConv = 25 * EncoderConstants.neoCPR;
+    public final static double climbPosConv = 25;
     public final static int kP = 0;
     public final static int kI = 0;
     public final static int kD = 0;
@@ -177,7 +171,7 @@ public final class Constants {
     public final static double minHeight = 0;
     public final static double safeZone = 0;
 
-    public final static double elevPosConv = (9 * EncoderConstants.neoCPR) / (Units.inchesToMeters(1.25) * Math.PI);
+    public final static double elevPosConv = 9. / (Units.inchesToMeters(1.25) * Math.PI);
     public final static int kP = 0;
     public final static int kI = 0;
     public final static int kD = 0;

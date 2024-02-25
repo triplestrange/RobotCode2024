@@ -71,7 +71,7 @@ public class SwerveModule {
     // divided by the encoder resolution.
 
     m_driveMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(ModuleConstants.kDriveEncoderDistancePerPulse));
-    
+
     m_turningEncoder.setPositionConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse);
     m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse / 60.);
     // m_absoluteEncoder.setPositionConversionFactor(encoderCPR);
@@ -118,7 +118,7 @@ public class SwerveModule {
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        m_driveMotor.getVelocity().getValueAsDouble() * (ModuleConstants.kDriveEncoderDistancePerPulse / 60.)
+        m_driveMotor.getVelocity().getValueAsDouble()
             + m_turningEncoder.getVelocity() * ModuleConstants.kWheelDiameterMeters / 2,
         new Rotation2d(m_turningEncoder.getPosition()));
   }
@@ -182,7 +182,7 @@ public class SwerveModule {
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        m_driveMotor.getPosition().getValueAsDouble() * ModuleConstants.kDriveEncoderDistancePerPulse,
+        m_driveMotor.getPosition().getValueAsDouble(),
         new Rotation2d(m_turningEncoder.getPosition()));
   }
 }
