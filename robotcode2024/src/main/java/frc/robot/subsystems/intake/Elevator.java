@@ -61,7 +61,6 @@ public class Elevator extends SubsystemBase {
         elevRelativeEncoder = elev.getEncoder();
         elevRelativeEncoder.setPositionConversionFactor(Constants.ElevatorConstants.elevPosConv);
 
-        intakeController.setOutputRange(Constants.IntakeConstants.kMinOutput, Constants.IntakeConstants.kMaxOutput);
 
 
         // set PID coefficients
@@ -131,13 +130,6 @@ public class Elevator extends SubsystemBase {
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
         }
-    }
-
-    public void setIntakePos(IntakePosition position) {
-        elevSetpoint = position.getIntakeHeight();
-        intakeSetpoint = position.getIntakeAngle();
-        elevPIDEnabled = true;
-        intakePIDEnabled = true;
     }
 
     public double getIntakePos() {
