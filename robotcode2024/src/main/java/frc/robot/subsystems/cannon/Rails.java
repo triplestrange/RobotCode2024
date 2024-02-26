@@ -85,10 +85,10 @@ public class Rails extends SubsystemBase {
         lWinchController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, smartMotionSlot);
         lWinchController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, smartMotionSlot);
 
-        rWinchController.setSmartMotionMaxVelocity(Constants.IntakeConstants.maxVel, smartMotionSlot);
-        rWinchController.setSmartMotionMinOutputVelocity(Constants.IntakeConstants.minVel, smartMotionSlot);
-        rWinchController.setSmartMotionMaxAccel(Constants.IntakeConstants.maxAcc, smartMotionSlot);
-        rWinchController.setSmartMotionAllowedClosedLoopError(Constants.IntakeConstants.allowedErr, smartMotionSlot);
+        rWinchController.setSmartMotionMaxVelocity(Constants.ClimbConstants.maxVel, smartMotionSlot);
+        rWinchController.setSmartMotionMinOutputVelocity(Constants.ClimbConstants.minVel, smartMotionSlot);
+        rWinchController.setSmartMotionMaxAccel(Constants.ClimbConstants.maxAcc, smartMotionSlot);
+        rWinchController.setSmartMotionAllowedClosedLoopError(Constants.ClimbConstants.allowedErr, smartMotionSlot);
 
         lWinch.burnFlash();
         rWinch.burnFlash();
@@ -178,30 +178,5 @@ public class Rails extends SubsystemBase {
 
     public void updateSmartDashBoard() {
 
-        // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("P Gain", Constants.ElevatorConstants.kP);
-        SmartDashboard.putNumber("I Gain", Constants.ElevatorConstants.kI);
-        SmartDashboard.putNumber("D Gain", Constants.ElevatorConstants.kD);
-        SmartDashboard.putNumber("Max Output", Constants.ElevatorConstants.kMaxOutput);
-        SmartDashboard.putNumber("Min Output", Constants.ElevatorConstants.kMinOutput);
-
-        // display Smart Motion coefficients
-        SmartDashboard.putNumber("Max Velocity", Constants.ElevatorConstants.maxVel);
-        SmartDashboard.putNumber("Min Velocity", Constants.ElevatorConstants.minVel);
-        SmartDashboard.putNumber("Max Acceleration", Constants.ElevatorConstants.maxAcc);
-        SmartDashboard.putNumber("Allowed Closed Loop Error", Constants.ElevatorConstants.allowedErr);
-
-        // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("P Gain", Constants.IntakeConstants.kP);
-        SmartDashboard.putNumber("I Gain", Constants.IntakeConstants.kI);
-        SmartDashboard.putNumber("D Gain", Constants.IntakeConstants.kD);
-        SmartDashboard.putNumber("Max Output", Constants.IntakeConstants.kMaxOutput);
-        SmartDashboard.putNumber("Min Output", Constants.IntakeConstants.kMinOutput);
-
-        // display Smart Motion coefficients
-        SmartDashboard.putNumber("Max Velocity", Constants.IntakeConstants.maxVel);
-        SmartDashboard.putNumber("Min Velocity", Constants.IntakeConstants.minVel);
-        SmartDashboard.putNumber("Max Acceleration", Constants.IntakeConstants.maxAcc);
-        SmartDashboard.putNumber("Allowed Closed Loop Error", Constants.IntakeConstants.allowedErr);
     }
 }

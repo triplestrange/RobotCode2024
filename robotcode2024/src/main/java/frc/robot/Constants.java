@@ -186,29 +186,23 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public final static double kMaxAngularSpeedMetersPerSecond = 0.1;
-    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 0.2;
+    public final static double kMaxAngularSpeedMetersPerSecond = 10;
+    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 20;
 
-    public final static double intakeGR = Math.PI;
-    public final static double intakeAbsOffset = 2.735392;
+    public final static double intakeAbsOffset = -78.33;
 
-    public final static double kP = 0.5;
+    public final static double kP = 0.03;
     public final static double kI = 0;
     public final static double kD = 0;
 
     public final static double maxAngle = 0;
-    public final static double minAngle = -2 * Math.PI;
+    public final static double minAngle = -145;
     public final static double safeZone = 0;
 
-    public final static double kMaxOutput = 1;
-    public final static double kMinOutput = -1;
     public final static double maxRPM = 0;
     public final static double allowedErr = 0;
-    public final static double maxVel = 1;
-    public final static double minVel = 1;
-    public final static double maxAcc = 1;
 
-    public final static double intakeSpeed = .5;
+    public final static double intakeSpeed = 1;
     public final static double conveyorSpeed = 1;
   }
 

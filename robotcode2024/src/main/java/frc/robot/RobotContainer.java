@@ -101,9 +101,10 @@ public class RobotContainer {
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
                                                 0 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0.25 * JoystickButtons.m_operatorController.getRightY()),
+                                                -0.15 * JoystickButtons.m_operatorController.getRightY()),
                                 m_elevator));
-                JoystickButtons.dY.whileTrue(new RunCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                
+                JoystickButtons.opY.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
 
                 //shooter controls
                 m_shooter.setDefaultCommand(new RunCommand(

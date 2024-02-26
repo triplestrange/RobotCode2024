@@ -25,10 +25,10 @@ public class Elevator extends SubsystemBase {
     private DutyCycleEncoder intakeEncoder;
 
     private boolean intakePIDEnabled;
-    private double intakeSetpoint;
+    public double intakeSetpoint;
 
     private boolean elevPIDEnabled;
-    private double elevSetpoint;
+    public double elevSetpoint;
 
     private double elevPower;
 
@@ -46,6 +46,7 @@ public class Elevator extends SubsystemBase {
         elev.restoreFactoryDefaults();
         intake.restoreFactoryDefaults();
 
+        intake.setInverted(true);
         elev.setIdleMode(IdleMode.kBrake);
         elev.setSmartCurrentLimit(Constants.ELECTRICAL.elevatorCurrentLimit);
 
@@ -108,16 +109,16 @@ public class Elevator extends SubsystemBase {
         } else {
             elevPower = motorElevPower;
            // System.out.println(elevPower);
-            elev.set(elevPower);
+            // elev.set(elevPower);
             elevSetpoint = getElevPos();
            // elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kSmartMotion);
             elevPIDEnabled = false;
         }
 
-        if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone) && motorIntakePower < 0) {
+        if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone) && motorIntakePower > 0) {
             motorIntakePower = 0;
         }
-        if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone) {
+        if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone && motorIntakePower < 0) {
             motorIntakePower = 0;
         }
 
@@ -125,7 +126,7 @@ public class Elevator extends SubsystemBase {
             intakePIDEnabled = true;
         } else {
             intakePower = motorIntakePower;
-            intake.set(intakePower);
+            // intake.set(intakePower);
             intakeSetpoint = getIntakePos();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
@@ -133,8 +134,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public double getIntakePos() {
-        return MathUtil
-        .angleModulus(2 * Math.PI * intakeEncoder.getAbsolutePosition()) - Constants.IntakeConstants.intakeAbsOffset;
+        return MathUtil.inputModulus(-intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset, -160, 20);
     }
 
     public void setIntakePosition(IntakePosition position) {
@@ -175,12 +175,15 @@ public class Elevator extends SubsystemBase {
         if (!intakeEncoder.isConnected()) {
             intakePower = 0;
         }
-        intake.set(intakePower);
+        SmartDashboard.putNumber("Power", intakePower);
+
+        // intake.set(intakePower);
     }
 
     public void updateSmartDashBoard() {
         SmartDashboard.putNumber("degree", getIntakePos());
         SmartDashboard.putBoolean("Is Encoder Plugged", intakeEncoder.isConnected());
-        SmartDashboard.putNumber("Power", intakePower);
+        SmartDashboard.putNumber("angle setpoint", intakeSetpoint);
+
     }
 }
