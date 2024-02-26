@@ -26,9 +26,9 @@ import frc.robot.subsystems.intake.Elevator.IntakePosition;
  */
 public final class Constants {
 
-  public static final class mechPositions {
+  public static final class MechPositions {
     // use for all mechanism pre programmed positions
-    public static final IntakePosition groundIntakePos = new IntakePosition(0, 0);
+    public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition feederIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition ampIntakePos = new IntakePosition(0, 0);
 
@@ -186,18 +186,18 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public final static double kMaxAngularSpeedMetersPerSecond = 0;
-    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 0;
+    public final static double kMaxAngularSpeedMetersPerSecond = 0.1;
+    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 0.2;
 
     public final static double intakeGR = Math.PI;
-    public final static double intakeAbsOffset = 0;
+    public final static double intakeAbsOffset = 2.735392;
 
-    public final static int kP = 0;
-    public final static int kI = 0;
-    public final static int kD = 0;
+    public final static double kP = 0.5;
+    public final static double kI = 0;
+    public final static double kD = 0;
 
     public final static double maxAngle = 0;
-    public final static double minAngle = 0;
+    public final static double minAngle = -2 * Math.PI;
     public final static double safeZone = 0;
 
     public final static double kMaxOutput = 1;
@@ -267,7 +267,7 @@ public final class Constants {
     public static final int climbCurrentLimit = 80;
 
     public static final int conveyorDigitalInput = 0;
-    public static final int intakeDigitalInput = 1;
+    public static final int intakeDigitalInput = 9;
 
     public static final int pivotAbsInput = 2;
     public static final int intakeAbsInput = 3;

@@ -48,7 +48,7 @@ public class Shooter extends SubsystemBase {
 
         pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
                 Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(0, 0));
-        pivotEncoder = new DutyCycleEncoder(3);
+        pivotEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.pivotAbsInput);
 
         pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
 

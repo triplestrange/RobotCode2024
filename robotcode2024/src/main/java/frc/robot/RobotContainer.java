@@ -100,9 +100,10 @@ public class RobotContainer {
                 //elevator controls
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
-                                                0.5 * JoystickButtons.m_operatorController.getLeftY(),
+                                                0 * JoystickButtons.m_operatorController.getLeftY(),
                                                 0.25 * JoystickButtons.m_operatorController.getRightY()),
                                 m_elevator));
+                JoystickButtons.dY.whileTrue(new RunCommand(() -> m_elevator.setIntakePos(Constants.MechPositions.stowIntakePos), m_elevator));
 
                 //shooter controls
                 m_shooter.setDefaultCommand(new RunCommand(
@@ -120,10 +121,10 @@ public class RobotContainer {
                 m_rails));
 */
                 // Conveyor
-                //JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
-                // JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
-                // m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
+                m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
+                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor));
                 m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
         }
 

@@ -100,8 +100,9 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
     i++;
     if (i % 10 == 0) {
-      m_robotContainer.m_robotDrive.updateSmartDashBoard();
-      m_robotContainer.m_shooter.updateSmartDashBoard();
+      // m_robotContainer.m_robotDrive.updateSmartDashBoard();
+      // m_robotContainer.m_shooter.updateSmartDashBoard();
+      m_robotContainer.m_elevator.updateSmartDashBoard();
 
     }
   }
