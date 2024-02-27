@@ -47,13 +47,12 @@ public class Shooter extends SubsystemBase {
         rPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
 
         pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
-                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(Constants.ShooterConstants.kMaxPivotSpeedMetersPerSecond, Constants.ShooterConstants.kMaxPivotAccelerationMetersPerSecondSquared));
+                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(Constants.ShooterConstants.kMaxAngularPivotSpeedDegreesPerSecond, Constants.ShooterConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
         pivotEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.pivotAbsInput);
 
         pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
 
         lPivot.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
-
         rPivot.follow(lPivot, false);
 
         int smartMotionSlot = 0;

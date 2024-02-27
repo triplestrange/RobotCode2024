@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Rails extends SubsystemBase {
+public class Climb extends SubsystemBase {
 
     private final CANSparkMax lWinch;
     private final CANSparkMax rWinch;
@@ -31,7 +31,7 @@ public class Rails extends SubsystemBase {
 
     private double rWinchPower;
 
-    public Rails() {
+    public Climb() {
         super();
 
         lWinch = new CANSparkMax(Constants.CAN.CLIMBL, MotorType.kBrushless);

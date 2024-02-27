@@ -35,8 +35,8 @@ public final class Constants {
 
     public static final double testPivotPos = -20;
 
-    public static final double underChainShooterPos = 0;
-    public static final double climbShooterPos = 0;
+    public static final double underChainPivotPos = -45;
+    public static final double climbPivotPos = 0;
 
     public static final double topRailPos = 0;
     public static final double bottomRailPos = 0;
@@ -101,16 +101,16 @@ public final class Constants {
   public static final class ShooterConstants {
     // pivot motor constants
 
-    public final static double kMaxPivotSpeedMetersPerSecond = 10;
-    public final static double kMaxPivotAccelerationMetersPerSecondSquared = 20;
+    public final static double kMaxAngularPivotSpeedDegreesPerSecond = 70; // theoretical max speed 476.784;
+    public final static double kMaxAngularPivotAccelerationDegreesPerSecondSquared = 140;
 
     public final static double maxAngle = 0;
-    public final static double minAngle = -50;
-    public final static double safeZone = 0;
+    public final static double minAngle = -48;
+    public final static double safeZone = 1;
 
-    public final static double pivotkP = 0.06 * .60;
-    public final static double pivotkI = 0.02;
-    public final static double pivotkD = 0.0005;
+    public final static double pivotkP = 0.055 * .5;
+    public final static double pivotkI = 0.06;
+    public final static double pivotkD = 0.000005;
 
     public final static double pivotAbsOffset = -346;
 
@@ -162,7 +162,7 @@ public final class Constants {
     public final static double kMaxSpeedMetersPerSecond = 0.5;
     public final static double kMaxAccelerationMetersPerSecondSquared = .5;
 
-    public final static double maxHeight = 20;
+    public final static double maxHeight = 1.016;
     public final static double minHeight = 0;
     public final static double safeZone = 0;
 
@@ -181,14 +181,14 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public final static double kMaxAngularSpeedMetersPerSecond = 200;
-    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 800;
+    public final static double kMaxAngularSpeedMetersPerSecond = 360;
+    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 1200;
 
     public final static double intakeAbsOffset = -78.33;
 
-    public final static double kP = 0.07 * .60;
-    public final static double kI = 0.02;
-    public final static double kD = 0.0005;
+    public final static double kP = 0;
+    public final static double kI = 0;
+    public final static double kD = 0;
 
     public final static double maxAngle = 0;
     public final static double minAngle = -145;
