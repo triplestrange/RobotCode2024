@@ -103,22 +103,14 @@ public final class Constants {
     public final static double kMaxPivotAccelerationMetersPerSecondSquared = 0;
 
     public final static double maxAngle = 0;
-    public final static double minAngle = 0;
+    public final static double minAngle = -45;
     public final static double safeZone = 0;
 
     public final static int pivotkP = 0;
     public final static int pivotkI = 0;
     public final static int pivotkD = 0;
 
-    public final static double pivotkMaxOutput = 1;
-    public final static double pivotkMinOutput = -1;
-    public final static double pivotmaxRPM = 0;
-    public final static double pivotallowedErr = 0;
-    public final static double pivotmaxVel = 1;
-    public final static double pivotminVel = 1;
-    public final static double pivotmaxAcc = 1;
-
-    public final static double pivotAbsOffset = 0;
+    public final static double pivotAbsOffset = -346;
 
     // flywheel motor constants
 
@@ -267,7 +259,7 @@ public final class Constants {
     public static final int pivotAbsInput = 2;
     public static final int intakeAbsInput = 3;
 
-    public static final int shooterPivotCurrentLimit = 0;
+    public static final int shooterPivotCurrentLimit = 40;
     public static final int flyWheelCurrentLimit = 0;
   }
 

@@ -43,38 +43,40 @@ public class Shooter extends SubsystemBase {
         lPivot.restoreFactoryDefaults();
         rPivot.restoreFactoryDefaults();
 
+        lPivot.setInverted(true);
+
         lPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
         rPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
 
         pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
-                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(0, 0));
+                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(Constants.ShooterConstants.kMaxPivotSpeedMetersPerSecond, Constants.ShooterConstants.kMaxPivotAccelerationMetersPerSecondSquared));
         pivotEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.pivotAbsInput);
 
         pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
 
         lPivot.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
 
-        rPivot.follow(lPivot, true);
+        rPivot.follow(lPivot, false);
 
         int smartMotionSlot = 0;
     }
 
     public double getAngle() {
         
-        return MathUtil.inputModulus(pivotEncoder.getAbsolutePosition() * 360 - Constants.ShooterConstants.pivotAbsOffset, 0, 360);
+        return MathUtil.inputModulus(-pivotEncoder.getAbsolutePosition() * 360 - Constants.ShooterConstants.pivotAbsOffset, 30, -330);
 
     }
 
     public void moveShooter(double motorPivotPower) {
-        // if (getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone) {
-        //     motorPivotPower = 0;
-        // }
-        // if (getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone) {
-        //     motorPivotPower = 0;
-        // }
+        if ((getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone) && motorPivotPower > 0) {
+            motorPivotPower = 0;
+        }
+        if ((getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone) && motorPivotPower < 0) {
+            motorPivotPower = 0;
+        }
 
-        shooterPIDEnabled = true;
         if (Math.abs(motorPivotPower) < 0.05) {
+            shooterPIDEnabled = true;
         } else {
             pivotPower = motorPivotPower;
             lPivot.set(pivotPower);
