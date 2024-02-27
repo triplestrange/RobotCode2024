@@ -145,6 +145,16 @@ public class Elevator extends SubsystemBase {
         intakePIDEnabled = true;
     }
 
+    public void resetPIDs() {
+        intakeSetpoint = getIntakePos();
+        elevSetpoint = getElevPos();
+        intakeController.reset(intakeSetpoint);
+        elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
+        intakePIDEnabled = true;
+        elevPIDEnabled = true;
+    
+    }
+
     public static class IntakePosition {
         private double elevPos;
         private double intakeAng;
@@ -175,15 +185,16 @@ public class Elevator extends SubsystemBase {
         if (!intakeEncoder.isConnected()) {
             intakePower = 0;
         }
-        SmartDashboard.putNumber("Power", intakePower);
 
-        // intake.set(intakePower);
+        intake.set(intakePower);
     }
 
     public void updateSmartDashBoard() {
         SmartDashboard.putNumber("degree", getIntakePos());
         SmartDashboard.putBoolean("Is Encoder Plugged", intakeEncoder.isConnected());
         SmartDashboard.putNumber("angle setpoint", intakeSetpoint);
+        SmartDashboard.putNumber("Power", intakePower);
+
 
     }
 }

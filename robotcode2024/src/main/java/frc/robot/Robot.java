@@ -125,8 +125,7 @@ public class Robot extends LoggedRobot {
     // }
     // }
 
-    m_robotContainer.m_elevator.intakeSetpoint = m_robotContainer.m_elevator.getIntakePos();
-    m_robotContainer.m_elevator.elevSetpoint = m_robotContainer.m_elevator.getElevPos();
+    m_robotContainer.m_elevator.resetPIDs();
 
     allianceColor = DriverStation.getAlliance();
 

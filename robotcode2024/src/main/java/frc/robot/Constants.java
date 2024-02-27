@@ -29,6 +29,7 @@ public final class Constants {
   public static final class MechPositions {
     // use for all mechanism pre programmed positions
     public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
+    public static final IntakePosition groundIntakePos = new IntakePosition(0, -130);
     public static final IntakePosition feederIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition ampIntakePos = new IntakePosition(0, 0);
 
@@ -186,14 +187,14 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public final static double kMaxAngularSpeedMetersPerSecond = 10;
-    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 20;
+    public final static double kMaxAngularSpeedMetersPerSecond = 200;
+    public final static double kMaxAngularAccelerationMetersPerSecondSquared = 800;
 
     public final static double intakeAbsOffset = -78.33;
 
-    public final static double kP = 0.03;
-    public final static double kI = 0;
-    public final static double kD = 0;
+    public final static double kP = 0.07 * .60;
+    public final static double kI = 0.02;
+    public final static double kD = 0.0005;
 
     public final static double maxAngle = 0;
     public final static double minAngle = -145;
