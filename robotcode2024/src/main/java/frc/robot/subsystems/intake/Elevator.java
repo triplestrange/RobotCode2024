@@ -46,7 +46,7 @@ public class Elevator extends SubsystemBase {
         elev.restoreFactoryDefaults();
         intake.restoreFactoryDefaults();
 
-        intake.setInverted(true);
+intake.setInverted(true);
         elev.setIdleMode(IdleMode.kBrake);
         elev.setSmartCurrentLimit(Constants.ELECTRICAL.elevatorCurrentLimit);
 

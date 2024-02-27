@@ -124,7 +124,7 @@ public class Robot extends LoggedRobot {
     // SmartDashboard.putBoolean("Will Win?", true);
     // }
     // }
-
+    m_robotContainer.m_shooter.resetPIDs();
     m_robotContainer.m_elevator.resetPIDs();
 
     allianceColor = DriverStation.getAlliance();

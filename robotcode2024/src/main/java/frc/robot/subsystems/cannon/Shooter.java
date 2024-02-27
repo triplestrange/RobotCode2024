@@ -60,8 +60,9 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getAngle() {
-        return MathUtil
-                .angleModulus(2 * Math.PI * pivotEncoder.getAbsolutePosition());
+        
+        return MathUtil.inputModulus(pivotEncoder.getAbsolutePosition() * 360 - Constants.ShooterConstants.pivotAbsOffset, 0, 360);
+
     }
 
     public void moveShooter(double motorPivotPower) {
@@ -88,6 +89,13 @@ public class Shooter extends SubsystemBase {
         shooterPIDEnabled = true;
     }
 
+    public void resetPIDs() {
+        pivotSetpoint = getAngle();
+        pivotController.reset(pivotSetpoint);
+        shooterPIDEnabled = true;
+    
+    }
+
     @Override
     public void periodic() {
         if (shooterPIDEnabled) {
@@ -101,7 +109,10 @@ public class Shooter extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-
+        SmartDashboard.putNumber("degree", getAngle());
+        SmartDashboard.putBoolean("Is Encoder Plugged", pivotEncoder.isConnected());
+        SmartDashboard.putNumber("angle setpoint", pivotSetpoint);
+        SmartDashboard.putNumber("Power", pivotPower);
     }
 
 }
