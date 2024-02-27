@@ -33,6 +33,8 @@ public final class Constants {
     public static final IntakePosition feederIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition ampIntakePos = new IntakePosition(0, 0);
 
+    public static final double testPivotPos = -20;
+
     public static final double underChainShooterPos = 0;
     public static final double climbShooterPos = 0;
 
@@ -99,16 +101,16 @@ public final class Constants {
   public static final class ShooterConstants {
     // pivot motor constants
 
-    public final static double kMaxPivotSpeedMetersPerSecond = 0;
-    public final static double kMaxPivotAccelerationMetersPerSecondSquared = 0;
+    public final static double kMaxPivotSpeedMetersPerSecond = 10;
+    public final static double kMaxPivotAccelerationMetersPerSecondSquared = 20;
 
     public final static double maxAngle = 0;
-    public final static double minAngle = -45;
+    public final static double minAngle = -50;
     public final static double safeZone = 0;
 
-    public final static int pivotkP = 0;
-    public final static int pivotkI = 0;
-    public final static int pivotkD = 0;
+    public final static double pivotkP = 0.06 * .60;
+    public final static double pivotkI = 0.02;
+    public final static double pivotkD = 0.0005;
 
     public final static double pivotAbsOffset = -346;
 

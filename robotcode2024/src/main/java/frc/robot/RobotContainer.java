@@ -103,27 +103,25 @@ public class RobotContainer {
                 //                                 0 * JoystickButtons.m_operatorController.getRightY()),
                 //                 m_elevator));
                 
-                m_shooter.setDefaultCommand(new RunCommand(
-                                () -> m_shooter.moveShooter(
-                                                0.05 * JoystickButtons.m_operatorController.getLeftY()),
-                                m_shooter));
+      
 
                 JoystickButtons.opY.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
                 JoystickButtons.opA.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos), m_elevator));
-                //shooter controls
-                m_shooter.setDefaultCommand(new RunCommand(
-                                () -> m_shooter.moveShooter(
-                                                0.2 * (JoystickButtons.m_driverController.getRightTriggerAxis()-
-                                                JoystickButtons.m_driverController.getLeftTriggerAxis())),
-                                m_shooter));
 
+                JoystickButtons.opX.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.testPivotPos), m_shooter));
+
+                //shooter controls
+                // m_shooter.setDefaultCommand(new RunCommand(
+                //                 () -> m_shooter.moveShooter(
+                //                                 -0.1 * JoystickButtons.m_operatorController.getLeftY()),
+                //                 m_shooter));
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5767), m_flywheel));
                 JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
-                // m_rails.setDefaultCommand(new RunCommand(
-                // () -> m_rails.moveClimb(
-                // -JoystickButtons.m_operatorController.getRightY(),
-                // -JoystickButtons.m_operatorController.getLeftY()),
-                // m_rails));
+                m_rails.setDefaultCommand(new RunCommand(
+                () -> m_rails.moveClimb(
+                -JoystickButtons.m_operatorController.getRightY(),
+                -JoystickButtons.m_operatorController.getLeftY()),
+                m_rails));
 
                 // Conveyor
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));

@@ -43,8 +43,6 @@ public class Shooter extends SubsystemBase {
         lPivot.restoreFactoryDefaults();
         rPivot.restoreFactoryDefaults();
 
-        lPivot.setInverted(true);
-
         lPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
         rPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
 
