@@ -1,5 +1,10 @@
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -51,11 +56,16 @@ public final class Constants {
     // Distance between front and back wheels on robot in meters
     public static final double kWheelBase = 0.52705;
 
+    public static final double kDriveBaseRadius = Math.hypot(kTrackWidth/2, kWheelBase/2);
+
+    
     // kinematics constructor with module positions as arguments
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2), new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2), new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
-  }
+    
+
+      }
 
   public static final class EncoderConstants {
     public static final double talonCPR = 2048;
@@ -150,17 +160,43 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     // changing here -- try raising gains further
-    public static final double kPXController = 2.8;
-    public static final double kPYController = 2.8;
-    public static final double kDXController = 0;
-    public static final double kDYController = 0;
+    public static final double kPXTranslationController = 2.8;
+    public static final double kDTranslationController = 0;
     public static final double kPThetaController = 3;
+
+    public static final boolean enableInitialReplanning = false;
+    public static final boolean enableDynamicReplanning = false;
+    public static final double dynamicReplanningTotalErrorThreshold = 0.4572;
+    public static final double dynamicReplanningErrorSpikeThreshold = 3;
+
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+
+    // Holonomic Path Config
+    public static final HolonomicPathFollowerConfig HOLONOMIC_PATH_FOLLOWER_CONFIG = new HolonomicPathFollowerConfig( 
+    new PIDConstants(kPXTranslationController, 0.0, 0.0), // Translation PID constants
+    new PIDConstants(kPThetaController, 0.0, 0.0), // Rotation PID constants
+    Constants.SwerveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
+    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+    new ReplanningConfig(enableInitialReplanning, 
+    enableDynamicReplanning, 
+    dynamicReplanningTotalErrorThreshold, 
+    dynamicReplanningErrorSpikeThreshold) // Default path replanning config. See the API for the options here
+    );
   }
 
+<<<<<<< Updated upstream
+=======
+  public static final class AutoAlign {
+    
+    public static final PathConstraints constraints = new PathConstraints(
+        3.0, 4.0,
+        Units.degreesToRadians(540), Units.degreesToRadians(720));
+  }
+
+>>>>>>> Stashed changes
   public static final class ELECTRICAL {
     public static final int swerveTurningCurrentLimit = 40;
     public static final int swerveDrivingCurrentLimit = 40;

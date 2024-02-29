@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -36,6 +39,17 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_Robot = m_Robot;
                 m_robotDrive = new SwerveDrive(m_Robot);
+<<<<<<< Updated upstream
+=======
+                m_elevator = new Elevator();
+                m_intake = new Intake();
+                m_shooter = new Shooter();
+                m_climb = new Climb();
+                m_conveyor = new Conveyor();
+                m_flywheel = new FlyWheel();
+
+                
+>>>>>>> Stashed changes
                 configureButtonBindings();
 
         }

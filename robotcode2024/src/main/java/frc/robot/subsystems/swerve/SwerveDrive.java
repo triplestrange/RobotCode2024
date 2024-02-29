@@ -1,6 +1,11 @@
 package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -8,7 +13,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+<<<<<<< Updated upstream
 import edu.wpi.first.networktables.NetworkTableInstance;
+=======
+import edu.wpi.first.wpilibj.DriverStation;
+>>>>>>> Stashed changes
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -56,6 +65,8 @@ public class SwerveDrive extends SubsystemBase {
   private SwerveModuleState[] swerveModuleStates;
   public ChassisSpeeds currentMovement;
 
+  
+
   // The gyro sensor
   public final double navXPitch() {
     return navX.getPitch();
@@ -89,7 +100,28 @@ public class SwerveDrive extends SubsystemBase {
   public SwerveDrive(Robot m_robot) {
     resetEncoders();
     m_Robot = m_robot;
+
+      AutoBuilder.configureHolonomic(
+            this::getPose, // Robot pose supplier
+            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            Constants.AutoConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
   }
+  
 
   /**
    * Returns the angle of the robot as a Rotation2d.
@@ -111,15 +143,7 @@ public class SwerveDrive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Update the odometry in the periodic block=
-    m_odometry.update(
-        getAngle(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
+    // Update the odometry in the periodic block
     updateOdometry();
 
     // System.out.print("xSpeed: " + xAutoSpeed + ";\n ySpeed: " + yAutoSpeed + ";\n
@@ -230,16 +254,32 @@ public class SwerveDrive extends SubsystemBase {
     gyroReset = true;
   }
 
-  // TODO: why am i still here just to suffer
-  // Calculates closest Apriltag for use in autoAlignCube
-  public int optimalID() {
-    Pose2d robotPose = getPose();
-    return 0;
-  }
-
   // TODO: fix this
   public void updateOdometry() {
+     m_odometry.update(
+        getAngle(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        });
+  }
 
+  public void updateChassisSpeeds() {
+currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
+    m_frontLeft.getState(),
+    m_frontRight.getState(),
+    m_rearLeft.getState(),
+    m_rearRight.getState());
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    return currentMovement;
+  }
+
+  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+    setModuleStates(Constants.SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   /**
@@ -317,7 +357,6 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("pitch", navX.getPitch());
     SmartDashboard.putNumber("roll", navX.getRoll());
     SmartDashboard.putNumber("yaw", navX.getYaw());
-    SmartDashboard.putString("Alliance Color", m_Robot.allianceColor.toString());
     // if (tempRobotPose.length >= 7) {
     // SmartDashboard.putNumber("Vision x", tempRobotPose[0]);
     // SmartDashboard.putNumber("Vision y", tempRobotPose[1]);
