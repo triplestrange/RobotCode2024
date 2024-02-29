@@ -39,8 +39,6 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_Robot = m_Robot;
                 m_robotDrive = new SwerveDrive(m_Robot);
-<<<<<<< Updated upstream
-=======
                 m_elevator = new Elevator();
                 m_intake = new Intake();
                 m_shooter = new Shooter();
@@ -49,7 +47,6 @@ public class RobotContainer {
                 m_flywheel = new FlyWheel();
 
                 
->>>>>>> Stashed changes
                 configureButtonBindings();
 
         }

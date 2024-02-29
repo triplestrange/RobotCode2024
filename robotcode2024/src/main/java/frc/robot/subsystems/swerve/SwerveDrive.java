@@ -13,13 +13,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-<<<<<<< Updated upstream
-import edu.wpi.first.networktables.NetworkTableInstance;
-=======
 import edu.wpi.first.wpilibj.DriverStation;
->>>>>>> Stashed changes
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -357,13 +352,6 @@ currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
     SmartDashboard.putNumber("pitch", navX.getPitch());
     SmartDashboard.putNumber("roll", navX.getRoll());
     SmartDashboard.putNumber("yaw", navX.getYaw());
-    // if (tempRobotPose.length >= 7) {
-    // SmartDashboard.putNumber("Vision x", tempRobotPose[0]);
-    // SmartDashboard.putNumber("Vision y", tempRobotPose[1]);
-    // SmartDashboard.putNumber("Vision r", tempRobotPose[5]);
-    // }
-
-    // SmartDashboard.putNumber("tempRobotPose length", tempRobotPose.length);
 
     SmartDashboard.putData("Field", m_field);
   }

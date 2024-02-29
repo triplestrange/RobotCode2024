@@ -16,18 +16,7 @@ public class AutoMain {
         RobotContainer m_robotContainer;        
         private final SendableChooser<Command> autoChooser;
 
-<<<<<<< Updated upstream
-        // Commands for AutoRoutines
-        public static HashMap<String, Command> eventMap;
-
-        public void eventMapEvents(SwerveDrive m_Drive) {
-                
-        };
-
-        public AutoMain(SwerveDrive m_Drive) {
-=======
         public AutoMain(RobotContainer m_robotContainer) {
->>>>>>> Stashed changes
                 // Class Variables
                 this.m_robotContainer = m_robotContainer;
 

@@ -187,8 +187,6 @@ public final class Constants {
     );
   }
 
-<<<<<<< Updated upstream
-=======
   public static final class AutoAlign {
     
     public static final PathConstraints constraints = new PathConstraints(
@@ -196,7 +194,6 @@ public final class Constants {
         Units.degreesToRadians(540), Units.degreesToRadians(720));
   }
 
->>>>>>> Stashed changes
   public static final class ELECTRICAL {
     public static final int swerveTurningCurrentLimit = 40;
     public static final int swerveDrivingCurrentLimit = 40;
