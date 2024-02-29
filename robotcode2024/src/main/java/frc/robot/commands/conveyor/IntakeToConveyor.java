@@ -12,7 +12,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.cannon.Shooter;
 
-public class NoteToConveyor extends Command {
+public class IntakeToConveyor extends Command {
     private Intake m_Intake;
     private Conveyor m_Conveyor;
     private Shooter m_Shooter;
@@ -23,7 +23,7 @@ public class NoteToConveyor extends Command {
      * normal = 2.5
      * slow = 0.75
      */
-    public NoteToConveyor(Intake m_Intake, Conveyor m_Conveyor, Shooter m_Shooter) {
+    public IntakeToConveyor(Intake m_Intake, Conveyor m_Conveyor, Shooter m_Shooter) {
         addRequirements(m_Intake, m_Conveyor, m_Shooter);
         this.m_Intake = m_Intake;
         this.m_Conveyor = m_Conveyor;
@@ -33,18 +33,18 @@ public class NoteToConveyor extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-
+        m_Conveyor.runConvIn();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        m_Conveyor.conveyorOff();
     }
 
     // Returns true when the command should end.

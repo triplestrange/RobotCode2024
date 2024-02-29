@@ -21,6 +21,7 @@ public class AutoMain {
         public static HashMap<String, Command> eventMap;
 
         public void eventMapEvents(SwerveDrive m_Drive) {
+                
         };
 
         public AutoMain(SwerveDrive m_Drive) {
