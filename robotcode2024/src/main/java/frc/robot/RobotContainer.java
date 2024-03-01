@@ -95,28 +95,20 @@ public class RobotContainer {
                                 }));
 */
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
-                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));
+                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));  
 
-                m_elevator.setDefaultCommand(new RunCommand(
+                JoystickButtons.opA.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                JoystickButtons.opY.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.feederIntakePos), m_elevator));
+
+                                m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
-                                                0.1 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0 * JoystickButtons.m_operatorController.getRightY()),
+                                                -0 * JoystickButtons.m_operatorController.getLeftY(),
+                                                0.5 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
-                
-      
-
-                // JoystickButtons.opY.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
-                // JoystickButtons.opA.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos), m_elevator));
 
                 JoystickButtons.opX.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.testPivotPos), m_shooter));
                 JoystickButtons.opB.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.climbPivotPos), m_shooter));
 
-
-                //shooter controls
-                // m_shooter.setDefaultCommand(new RunCommand(
-                //                 () -> m_shooter.moveShooter(
-                //                                 -0.1 * JoystickButtons.m_operatorController.getLeftY()),
-                //                 m_shooter));
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
                 JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
                 // m_climb.setDefaultCommand(new RunCommand(

@@ -102,7 +102,7 @@ public class Robot extends LoggedRobot {
     if (i % 10 == 0) {
       // m_robotContainer.m_robotDrive.updateSmartDashBoard();
       m_robotContainer.m_shooter.updateSmartDashBoard();
-      // m_robotContainer.m_elevator.updateSmartDashBoard();
+      m_robotContainer.m_elevator.updateSmartDashBoard();
 
     }
   }

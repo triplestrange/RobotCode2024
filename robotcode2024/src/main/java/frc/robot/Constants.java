@@ -30,7 +30,7 @@ public final class Constants {
     // use for all mechanism pre programmed positions
     public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition groundIntakePos = new IntakePosition(0, -130);
-    public static final IntakePosition feederIntakePos = new IntakePosition(0, 0);
+    public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
     public static final IntakePosition ampIntakePos = new IntakePosition(0, 0);
 
     public static final double testPivotPos = -20;
@@ -159,17 +159,17 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants {
-    public final static double kMaxSpeedMetersPerSecond = 0.5;
-    public final static double kMaxAccelerationMetersPerSecondSquared = .5;
+    public final static double kMaxSpeedInchesPerSecond = 20;
+    public final static double kMaxAccelerationInchesPerSecondSquared = 20;
 
-    public final static double maxHeight = 1.016;
+    public final static double maxHeight = 40;
     public final static double minHeight = 0;
     public final static double safeZone = 0;
 
-    public final static double elevPosConv = 9. / (Units.inchesToMeters(1.25) * Math.PI);
-    public final static int kP = 0;
-    public final static int kI = 0;
-    public final static int kD = 0;
+    public final static double elevPosConv = (1.25 * Math.PI)/15;
+    public final static double kP = 0.4;
+    public final static double kI = 0;
+    public final static double kD = 0;
 
     public final static double kMaxOutput = 1;
     public final static double kMinOutput = -1;
@@ -186,7 +186,7 @@ public final class Constants {
 
     public final static double intakeAbsOffset = -78.33;
 
-    public final static double kP = 0;
+    public final static double kP = 0.055 * .5;
     public final static double kI = 0;
     public final static double kD = 0;
 
@@ -247,7 +247,7 @@ public final class Constants {
     public static final int swerveTurningCurrentLimit = 40;
     public static final int swerveDrivingCurrentLimit = 40;
 
-    public static final int elevatorCurrentLimit = 0;
+    public static final int elevatorCurrentLimit = 40;
     public static final int intakeCurrentLimit = 30;
 
     public static final int rollerCurrentLimit = 80;

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -47,6 +48,8 @@ public class Elevator extends SubsystemBase {
         intake.restoreFactoryDefaults();
 
         intake.setInverted(true);
+        elev.setInverted(false);
+
         elev.setIdleMode(IdleMode.kBrake);
         elev.setSmartCurrentLimit(Constants.ELECTRICAL.elevatorCurrentLimit);
 
@@ -97,10 +100,10 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveElev(double motorElevPower, double motorIntakePower) {
-        if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone) {
+        if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone && motorElevPower > 0) {
             motorElevPower = 0;
         }
-        if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone) {
+        if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone && motorElevPower < 0) {
             motorElevPower = 0;
         }
 
@@ -108,9 +111,8 @@ public class Elevator extends SubsystemBase {
             elevPIDEnabled = true;
         } else {
             elevPower = motorElevPower;
-           // System.out.println(elevPower);
             elev.set(elevPower);
-   
+            elevSetpoint = getElevPos();
             elevPIDEnabled = false;
         }
 
@@ -177,7 +179,8 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         if (elevPIDEnabled) {
             elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
-        }
+        }   else
+
         if (intakePIDEnabled) {
             intakePower = intakeController.calculate(getIntakePos(), intakeSetpoint);
         }
@@ -193,9 +196,9 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putBoolean("Is Encoder Plugged", intakeEncoder.isConnected());
         SmartDashboard.putNumber("angle setpoint", intakeSetpoint);
         SmartDashboard.putNumber("Power", intakePower);
-        SmartDashboard.putNumber("height", getElevPos());
-        SmartDashboard.putNumber("height setpoint", elevSetpoint);
-        SmartDashboard.putNumber("Elev Power", elevPower);
+        // SmartDashboard.putNumber("height", getElevPos());
+        // SmartDashboard.putNumber("height setpoint", elevSetpoint);
+        // SmartDashboard.putNumber("Elev Power", elevPower);
         
 
     }
