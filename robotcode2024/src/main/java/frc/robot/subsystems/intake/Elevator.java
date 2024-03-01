@@ -58,14 +58,16 @@ public class Elevator extends SubsystemBase {
 
         intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
                 Constants.IntakeConstants.kD,
-                new Constraints(Constants.IntakeConstants.kMaxAngularSpeedMetersPerSecond, Constants.IntakeConstants.kMaxAngularAccelerationMetersPerSecondSquared));
+                new Constraints(Constants.IntakeConstants.kMaxAngularSpeedMetersPerSecond,
+                        Constants.IntakeConstants.kMaxAngularAccelerationMetersPerSecondSquared));
         intakeEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.intakeAbsInput);
 
         elevController = elev.getPIDController();
         elevRelativeEncoder = elev.getEncoder();
+
+        elevRelativeEncoder.setPosition(0);
+
         elevRelativeEncoder.setPositionConversionFactor(Constants.ElevatorConstants.elevPosConv);
-
-
 
         // set PID coefficients
         elevController.setP(Constants.ElevatorConstants.kP);
@@ -100,10 +102,12 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveElev(double motorElevPower, double motorIntakePower) {
-        if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone && motorElevPower > 0) {
+        if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone
+                && motorElevPower > 0) {
             motorElevPower = 0;
         }
-        if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone && motorElevPower < 0) {
+        if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone
+                && motorElevPower < 0) {
             motorElevPower = 0;
         }
 
@@ -116,10 +120,12 @@ public class Elevator extends SubsystemBase {
             elevPIDEnabled = false;
         }
 
-        if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone) && motorIntakePower > 0) {
+        if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone)
+                && motorIntakePower > 0) {
             motorIntakePower = 0;
         }
-        if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone && motorIntakePower < 0) {
+        if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone
+                && motorIntakePower < 0) {
             motorIntakePower = 0;
         }
 
@@ -135,7 +141,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public double getIntakePos() {
-        return MathUtil.inputModulus(-intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset, -160, 20);
+        return MathUtil.inputModulus(
+                -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset, -160, 20);
     }
 
     public void setIntakePosition(IntakePosition position) {
@@ -153,7 +160,7 @@ public class Elevator extends SubsystemBase {
         elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
         intakePIDEnabled = true;
         elevPIDEnabled = true;
-    
+
     }
 
     public static class IntakePosition {
@@ -179,7 +186,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         if (elevPIDEnabled) {
             elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
-        }   else
+        } else
 
         if (intakePIDEnabled) {
             intakePower = intakeController.calculate(getIntakePos(), intakeSetpoint);
@@ -199,7 +206,6 @@ public class Elevator extends SubsystemBase {
         // SmartDashboard.putNumber("height", getElevPos());
         // SmartDashboard.putNumber("height setpoint", elevSetpoint);
         // SmartDashboard.putNumber("Elev Power", elevPower);
-        
 
     }
 }
