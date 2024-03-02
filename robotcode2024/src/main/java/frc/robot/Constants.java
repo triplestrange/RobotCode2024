@@ -66,7 +66,7 @@ public final class Constants {
     // Distance between front and back wheels on robot in meters
     public static final double kWheelBase = 0.52705;
 
-    public static final double kDriveBaseRadius = Math.hypot(kTrackWidth/2, kWheelBase/2);
+    public static final double kDriveBaseRadius = Math.hypot(kTrackWidth / 2, kWheelBase / 2);
 
     // kinematics constructor with module positions as arguments
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
@@ -173,7 +173,7 @@ public final class Constants {
     public final static double minHeight = 0;
     public final static double safeZone = 0;
 
-    public final static double elevPosConv = (1.25 * Math.PI)/15;
+    public final static double elevPosConv = (1.25 * Math.PI) / 15;
     public final static double kP = 0.4;
     public final static double kI = 0;
     public final static double kD = 0;
@@ -221,30 +221,30 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXTranslationController = 2.8; 
+    public static final double kPXTranslationController = 2.8;
     public static final double kDTranslationController = 0;
 
     public static final double kPThetaController = 3;
 
-    public static final boolean enableInitialReplanning = false; 
-    public static final boolean enableDynamicReplanning = false; 
-    public static final double dynamicReplanningTotalErrorThreshold = 0.4572; 
+    public static final boolean enableInitialReplanning = false;
+    public static final boolean enableDynamicReplanning = false;
+    public static final double dynamicReplanningTotalErrorThreshold = 0.4572;
     public static final double dynamicReplanningErrorSpikeThreshold = 3;
-    
+
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    public static final HolonomicPathFollowerConfig HOLONOMIC_PATH_FOLLOWER_CONFIG = new HolonomicPathFollowerConfig( 
+    public static final HolonomicPathFollowerConfig HOLONOMIC_PATH_FOLLOWER_CONFIG = new HolonomicPathFollowerConfig(
         new PIDConstants(kPXTranslationController, 0.0, 0.0), // Translation PID constants
         new PIDConstants(kPThetaController, 0.0, 0.0), // Rotation PID constants
         Constants.SwerveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
         0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-        new ReplanningConfig(enableInitialReplanning, 
-        enableDynamicReplanning, 
-        dynamicReplanningTotalErrorThreshold, 
-        dynamicReplanningErrorSpikeThreshold) // Default path replanning config. See the API for the options here
-        );
+        new ReplanningConfig(enableInitialReplanning,
+            enableDynamicReplanning,
+            dynamicReplanningTotalErrorThreshold,
+            dynamicReplanningErrorSpikeThreshold) // Default path replanning config. See the API for the options here
+    );
   }
 
   public static final class AutoAlign {
