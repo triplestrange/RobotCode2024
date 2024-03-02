@@ -1,6 +1,8 @@
 package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -8,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -87,6 +90,26 @@ public class SwerveDrive extends SubsystemBase {
   public SwerveDrive(Robot m_robot) {
     resetEncoders();
     m_Robot = m_robot;
+
+    AutoBuilder.configureHolonomic(
+            this::getPose, // Robot pose supplier
+            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            Constants.AutoConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
   }
 
   /**
@@ -109,15 +132,7 @@ public class SwerveDrive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Update the odometry in the periodic block=
-    m_odometry.update(
-        getAngle(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
+    // Update the odometry in the periodic block
     updateOdometry();
 
     // System.out.print("xSpeed: " + xAutoSpeed + ";\n ySpeed: " + yAutoSpeed + ";\n
@@ -131,23 +146,6 @@ public class SwerveDrive extends SubsystemBase {
    */
   public Pose2d getPose() {
     return m_odometry.getEstimatedPosition();
-  }
-
-  /**
-   * Resets the odometry to the specified pose.
-   *
-   * @param pose The pose to which to set the odometry.
-   */
-  public void resemtOdoetry(Pose2d pose) {
-    m_odometry.resetPosition(
-        getAngle(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-        pose);
   }
 
   /**
@@ -228,17 +226,28 @@ public class SwerveDrive extends SubsystemBase {
     gyroReset = true;
   }
 
-  // TODO: why am i still here just to suffer
-  // Calculates closest Apriltag for use in autoAlignCube
-  public int optimalID() {
-    Pose2d robotPose = getPose();
-    return 0;
-  }
-
-  // TODO: fix this
   public void updateOdometry() {
-
+    m_odometry.update(
+      getAngle(),
+      new SwerveModulePosition[] {
+        m_frontLeft.getPosition(),
+        m_frontRight.getPosition(),
+        m_rearLeft.getPosition(),
+        m_rearRight.getPosition()
+              });
   }
+
+  public void updateChassisSpeeds() {
+    currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
+        m_frontLeft.getState(),
+        m_frontRight.getState(),
+        m_rearLeft.getState(),
+        m_rearRight.getState());
+      }
+    
+      public ChassisSpeeds getChassisSpeeds() {
+        return currentMovement;
+      }
 
   /**
    * Returns the heading of the robot.
@@ -248,6 +257,10 @@ public class SwerveDrive extends SubsystemBase {
   public static double getHeading() {
     double heading = Math.IEEEremainder(navX.getAngle(), 360) * (SwerveConstants.kGyroReversed ? -1.0 : 1.0);
     return heading;
+  }
+
+  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+    setModuleStates(Constants.SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   /**
@@ -308,22 +321,6 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", navX.getAngle());
     SmartDashboard.putNumber("TurnRate", getTurnRate());
-    // SmartDashboard.putNumber("Has Target?", tv);
-    // SmartDashboard.putNumber("xSpeed", xAutoSpeed);
-    // SmartDashboard.putNumber("ySpeed", yAutoSpeed);
-    // SmartDashboard.putNumber("rSpeed", rAutoSpeed);
-    SmartDashboard.putNumber("pitch", navX.getPitch());
-    SmartDashboard.putNumber("roll", navX.getRoll());
-    SmartDashboard.putNumber("yaw", navX.getYaw());
-    SmartDashboard.putString("Alliance Color", m_Robot.allianceColor.toString());
-    // if (tempRobotPose.length >= 7) {
-    // SmartDashboard.putNumber("Vision x", tempRobotPose[0]);
-    // SmartDashboard.putNumber("Vision y", tempRobotPose[1]);
-    // SmartDashboard.putNumber("Vision r", tempRobotPose[5]);
-    // }
-
-    // SmartDashboard.putNumber("tempRobotPose length", tempRobotPose.length);
-
     SmartDashboard.putData("Field", m_field);
   }
 }

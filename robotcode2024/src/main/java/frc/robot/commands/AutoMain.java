@@ -1,25 +1,34 @@
 package frc.robot.commands;
 
-import java.util.HashMap;
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.RobotContainer;
 
 public class AutoMain extends Command {
 
-        SwerveDrive m_Drive;
+        RobotContainer m_robotContainer;        
+        private final SendableChooser<Command> autoChooser;
 
-        // Commands for AutoRoutines
-        public static HashMap<String, Command> eventMap;
-
-        public void eventMapEvents(SwerveDrive m_Drive) {
-                
-        };
-
-        public AutoMain(SwerveDrive m_Drive) {
+        public AutoMain(RobotContainer m_robotContainer) {
                 // Class Variables
-                this.m_Drive = m_Drive;
+                this.m_robotContainer = m_robotContainer;
+
+                autoChooser = AutoBuilder.buildAutoChooser();
+                
+                SmartDashboard.putData("Auto Chooser", autoChooser);
+
+                registerCommands();
+                
         }
 
-        // Base Commands
+        public void registerCommands()  {
+                
+        }
 
+        public Command getAutoChooser() {
+            return autoChooser.getSelected();
+        }
 }
