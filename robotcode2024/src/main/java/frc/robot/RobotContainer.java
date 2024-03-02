@@ -106,11 +106,11 @@ public class RobotContainer {
                                                 0 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
-                JoystickButtons.opX.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.testPivotPos), m_shooter));
-                JoystickButtons.opB.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.climbPivotPos), m_shooter));
+                JoystickButtons.opX.onTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.testPivotPos), m_shooter));
+                JoystickButtons.opB.onTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos), m_shooter));
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
-                JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
+                JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOn(), m_flywheel));
                 // m_climb.setDefaultCommand(new RunCommand(
                 // () -> m_climb.moveClimb(
                 // -JoystickButtons.m_operatorController.getRightY(),

@@ -93,8 +93,8 @@ public class FlyWheel extends SubsystemBase {
     }
 
     public void flyWheelOff() {
-        lFlyWheelSetpoint = 0;
-        rFlyWheelSetpoint = 0;
+        lFlyWheelSetpoint = 1100;
+        rFlyWheelSetpoint = -(1100 - Constants.ShooterConstants.rotationalSpeed);
     }
 
     @Override

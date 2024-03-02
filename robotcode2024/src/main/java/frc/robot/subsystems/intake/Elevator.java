@@ -187,7 +187,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         if (elevPIDEnabled) {
             elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
-        } else
+        } 
 
         if (intakePIDEnabled) {
             intakePower = intakeController.calculate(getIntakePos(), intakeSetpoint);

@@ -83,7 +83,7 @@ public class Shooter extends SubsystemBase {
         }
     }
 
-    public void setShooterPos(double angle) {
+    public void setShooterAngle(double angle) {
         pivotSetpoint = angle;
         shooterPIDEnabled = true;
     }
