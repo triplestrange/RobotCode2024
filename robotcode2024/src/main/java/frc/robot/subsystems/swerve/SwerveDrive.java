@@ -2,9 +2,6 @@ package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -60,8 +57,6 @@ public class SwerveDrive extends SubsystemBase {
   private SwerveModuleState[] swerveModuleStates;
   public ChassisSpeeds currentMovement;
 
-  
-
   // The gyro sensor
   public final double navXPitch() {
     return navX.getPitch();
@@ -96,7 +91,7 @@ public class SwerveDrive extends SubsystemBase {
     resetEncoders();
     m_Robot = m_robot;
 
-      AutoBuilder.configureHolonomic(
+    AutoBuilder.configureHolonomic(
             this::getPose, // Robot pose supplier
             this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -116,7 +111,6 @@ public class SwerveDrive extends SubsystemBase {
             this // Reference to this subsystem to set requirements
     );
   }
-  
 
   /**
    * Returns the angle of the robot as a Rotation2d.
@@ -152,23 +146,6 @@ public class SwerveDrive extends SubsystemBase {
    */
   public Pose2d getPose() {
     return m_odometry.getEstimatedPosition();
-  }
-
-  /**
-   * Resets the odometry to the specified pose.
-   *
-   * @param pose The pose to which to set the odometry.
-   */
-  public void resemtOdoetry(Pose2d pose) {
-    m_odometry.resetPosition(
-        getAngle(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-        pose);
   }
 
   /**
@@ -249,33 +226,28 @@ public class SwerveDrive extends SubsystemBase {
     gyroReset = true;
   }
 
-  // TODO: fix this
   public void updateOdometry() {
-     m_odometry.update(
-        getAngle(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
+    m_odometry.update(
+      getAngle(),
+      new SwerveModulePosition[] {
+        m_frontLeft.getPosition(),
+        m_frontRight.getPosition(),
+        m_rearLeft.getPosition(),
+        m_rearRight.getPosition()
+              });
   }
 
   public void updateChassisSpeeds() {
-currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
-    m_frontLeft.getState(),
-    m_frontRight.getState(),
-    m_rearLeft.getState(),
-    m_rearRight.getState());
-  }
-
-  public ChassisSpeeds getChassisSpeeds() {
-    return currentMovement;
-  }
-
-  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-    setModuleStates(Constants.SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
-  }
+    currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
+        m_frontLeft.getState(),
+        m_frontRight.getState(),
+        m_rearLeft.getState(),
+        m_rearRight.getState());
+      }
+    
+      public ChassisSpeeds getChassisSpeeds() {
+        return currentMovement;
+      }
 
   /**
    * Returns the heading of the robot.
@@ -285,6 +257,10 @@ currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
   public static double getHeading() {
     double heading = Math.IEEEremainder(navX.getAngle(), 360) * (SwerveConstants.kGyroReversed ? -1.0 : 1.0);
     return heading;
+  }
+
+  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+    setModuleStates(Constants.SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   /**
@@ -345,14 +321,6 @@ currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", navX.getAngle());
     SmartDashboard.putNumber("TurnRate", getTurnRate());
-    // SmartDashboard.putNumber("Has Target?", tv);
-    // SmartDashboard.putNumber("xSpeed", xAutoSpeed);
-    // SmartDashboard.putNumber("ySpeed", yAutoSpeed);
-    // SmartDashboard.putNumber("rSpeed", rAutoSpeed);
-    SmartDashboard.putNumber("pitch", navX.getPitch());
-    SmartDashboard.putNumber("roll", navX.getRoll());
-    SmartDashboard.putNumber("yaw", navX.getYaw());
-
     SmartDashboard.putData("Field", m_field);
   }
 }

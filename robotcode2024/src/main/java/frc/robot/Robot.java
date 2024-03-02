@@ -13,8 +13,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -26,7 +24,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutoMain;
-import frc.robot.util.LocalADStarAK;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,9 +38,8 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private AutoMain m_autoMain;
-  private int i;
-  // private int w;
+private AutoMain m_autoMain;  
+private int i;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -70,10 +66,10 @@ public class Robot extends LoggedRobot {
     // the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
-    Pathfinding.setPathfinder(new LocalADStarAK());
-
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
+    // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
     m_robotContainer.m_robotDrive.zeroHeading();
   }
@@ -102,7 +98,7 @@ public class Robot extends LoggedRobot {
     if (i % 10 == 0) {
       // m_robotContainer.m_robotDrive.updateSmartDashBoard();
       m_robotContainer.m_shooter.updateSmartDashBoard();
-      // m_robotContainer.m_elevator.updateSmartDashBoard();
+      m_robotContainer.m_elevator.updateSmartDashBoard();
 
     }
   }

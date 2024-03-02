@@ -4,17 +4,21 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
+import frc.robot.subsystems.cannon.Conveyor;
+import frc.robot.subsystems.cannon.FlyWheel;
+import frc.robot.subsystems.cannon.Climb;
+import frc.robot.subsystems.cannon.Shooter;
+import frc.robot.subsystems.intake.Elevator;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.commands.DefaultDrive;
 
@@ -26,8 +30,14 @@ import frc.robot.commands.DefaultDrive;
  */
 public class RobotContainer {
         // The robot's subsystems
-        private final Robot m_Robot;
+        private final Robot m_robot;
         public final SwerveDrive m_robotDrive;
+        public final Elevator m_elevator;
+        public final Intake m_intake;
+        public final Shooter m_shooter;
+        public final FlyWheel m_flywheel;
+        public final Climb m_climb;
+        public final Conveyor m_conveyor;
 
         // private final SendableChooser<Command> choose;
         // public final AutoMain m_Autos;
@@ -37,7 +47,7 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer(Robot m_Robot) {
-                this.m_Robot = m_Robot;
+                this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(m_Robot);
                 m_elevator = new Elevator();
                 m_intake = new Intake();
@@ -46,7 +56,6 @@ public class RobotContainer {
                 m_conveyor = new Conveyor();
                 m_flywheel = new FlyWheel();
 
-                
                 configureButtonBindings();
 
         }
@@ -65,22 +74,16 @@ public class RobotContainer {
 
                 // Driver Controls
                 m_robotDrive.setDefaultCommand(
+
+                                // swerve code
                                 // The left stick controls tran slation of the robot.
                                 // Turning is controlled by the X axis of the right stick.
-                                new DefaultDrive(m_robotDrive, 1, 1));// 2.5, 1));
-                // m_robotDrive.setDefaultCommand(new FilteredDrive(m_robotDrive,
-                // XBOX
-                // () -> JoystickButtons.m_driverController.getLeftY() * 5,
-                // () -> JoystickButtons.m_driverController.getLeftX() * 5,
-                // () -> JoystickButtons.m_driverController.getRightX() * 5));
-                // Logitech
-                // () -> JoystickButtons.m_driverController.getLeftY() * 2,
-                // () -> JoystickButtons.m_driverController.getLeftX() * 2,
-                // () -> JoystickButtons.m_driverController.getRawAxis(2) * 5));
+                                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
+
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 
-                new Trigger(() -> Math.abs(JoystickButtons.m_driverController.getLeftTriggerAxis()) > 0.05)
+         /*        new Trigger(() -> Math.abs(JoystickButtons.m_driverController.getLeftTriggerAxis()) > 0.05)
                                 .onTrue(new InstantCommand(() -> {
                                         m_robotDrive.setPresetEnabled(true, -180.0);
                                 }));
@@ -90,23 +93,37 @@ public class RobotContainer {
                                         m_robotDrive.setPresetEnabled(true, 0);
 
                                 }));
-
+*/
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
-                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));
+                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));  
 
-                // Y | high: 29.25, 29.11, 34
-                // X | mid: -
-                // dR| cube: -42.7,-133.7,43.5
-                // dU| cone upright: -34.69, -139.75, 37.55
-                // B | feeder slope: -2, -162.5, 115.2
-                // dD| cone lying: -56.45, -139.75, 95.84
-                // A | default: -0.6, -169.63, 137.6
-                // dL| feed slide -2.78, -73.08, -57.43
+                JoystickButtons.opA.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                JoystickButtons.opY.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.feederIntakePos), m_elevator));
 
-                // // JoystickButtons.oplWing.whileTrue(new InstantCommand(() -> {
-                // // m_robotDrive.setPresetEnabled(true, 0);
+                                m_elevator.setDefaultCommand(new RunCommand(
+                                () -> m_elevator.moveElev(
+                                                -0.5 * JoystickButtons.m_operatorController.getLeftY(),
+                                                0 * JoystickButtons.m_operatorController.getRightX()),
+                                m_elevator));
 
-                // }));
+                JoystickButtons.opX.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.testPivotPos), m_shooter));
+                JoystickButtons.opB.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.climbPivotPos), m_shooter));
+
+                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
+                JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
+                // m_climb.setDefaultCommand(new RunCommand(
+                // () -> m_climb.moveClimb(
+                // -JoystickButtons.m_operatorController.getRightY(),
+                // -JoystickButtons.m_operatorController.getLeftY()),
+                // m_climb));
+
+                // Conveyor
+                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
+                // JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
+                // m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(),m_conveyor));
+                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor));
+                m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
         }
 
         /**
