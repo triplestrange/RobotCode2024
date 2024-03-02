@@ -118,11 +118,11 @@ public class RobotContainer {
                 // m_climb));
 
                 // Conveyor
-                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
-                // JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
-                // m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(),m_conveyor));
-                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
+                 m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(),m_conveyor));
+                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor));
                 m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
         }
 

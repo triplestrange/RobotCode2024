@@ -108,9 +108,9 @@ public final class Constants {
     public final static double minAngle = -48;
     public final static double safeZone = 1;
 
-    public final static double pivotkP = 0.055 * .5;
-    public final static double pivotkI = 0.06;
-    public final static double pivotkD = 0.000005;
+    public final static double pivotkP = 0.055 * .5 * 0;
+    public final static double pivotkI = 0.06 * 0 ;
+    public final static double pivotkD = 0.000005 * 0;
 
     public final static double pivotAbsOffset = -346;
 
@@ -186,7 +186,7 @@ public final class Constants {
 
     public final static double intakeAbsOffset = -78.33;
 
-    public final static double kP = 0.055 * .5;
+    public final static double kP = 0.055 * .5 * 0;
     public final static double kI = 0;
     public final static double kD = 0;
 
