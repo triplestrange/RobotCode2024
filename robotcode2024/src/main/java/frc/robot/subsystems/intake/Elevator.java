@@ -66,6 +66,7 @@ public class Elevator extends SubsystemBase {
         elevRelativeEncoder = elev.getEncoder();
 
         elevRelativeEncoder.setPosition(0);
+        elevSetpoint = getElevPos();
 
         elevRelativeEncoder.setPositionConversionFactor(Constants.ElevatorConstants.elevPosConv);
 

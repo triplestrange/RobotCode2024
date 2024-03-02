@@ -102,8 +102,8 @@ public class RobotContainer {
 
                                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
-                                                -0 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0.5 * JoystickButtons.m_operatorController.getRightX()),
+                                                -0.5 * JoystickButtons.m_operatorController.getLeftY(),
+                                                0 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
                 JoystickButtons.opX.onTrue(new InstantCommand(() -> m_shooter.setShooterPos(Constants.MechPositions.testPivotPos), m_shooter));
