@@ -5,7 +5,9 @@
 
 package frc.robot.commands.automations; 
 import com.pathplanner.lib.auto.AutoBuilder; 
-import com.pathplanner.lib.commands.PathfindingCommand; 
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.MathUtil; 
 import edu.wpi.first.math.controller.PIDController; 
 import edu.wpi.first.math.geometry.Pose2d; 
@@ -18,6 +20,7 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 public class DriveTo extends Command { 
 
   public Pose2d targetPose2d; 
+  public PathPlannerPath goalPath;
   public double endVelocity; 
   public double rotDelayDistance; 
   private SwerveDrive m_SwerveDrive; 
@@ -37,31 +40,51 @@ public class DriveTo extends Command {
     this.m_Robot = m_Robot; 
     this.targetPose2d = targetPose2d; 
   } 
+
+  public DriveTo(PathPlannerPath goalPath, double rotDelayDistance, SwerveDrive m_SwerveDrive, Robot m_Robot) {
+    addRequirements(m_SwerveDrive);
+
+    this.m_SwerveDrive = m_SwerveDrive;
+    this.m_Robot = m_Robot;
+    this.goalPath = goalPath;
+
+  }
     // Called when the command is initially scheduled. 
     
     @Override 
     public void initialize() { 
-      pathfindingCommand = AutoBuilder.pathfindToPose(targetPose2d, Constants.AutoAlign.constraints, 
-      endVelocity, // Goal end velocity in meters/sec 
-      rotDelayDistance // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate. 
+      if (targetPose2d != null) {
+        pathfindingCommand = AutoBuilder.pathfindToPose(targetPose2d, Constants.AutoAlign.constraints, 
+        endVelocity, // Goal end velocity in meters/sec 
+        rotDelayDistance // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate. 
       ); 
+      
+    }
+      
+      else if (goalPath != null) {
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(goalPath, 
+        Constants.AutoAlign.constraints, 
+        rotDelayDistance);
+      }
+    
+      pathfindingCommand.initialize();
     } 
     
     // Called every time the scheduler runs while the command is scheduled. 
     @Override 
     public void execute() { 
-
+      pathfindingCommand.execute();
     } 
     
     // Called once the command ends or is interrupted. 
     @Override 
     public void end(boolean interrupted) { 
-
+      pathfindingCommand.end(interrupted);
     } 
     
     // Returns true when the command should end. 
     @Override 
     public boolean isFinished() { 
-      return true;
+      return pathfindingCommand.isFinished();
     } 
   }
