@@ -135,6 +135,8 @@ public class SwerveDrive extends SubsystemBase {
     // Update the odometry in the periodic block
     updateOdometry();
 
+    m_field.setRobotPose(getPose());
+
     // System.out.print("xSpeed: " + xAutoSpeed + ";\n ySpeed: " + yAutoSpeed + ";\n
     // rSpeed: " + rAutoSpeed);
   }

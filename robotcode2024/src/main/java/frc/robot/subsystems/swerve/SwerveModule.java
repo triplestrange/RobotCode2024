@@ -70,7 +70,7 @@ public class SwerveModule {
     // This is the the angle through an entire rotation (2 * wpi::math::pi)
     // divided by the encoder resolution.
 
-    m_driveMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(ModuleConstants.kDriveEncoderDistancePerPulse));
+    m_driveMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1.0/ModuleConstants.kDriveEncoderDistancePerPulse));
 
     m_turningEncoder.setPositionConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse);
     m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse / 60.);

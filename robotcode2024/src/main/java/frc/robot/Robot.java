@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutoMain;
+import frc.robot.subsystems.swerve.Vision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -38,8 +39,9 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-private AutoMain m_autoMain;  
-private int i;
+  private AutoMain m_autoMain;  
+  private Vision m_vision;
+  private int i;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -71,6 +73,7 @@ private int i;
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
+    m_vision = new Vision(m_robotContainer.m_robotDrive);
     m_robotContainer.m_robotDrive.zeroHeading();
   }
 
@@ -100,6 +103,7 @@ private int i;
       m_robotContainer.m_shooter.updateSmartDashBoard();
       // m_robotContainer.m_elevator.updateSmartDashBoard();
       m_robotContainer.m_robotDrive.updateSmartDashBoard();
+      m_vision.updateSmartDashBoard();
 
     }
   }

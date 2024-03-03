@@ -63,7 +63,7 @@ public class Shoot {
 
     Rotation2d shootingRotation;
     double shootingAngle = 0;
-    Translation3d speakerPose3d = new Translation3d(5.6282082, 0.3603998634, 2.1326856);
+    Translation3d speakerPose3d = new Translation3d(0.3603998634, 5.6282082, 2.1326856);
     
 
     public Shoot(RobotContainer m_RobotContainer) {
@@ -75,8 +75,10 @@ public class Shoot {
     public void prepare()   {
         if (isAllianceRed())    {
         shootingRotation = new Translation2d(flipTranslation3d(speakerPose3d).getX(), flipTranslation3d(speakerPose3d).getY()) .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
-
         }
+
+        shootingRotation = new Translation2d(speakerPose3d.getX(), speakerPose3d.getY()) .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
+
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
         m_RobotContainer.m_flywheel.setFWSpeed(-5676);
     }
