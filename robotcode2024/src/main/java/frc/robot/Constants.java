@@ -115,11 +115,11 @@ public final class Constants {
     public final static double minAngle = -48;
     public final static double safeZone = 1;
 
-    public final static double pivotkP = 0.055 * .5 * 0;
-    public final static double pivotkI = 0.06 * 0 ;
-    public final static double pivotkD = 0.000005 * 0;
+    public final static double pivotkP = 0.055 * .5;
+    public final static double pivotkI = 0.06;
+    public final static double pivotkD = 0.0005;
 
-    public final static double pivotAbsOffset = -346;
+    public final static double pivotAbsOffset = -105;
 
     // flywheel motor constants
 
@@ -193,7 +193,7 @@ public final class Constants {
 
     public final static double intakeAbsOffset = -78.33;
 
-    public final static double kP = 0.055 * .5 * 0;
+    public final static double kP = 0.055 * .5;
     public final static double kI = 0;
     public final static double kD = 0;
 
@@ -260,10 +260,10 @@ public final class Constants {
     public static final int swerveTurningCurrentLimit = 40;
     public static final int swerveDrivingCurrentLimit = 40;
 
-    public static final int elevatorCurrentLimit = 40;
+    public static final int elevatorCurrentLimit = 30;
     public static final int intakeCurrentLimit = 30;
 
-    public static final int rollerCurrentLimit = 80;
+    public static final int rollerCurrentLimit = 20;
     public static final int conveyorCurrentLimit = 20;
 
     public static final int climbCurrentLimit = 80;

@@ -300,27 +300,12 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public void updateSmartDashBoard() {
-    SmartDashboard.putNumber("FLSteering", m_frontLeft.m_absoluteEncoder.getAngle());
-    SmartDashboard.putNumber("FRSteering", m_frontRight.m_absoluteEncoder.getAngle());
-    SmartDashboard.putNumber("BLSteering", m_rearLeft.m_absoluteEncoder.getAngle());
-    SmartDashboard.putNumber("BRSteering", m_rearRight.m_absoluteEncoder.getAngle());
-    SmartDashboard.putNumber("FLSteeringDeg", m_frontLeft.m_absoluteEncoder.getAngle() * 180.0 / Math.PI);
-    SmartDashboard.putNumber("FRSteeringDeg", m_frontRight.m_absoluteEncoder.getAngle() * 180.0 / Math.PI);
-    SmartDashboard.putNumber("BLSteeringDeg", m_rearLeft.m_absoluteEncoder.getAngle() * 180.0 / Math.PI);
-    SmartDashboard.putNumber("BRSteeringDeg", m_rearRight.m_absoluteEncoder.getAngle() * 180.0 / Math.PI);
-    SmartDashboard.putNumber("FLSteerNEO", m_frontLeft.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("FRSteerNEO", m_frontRight.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("BLSteerNEO", m_rearLeft.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("BRSteerNEO", m_rearRight.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("FLneo", m_frontLeft.getState().angle.getRadians());
-    SmartDashboard.putNumber("FRneo", m_frontRight.getState().angle.getRadians());
-    SmartDashboard.putNumber("BLneo", m_rearLeft.getState().angle.getRadians());
-    SmartDashboard.putNumber("BRneo", m_rearRight.getState().angle.getRadians());
+
+
     SmartDashboard.putNumber("x", getPose().getTranslation().getX());
     SmartDashboard.putNumber("y", getPose().getTranslation().getY());
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", navX.getAngle());
-    SmartDashboard.putNumber("TurnRate", getTurnRate());
     SmartDashboard.putData("Field", m_field);
   }
 }

@@ -25,11 +25,11 @@ public class Intake extends SubsystemBase {
     }
 
     public void runIntake() {
-        rollers.set(-Constants.IntakeConstants.intakeSpeed);
+        rollers.set(Constants.IntakeConstants.intakeSpeed);
     }
 
     public void runOutake() {
-        rollers.set(Constants.IntakeConstants.intakeSpeed);
+        rollers.set(-Constants.IntakeConstants.intakeSpeed);
     }
 
     public void intakeOff() {

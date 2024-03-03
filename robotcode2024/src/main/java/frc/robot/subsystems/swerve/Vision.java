@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.photonvision.*;
@@ -107,7 +108,8 @@ public class Vision extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-
+        SmartDashboard.putNumber("camleft x", getVisionInfo(camLeft).getPose2d().getX());
+        SmartDashboard.putNumber("camleft y", getVisionInfo(camLeft).getPose2d().getY());
     }
 
     public void periodic() {

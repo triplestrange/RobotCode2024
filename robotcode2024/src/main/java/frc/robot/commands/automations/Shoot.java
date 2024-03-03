@@ -7,6 +7,8 @@ package frc.robot.commands.automations;
 import javax.lang.model.util.ElementScanner14;
 import javax.swing.text.GlyphView.GlyphPainter;
 
+import org.opencv.core.Mat;
+
 import com.pathplanner.lib.auto.AutoBuilder; 
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -14,9 +16,12 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil; 
 import edu.wpi.first.math.controller.PIDController; 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command; 
 import frc.robot.Constants; 
@@ -57,8 +62,8 @@ public class Shoot {
     // variables for shooting
 
     Rotation2d shootingRotation;
-    double shootingAngle;
-    Pose2d speakerPose2d = new Pose2d(5.6282082, 0.3603998634, new Rotation2d().fromDegrees(0));
+    double shootingAngle = 0;
+    Translation3d speakerPose3d = new Translation3d(5.6282082, 0.3603998634, 2.1326856);
     
 
     public Shoot(RobotContainer m_RobotContainer) {
@@ -69,7 +74,7 @@ public class Shoot {
 
     public void prepare()   {
         if (isAllianceRed())    {
-        shootingRotation = flipPose(speakerPose2d).getTranslation().minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
+        shootingRotation = new Translation2d(flipTranslation3d(speakerPose3d).getX(), flipTranslation3d(speakerPose3d).getY()) .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
 
         }
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
@@ -77,6 +82,8 @@ public class Shoot {
     }
 
     public void execute()   {
+
+        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerPose3d.getZ(), Math.hypot(m_RobotContainer.m_robotDrive.getPose().getX(), m_RobotContainer.m_robotDrive.getPose().getY()))) - 90 + 32.5;
         m_RobotContainer.m_shooter.setShooterAngle(shootingAngle);
     } 
 
@@ -131,7 +138,12 @@ public class Shoot {
     } 
 
     public Pose2d flipPose(Pose2d pose)    {
-        return new Pose2d(16.54 - pose.getX(), 8.21 - pose.getY(), pose.getRotation().rotateBy(new Rotation2d().fromRadians(Math.PI/2)));
+        return new Pose2d(16.54 - pose.getX(), pose.getY(), pose.getRotation().rotateBy(new Rotation2d().fromRadians(Math.PI/2)));
+    }
+
+    public Translation3d flipTranslation3d(Translation3d translation)   {
+        return new Translation3d(16.54 - translation.getX(), translation.getY(), translation.getZ());
+
     }
 
     public boolean isAllianceRed()  {

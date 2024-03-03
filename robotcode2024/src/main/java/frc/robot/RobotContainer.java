@@ -21,6 +21,7 @@ import frc.robot.subsystems.intake.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.commands.DefaultDrive;
+import frc.robot.commands.automations.Shoot;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -38,6 +39,7 @@ public class RobotContainer {
         public final FlyWheel m_flywheel;
         public final Climb m_climb;
         public final Conveyor m_conveyor;
+        public final Shoot m_shoot;
 
         // private final SendableChooser<Command> choose;
         // public final AutoMain m_Autos;
@@ -55,6 +57,7 @@ public class RobotContainer {
                 m_climb = new Climb();
                 m_conveyor = new Conveyor();
                 m_flywheel = new FlyWheel();
+                m_shoot = new Shoot(this);
 
                 configureButtonBindings();
 
@@ -95,19 +98,24 @@ public class RobotContainer {
                                 }));
 */
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
-                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));  
+                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90))); 
 
-                JoystickButtons.opA.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
-                JoystickButtons.opY.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.feederIntakePos), m_elevator));
-
+                JoystickButtons.dA.whileTrue(new RunCommand(() -> m_shoot.prepare(), m_shooter, m_flywheel));
+                JoystickButtons.dY.whileTrue(new RunCommand(() -> m_shoot.execute(), m_shooter, m_flywheel, m_conveyor));
+                JoystickButtons.dX.whileTrue(new RunCommand(() -> m_shoot.shoot(), m_shooter, m_flywheel, m_conveyor));
                                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
                                                 -0.5 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0 * JoystickButtons.m_operatorController.getRightX()),
+                                                0.5 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
                 JoystickButtons.opX.onTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.testPivotPos), m_shooter));
                 JoystickButtons.opB.onTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos), m_shooter));
+
+                //     m_shooter.setDefaultCommand(new RunCommand(
+                // () -> m_shooter.moveShooter(
+                // -JoystickButtons.m_operatorController.getLeftX() * 0.3),
+                // m_shooter));
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
                 JoystickButtons.drBump.onFalse(new InstantCommand(() -> m_flywheel.flyWheelOn(), m_flywheel));
@@ -121,9 +129,12 @@ public class RobotContainer {
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
                  m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(),m_conveyor));
-                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(),m_conveyor));
+                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor));
                 m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
+
+                // shooting
+
         }
 
         /**

@@ -103,14 +103,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveElev(double motorElevPower, double motorIntakePower) {
-        if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone
-                && motorElevPower > 0) {
-            motorElevPower = 0;
-        }
-        if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone
-                && motorElevPower < 0) {
-            motorElevPower = 0;
-        }
+        // if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone
+        //         && motorElevPower > 0) {
+        //     motorElevPower = 0;
+        // }
+        // if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone
+        //         && motorElevPower < 0) {
+        //     motorElevPower = 0;
+        // }
 
         if (Math.abs(motorElevPower) < 0.05) {
             elevPIDEnabled = true;
@@ -134,7 +134,6 @@ public class Elevator extends SubsystemBase {
             intakePIDEnabled = true;
         } else {
             intakePower = motorIntakePower;
-            intake.set(intakePower);
             intakeSetpoint = getIntakePos();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
@@ -196,7 +195,7 @@ public class Elevator extends SubsystemBase {
             intakePower = 0;
         }
 
-        intake.set(intakePower);
+        // intake.set(intakePower);
     }
 
     public void updateSmartDashBoard() {
@@ -204,9 +203,9 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putBoolean("Is Encoder Plugged", intakeEncoder.isConnected());
         SmartDashboard.putNumber("angle setpoint", intakeSetpoint);
         SmartDashboard.putNumber("Power", intakePower);
-        // SmartDashboard.putNumber("height", getElevPos());
-        // SmartDashboard.putNumber("height setpoint", elevSetpoint);
-        // SmartDashboard.putNumber("Elev Power", elevPower);
+        SmartDashboard.putNumber("height", getElevPos());
+        SmartDashboard.putNumber("height setpoint", elevSetpoint);
+        SmartDashboard.putNumber("Elev Power", elevPower);
 
     }
 }
