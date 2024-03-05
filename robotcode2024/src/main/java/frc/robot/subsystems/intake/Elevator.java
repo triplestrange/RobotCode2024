@@ -103,13 +103,15 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveElev(double motorElevPower, double motorIntakePower) {
-        // if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone
-        //         && motorElevPower > 0) {
-        //     motorElevPower = 0;
+        // if (getElevPos() >= Constants.ElevatorConstants.maxHeight -
+        // Constants.ElevatorConstants.safeZone
+        // && motorElevPower > 0) {
+        // motorElevPower = 0;
         // }
-        // if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone
-        //         && motorElevPower < 0) {
-        //     motorElevPower = 0;
+        // if (getElevPos() <= Constants.ElevatorConstants.minHeight +
+        // Constants.ElevatorConstants.safeZone
+        // && motorElevPower < 0) {
+        // motorElevPower = 0;
         // }
 
         if (Math.abs(motorElevPower) < 0.05) {
@@ -186,7 +188,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         if (elevPIDEnabled) {
             elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
-        } 
+        }
 
         if (intakePIDEnabled) {
             intakePower = intakeController.calculate(getIntakePos(), intakeSetpoint);

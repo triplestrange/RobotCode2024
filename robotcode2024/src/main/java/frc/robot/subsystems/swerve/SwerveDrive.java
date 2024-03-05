@@ -92,23 +92,24 @@ public class SwerveDrive extends SubsystemBase {
     m_Robot = m_robot;
 
     AutoBuilder.configureHolonomic(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-            Constants.AutoConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        this::getPose, // Robot pose supplier
+        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        Constants.AutoConstants.HOLONOMIC_PATH_FOLLOWER_CONFIG,
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red
+          // alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        this // Reference to this subsystem to set requirements
     );
   }
 
@@ -230,13 +231,13 @@ public class SwerveDrive extends SubsystemBase {
 
   public void updateOdometry() {
     m_odometry.update(
-      getAngle(),
-      new SwerveModulePosition[] {
-        m_frontLeft.getPosition(),
-        m_frontRight.getPosition(),
-        m_rearLeft.getPosition(),
-        m_rearRight.getPosition()
-              });
+        getAngle(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        });
   }
 
   public void updateChassisSpeeds() {
@@ -245,11 +246,11 @@ public class SwerveDrive extends SubsystemBase {
         m_frontRight.getState(),
         m_rearLeft.getState(),
         m_rearRight.getState());
-      }
-    
-      public ChassisSpeeds getChassisSpeeds() {
-        return currentMovement;
-      }
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    return currentMovement;
+  }
 
   /**
    * Returns the heading of the robot.
@@ -302,7 +303,6 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public void updateSmartDashBoard() {
-
 
     SmartDashboard.putNumber("x", getPose().getTranslation().getX());
     SmartDashboard.putNumber("y", getPose().getTranslation().getY());

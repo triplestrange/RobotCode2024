@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 public class Shooter extends SubsystemBase {
 
     private CANSparkMax lPivot;
@@ -47,7 +46,9 @@ public class Shooter extends SubsystemBase {
         rPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
 
         pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
-                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD, new Constraints(Constants.ShooterConstants.kMaxAngularPivotSpeedDegreesPerSecond, Constants.ShooterConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
+                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD,
+                new Constraints(Constants.ShooterConstants.kMaxAngularPivotSpeedDegreesPerSecond,
+                        Constants.ShooterConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
         pivotEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.pivotAbsInput);
 
         pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
@@ -59,16 +60,19 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getAngle() {
-        
-        return MathUtil.inputModulus(-pivotEncoder.getAbsolutePosition() * 360 - Constants.ShooterConstants.pivotAbsOffset, 30, -330);
+
+        return MathUtil.inputModulus(
+                -pivotEncoder.getAbsolutePosition() * 360 - Constants.ShooterConstants.pivotAbsOffset, 30, -330);
 
     }
 
     public void moveShooter(double motorPivotPower) {
-        if ((getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone) && motorPivotPower > 0) {
+        if ((getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone)
+                && motorPivotPower > 0) {
             motorPivotPower = 0;
         }
-        if ((getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone) && motorPivotPower < 0) {
+        if ((getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone)
+                && motorPivotPower < 0) {
             motorPivotPower = 0;
         }
 
@@ -92,7 +96,7 @@ public class Shooter extends SubsystemBase {
         pivotSetpoint = getAngle();
         pivotController.reset(pivotSetpoint);
         shooterPIDEnabled = true;
-    
+
     }
 
     @Override

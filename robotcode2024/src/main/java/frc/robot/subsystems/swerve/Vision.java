@@ -43,20 +43,22 @@ public class Vision extends SubsystemBase {
     public Optional<EstimatedRobotPose> poseFront;
     public Optional<EstimatedRobotPose> poseBack;
 
-
     public Vision(SwerveDrive m_SwerveDrive) {
         camLeft = new PhotonCamera("camLeft");
         camRight = new PhotonCamera("camRight");
         camFront = new PhotonCamera("camFront");
         camBack = new PhotonCamera("camBack");
 
-    visionLeft = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camLeft, new Transform3d(new Translation3d(0, -0.32385, 0.5969), new Rotation3d(Math.PI,-Math.PI/4,Math.PI/2)));
+        visionLeft = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camLeft,
+                new Transform3d(new Translation3d(0, -0.32385, 0.5969),
+                        new Rotation3d(Math.PI, -Math.PI / 4, Math.PI / 2)));
 
         this.m_SwerveDrive = m_SwerveDrive;
 
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedPose(PhotonPoseEstimator photonPoseEstimator, Pose2d prevEstimatedPose) {
+    public Optional<EstimatedRobotPose> getEstimatedPose(PhotonPoseEstimator photonPoseEstimator,
+            Pose2d prevEstimatedPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedPose);
         return photonPoseEstimator.update();
     }
@@ -64,15 +66,17 @@ public class Vision extends SubsystemBase {
     public void addVisionMeasurement() {
         poseLeft = getEstimatedPose(visionLeft, m_SwerveDrive.getPose());
 
-        if (poseLeft.isPresent() && poseLeft.get().estimatedPose.getX() > 0 && poseLeft.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength())  {
-            m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(), poseLeft.get().timestampSeconds);
+        if (poseLeft.isPresent() && poseLeft.get().estimatedPose.getX() > 0
+                && poseLeft.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength()) {
+            m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(),
+                    poseLeft.get().timestampSeconds);
         }
     }
 
     public void updateSmartDashBoard() {
-        if (poseLeft != null && poseLeft.isPresent())   {
-        SmartDashboard.putNumber("camleft x", poseLeft.get().estimatedPose.getX());
-        SmartDashboard.putNumber("camleft y", poseLeft.get().estimatedPose.getY());
+        if (poseLeft != null && poseLeft.isPresent()) {
+            SmartDashboard.putNumber("camleft x", poseLeft.get().estimatedPose.getX());
+            SmartDashboard.putNumber("camleft y", poseLeft.get().estimatedPose.getY());
         }
     }
 

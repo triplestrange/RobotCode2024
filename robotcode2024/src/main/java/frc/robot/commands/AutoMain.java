@@ -9,7 +9,7 @@ import frc.robot.RobotContainer;
 
 public class AutoMain extends Command {
 
-        RobotContainer m_robotContainer;        
+        RobotContainer m_robotContainer;
         private final SendableChooser<Command> autoChooser;
 
         public AutoMain(RobotContainer m_robotContainer) {
@@ -17,18 +17,18 @@ public class AutoMain extends Command {
                 this.m_robotContainer = m_robotContainer;
 
                 autoChooser = AutoBuilder.buildAutoChooser();
-                
+
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 registerCommands();
-                
+
         }
 
-        public void registerCommands()  {
-                
+        public void registerCommands() {
+
         }
 
         public Command getAutoChooser() {
-            return autoChooser.getSelected();
+                return autoChooser.getSelected();
         }
 }

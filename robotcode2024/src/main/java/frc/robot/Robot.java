@@ -39,7 +39,7 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private AutoMain m_autoMain;  
+  private AutoMain m_autoMain;
   private Vision m_vision;
   private int i;
 
