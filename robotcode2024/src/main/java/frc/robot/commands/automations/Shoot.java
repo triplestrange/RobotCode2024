@@ -80,9 +80,13 @@ public class Shoot {
 
         shootingRotation = new Translation2d(speakerPose3d.getX(), speakerPose3d.getY())
                 .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
+        shootingRotation = new Translation2d(speakerPose3d.getX(), speakerPose3d.getY()) .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle().plus(new Rotation2d().fromDegrees(180));
 
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
         m_RobotContainer.m_flywheel.setFWSpeed(-5676);
+
+        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerPose3d.getZ(), Math.hypot(m_RobotContainer.m_robotDrive.getPose().getX(), m_RobotContainer.m_robotDrive.getPose().getY()))) - 90 + 32.5;
+
     }
 
     public void execute() {

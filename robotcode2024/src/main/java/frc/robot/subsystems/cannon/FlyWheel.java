@@ -96,6 +96,12 @@ public class FlyWheel extends SubsystemBase {
         rFlyWheelSetpoint = -(900 - Constants.ShooterConstants.rotationalSpeed);
     }
 
+    public void flyWheelOff() {
+        lFlyWheelSetpoint = 0;
+        rFlyWheelSetpoint = 0;
+
+    }
+
     @Override
     public void periodic() {
         lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);

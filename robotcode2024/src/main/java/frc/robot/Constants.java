@@ -116,8 +116,8 @@ public final class Constants {
     public final static double safeZone = 1;
 
     public final static double pivotkP = 0.055 * .5;
-    public final static double pivotkI = 0.06;
-    public final static double pivotkD = 0.0005;
+    public final static double pivotkI = 0.006;
+    public final static double pivotkD = 0.001;
 
     public final static double pivotAbsOffset = -105;
 
@@ -258,7 +258,7 @@ public final class Constants {
 
   public static final class ELECTRICAL {
     public static final int swerveTurningCurrentLimit = 40;
-    public static final int swerveDrivingCurrentLimit = 40;
+    public static final int swerveDrivingCurrentLimit = 20;
 
     public static final int elevatorCurrentLimit = 30;
     public static final int intakeCurrentLimit = 30;
@@ -266,7 +266,7 @@ public final class Constants {
     public static final int rollerCurrentLimit = 20;
     public static final int conveyorCurrentLimit = 20;
 
-    public static final int climbCurrentLimit = 80;
+    public static final int climbCurrentLimit = 40;
 
     public static final int conveyorDigitalInput = 0;
     public static final int intakeDigitalInput = 9;

@@ -114,7 +114,7 @@ public class Shooter extends SubsystemBase {
     public void updateSmartDashBoard() {
         SmartDashboard.putNumber("degree", getAngle());
         SmartDashboard.putBoolean("Is Encoder Plugged", pivotEncoder.isConnected());
-        SmartDashboard.putNumber("angle setpoint", pivotSetpoint);
+        SmartDashboard.putNumber("cannon angle setpoint", pivotSetpoint);
         SmartDashboard.putNumber("Power", pivotPower);
     }
 

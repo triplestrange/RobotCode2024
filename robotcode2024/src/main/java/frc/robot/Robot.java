@@ -39,8 +39,8 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private AutoMain m_autoMain;
-  private Vision m_vision;
+  private AutoMain m_autoMain;  
+  public Vision m_vision;
   private int i;
 
   /**
@@ -100,9 +100,8 @@ public class Robot extends LoggedRobot {
     i++;
     if (i % 10 == 0) {
       // m_robotContainer.m_robotDrive.updateSmartDashBoard();
-      m_robotContainer.m_shooter.updateSmartDashBoard();
-      // m_robotContainer.m_elevator.updateSmartDashBoard();
-      m_robotContainer.m_robotDrive.updateSmartDashBoard();
+      // m_robotContainer.m_shooter.updateSmartDashBoard();
+      m_robotContainer.m_elevator.updateSmartDashBoard();
       m_vision.updateSmartDashBoard();
 
     }
@@ -111,7 +110,6 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.m_robotDrive.zeroHeading();
 
   }
 

@@ -27,8 +27,6 @@ public class SwerveDrive extends SubsystemBase {
   public double rotationPreset = 0;
   public boolean presetEnabled = false;
 
-  public Field2d m_field = new Field2d();
-
   // Robot swerve modules
   private final SwerveModule m_frontLeft = new SwerveModule(CAN.FL_DRIVE,
       CAN.FL_STEER,
@@ -136,7 +134,6 @@ public class SwerveDrive extends SubsystemBase {
     // Update the odometry in the periodic block
     updateOdometry();
 
-    m_field.setRobotPose(getPose());
 
     // System.out.print("xSpeed: " + xAutoSpeed + ";\n ySpeed: " + yAutoSpeed + ";\n
     // rSpeed: " + rAutoSpeed);
@@ -224,7 +221,7 @@ public class SwerveDrive extends SubsystemBase {
   public void zeroHeading() {
     navX.reset();
     resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(0)));
-    m_field.setRobotPose(m_odometry.getEstimatedPosition());
+    m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
 
     gyroReset = true;
   }
@@ -308,6 +305,5 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("y", getPose().getTranslation().getY());
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", navX.getAngle());
-    SmartDashboard.putData("Field", m_field);
   }
 }
