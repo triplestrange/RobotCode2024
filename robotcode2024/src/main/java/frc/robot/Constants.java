@@ -36,7 +36,7 @@ public final class Constants {
     public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition groundIntakePos = new IntakePosition(0, -130);
     public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
-    public static final IntakePosition ampIntakePos = new IntakePosition(20, -100);
+    public static final IntakePosition ampIntakePos = new IntakePosition(27, -100);
 
     public static final double testPivotPos = -20;
 
@@ -169,11 +169,11 @@ public final class Constants {
     public final static double kMaxSpeedInchesPerSecond = 20;
     public final static double kMaxAccelerationInchesPerSecondSquared = 20;
 
-    public final static double maxHeight = 40;
+    public final static double maxHeight = 33;
     public final static double minHeight = 0;
     public final static double safeZone = 0;
 
-    public final static double elevPosConv = (1.25 * Math.PI) / 15;
+    public final static double elevPosConv = 33/101.5;
     public final static double kP = 0.4;
     public final static double kI = 0;
     public final static double kD = 0;

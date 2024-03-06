@@ -53,9 +53,7 @@ public class Shooter extends SubsystemBase {
 
         pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
 
-        lPivot.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
-        rPivot.follow(lPivot, false);
-
+        lPivot.setInverted(true);
         int smartMotionSlot = 0;
     }
 
@@ -67,20 +65,21 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveShooter(double motorPivotPower) {
-        if ((getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone)
-                && motorPivotPower > 0) {
-            motorPivotPower = 0;
-        }
-        if ((getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone)
-                && motorPivotPower < 0) {
-            motorPivotPower = 0;
-        }
+        // if ((getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone)
+        //         && motorPivotPower > 0) {
+        //     motorPivotPower = 0;
+        // }
+        // if ((getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone)
+        //         && motorPivotPower < 0) {
+        //     motorPivotPower = 0;
+        // }
 
         if (Math.abs(motorPivotPower) < 0.05) {
             shooterPIDEnabled = true;
         } else {
             pivotPower = motorPivotPower;
             lPivot.set(pivotPower);
+            rPivot.set(pivotPower);
             pivotSetpoint = getAngle();
             pivotController.reset(pivotSetpoint);
             shooterPIDEnabled = false;
@@ -108,7 +107,7 @@ public class Shooter extends SubsystemBase {
             pivotPower = 0;
         }
         lPivot.set(pivotPower);
-
+        rPivot.set(pivotPower);
     }
 
     public void updateSmartDashBoard() {

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +23,7 @@ import frc.robot.subsystems.intake.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.commands.DefaultDrive;
+import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
 
 /*
@@ -103,24 +106,27 @@ public class RobotContainer {
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));
 
-                JoystickButtons.dA.whileTrue(new RunCommand(() -> m_shoot.prepare(), m_shooter, m_flywheel));
-                JoystickButtons.dY
-                                .whileTrue(new RunCommand(() -> m_shoot.execute(), m_shooter, m_flywheel, m_conveyor));
-                JoystickButtons.dX.whileTrue(new RunCommand(() -> m_shoot.shoot(), m_shooter, m_flywheel, m_conveyor));
+                JoystickButtons.dA.onTrue(new RunCommand(() -> m_shoot.prepare(), m_shooter, m_flywheel));
+                JoystickButtons.dY.onTrue(new RunCommand(() -> m_shoot.execute(), m_shooter, m_flywheel, m_conveyor));
+                JoystickButtons.dX.onTrue(new RunCommand(() -> m_shoot.shoot(), m_shooter, m_flywheel, m_conveyor));
+                JoystickButtons.dB.whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot));
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
                                                 -0.5 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0.5 * JoystickButtons.m_operatorController.getRightX()),
+                                                0.2 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
                 JoystickButtons.opX.onTrue(new InstantCommand(
                                 () -> m_shooter.setShooterAngle(Constants.MechPositions.testPivotPos), m_shooter));
                 JoystickButtons.opB.onTrue(new InstantCommand(
                                 () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos), m_shooter));
-
+                JoystickButtons.opY.onTrue(new InstantCommand(
+                                () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                JoystickButtons.opA.onTrue(new InstantCommand(
+                                () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
                 // m_shooter.setDefaultCommand(new RunCommand(
                 // () -> m_shooter.moveShooter(
-                // -JoystickButtons.m_operatorController.getLeftX() * 0.3),
+                // -JoystickButtons.m_operatorController.getLeftX() * 0.2),
                 // m_shooter));
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));

@@ -63,7 +63,7 @@ public class Shoot {
 
     Rotation2d shootingRotation;
     double shootingAngle = 0;
-    Translation3d speakerPose3d = new Translation3d(0.3603998634, 5.6282082, 2.1326856);
+    Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.025);
 
     public Shoot(RobotContainer m_RobotContainer) {
         // Use addRequirements() here to declare subsystem dependencies.
@@ -73,25 +73,25 @@ public class Shoot {
 
     public void prepare() {
         if (isAllianceRed()) {
-            shootingRotation = new Translation2d(flipTranslation3d(speakerPose3d).getX(),
-                    flipTranslation3d(speakerPose3d).getY())
+            shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
+                    flipTranslation3d(speakerTranslation3d).getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
         }
 
-        shootingRotation = new Translation2d(speakerPose3d.getX(), speakerPose3d.getY())
+        shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                 .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
-        shootingRotation = new Translation2d(speakerPose3d.getX(), speakerPose3d.getY()) .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle().plus(new Rotation2d().fromDegrees(180));
+        shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY()) .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle().plus(new Rotation2d().fromDegrees(180));
 
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
         m_RobotContainer.m_flywheel.setFWSpeed(-5676);
 
-        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerPose3d.getZ(), Math.hypot(m_RobotContainer.m_robotDrive.getPose().getX(), m_RobotContainer.m_robotDrive.getPose().getY()))) - 90 + 32.5;
+        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math.hypot(m_RobotContainer.m_robotDrive.getPose().getX(), m_RobotContainer.m_robotDrive.getPose().getY()))) - 90 + 32.5;
 
     }
 
     public void execute() {
 
-        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerPose3d.getZ(), Math
+        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
                 .hypot(m_RobotContainer.m_robotDrive.getPose().getX(), m_RobotContainer.m_robotDrive.getPose().getY())))
                 - 90 + 32.5;
         m_RobotContainer.m_shooter.setShooterAngle(shootingAngle);

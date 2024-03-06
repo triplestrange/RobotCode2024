@@ -123,14 +123,14 @@ public class Elevator extends SubsystemBase {
             elevPIDEnabled = false;
         }
 
-        if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone)
-                && motorIntakePower > 0) {
-            motorIntakePower = 0;
-        }
-        if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone
-                && motorIntakePower < 0) {
-            motorIntakePower = 0;
-        }
+        // if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone)
+        //         && motorIntakePower > 0) {
+        //     motorIntakePower = 0;
+        // }
+        // if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone
+        //         && motorIntakePower < 0) {
+        //     motorIntakePower = 0;
+        // }
 
         if (Math.abs(motorIntakePower) < 0.05) {
             intakePIDEnabled = true;
@@ -197,7 +197,7 @@ public class Elevator extends SubsystemBase {
             intakePower = 0;
         }
 
-        // intake.set(intakePower);
+        intake.set(intakePower);
     }
 
     public void updateSmartDashBoard() {
