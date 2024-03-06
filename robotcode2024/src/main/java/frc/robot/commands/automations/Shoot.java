@@ -106,8 +106,8 @@ public class Shoot {
                     - 90 + 32.5;
         } else {
             shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
-                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX(),
-                            m_RobotContainer.m_robotDrive.getPose().getY())))
+                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX() - speakerTranslation3d.getX(),
+                            m_RobotContainer.m_robotDrive.getPose().getY() - speakerTranslation3d.getY())))
                     - 90 + 32.5;
         }
 
