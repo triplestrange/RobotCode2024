@@ -80,80 +80,82 @@ public class RobotContainer {
 
         private void configureButtonBindings() {
 
-                // Driver Controls
+                // Swerve Controls
+
                 m_robotDrive.setDefaultCommand(
 
-                                // swerve code
-                                // The left stick controls tran slation of the robot.
-                                // Turning is controlled by the X axis of the right stick.
-                                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
+                // swerve code
+                // The left stick controls tran slation of the robot.
+                // Turning is controlled by the X axis of the right stick.
+                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
 
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 
-                /*
-                 * new Trigger(() ->
-                 * Math.abs(JoystickButtons.m_driverController.getLeftTriggerAxis()) > 0.05)
-                 * .onTrue(new InstantCommand(() -> {
-                 * m_robotDrive.setPresetEnabled(true, -180.0);
-                 * }));
-                 * 
-                 * new Trigger(() ->
-                 * Math.abs(JoystickButtons.m_driverController.getRightTriggerAxis()) > 0.05)
-                 * .onTrue(new InstantCommand(() -> {
-                 * m_robotDrive.setPresetEnabled(true, 0);
-                 * 
-                 * }));
-                 */
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));
 
-                JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
-                                                .until(() -> m_shoot.hasNote).andThen(new WaitCommand(0.5)));
 
-                JoystickButtons.dB
-                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot));
+                // Elevator Controls
+
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
                                                 -0.5 * JoystickButtons.m_operatorController.getLeftY(),
                                                 0.2 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
-                JoystickButtons.opX.onTrue(new InstantCommand(
-                                () -> m_shooter.setShooterAngle(Constants.MechPositions.testPivotPos), m_shooter));
-                JoystickButtons.opB.onTrue(new InstantCommand(
-                                () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos), m_shooter));
                 JoystickButtons.opY.onTrue(new InstantCommand(
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
                 JoystickButtons.opA.onTrue(new InstantCommand(
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
-                // m_shooter.setDefaultCommand(new RunCommand(
-                // () -> m_shooter.moveShooter(
-                // -JoystickButtons.m_operatorController.getLeftX() * 0.2),
-                // m_shooter));
 
-                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel)); // m_climb.setDefaultCommand(new
-                                                                                                          // RunCommand(
+                // Climb Controls
 
-                // climb worky :D
-                // m_climb.setDefaultCommand(new RunCommand(
-                // () -> m_climb.moveClimb(
-                // -JoystickButtons.m_operatorController.getRightY(),
-                // -JoystickButtons.m_operatorController.getLeftY()),
-                // m_climb));
+                m_climb.setDefaultCommand(new RunCommand(
+                                () -> m_climb.moveClimb(
+                                -JoystickButtons.m_operatorController.getRightY(),
+                                -JoystickButtons.m_operatorController.getLeftY()),
+                                m_climb));
 
-                // Conveyor
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake));
+
+                // Pivot Controls
+
+                m_shooter.setDefaultCommand(new RunCommand(
+                                () -> m_shooter.moveShooter(
+                                -JoystickButtons.m_operatorController.getLeftX() * 0.2),
+                                m_shooter));
+
+                JoystickButtons.opX.onTrue(new InstantCommand(
+                                () -> m_shooter.setShooterAngle(Constants.MechPositions.testPivotPos), m_shooter));
+                JoystickButtons.opB.onTrue(new InstantCommand(
+                                () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos), m_shooter));
+
+                // Intake and Conveyor Controls
+
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
+
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
+
                 m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor));
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor));
+
                 m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
 
-                // shooting
 
+                // Fly Wheels controls
+
+                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
+                
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
+
+                // Shooting Automations
+
+                JoystickButtons.dX.whileTrue(
+                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
+                                                .until(() -> m_shoot.hasNote).andThen(new WaitCommand(0.5)));
+                // Amp Automations
+
+                JoystickButtons.dB
+                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot));
         }
 
         /**
