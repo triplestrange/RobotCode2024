@@ -117,25 +117,26 @@ public class Vision extends SubsystemBase {
                 }
             }
 
-        }   if (poseRight.isPresent()) {
-                if (poseRight.get().estimatedPose.getX() > 0 && 
-                poseRight.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
-                poseRight.get().estimatedPose.getY() > 0 && 
-                poseRight.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
-                    if (
-                        (Math.sqrt(
-                        Math.pow(lastRightTranslation.getX() - poseRight.get().estimatedPose.getX(), 2) + 
-                        Math.pow(lastRightTranslation.getY() - poseRight.get().estimatedPose.getY(), 2))
+        } //  if (poseRight.isPresent()) {
+        //         if (poseRight.get().estimatedPose.getX() > 0 && 
+        //         poseRight.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
+        //         poseRight.get().estimatedPose.getY() > 0 && 
+        //         poseRight.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
+        //             if (
+        //                 (Math.sqrt(
+        //                 Math.pow(lastRightTranslation.getX() - poseRight.get().estimatedPose.getX(), 2) + 
+        //                 Math.pow(lastRightTranslation.getY() - poseRight.get().estimatedPose.getY(), 2))
 
-                        / (lastRightTime - poseRight.get().timestampSeconds)) 
-                        <= Constants.SwerveConstants.kMaxSpeedMetersPerSecond)   
-                    {
-                    m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
-                    m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
-                    }
-                }
+        //                 / (lastRightTime - poseRight.get().timestampSeconds)) 
+        //                 <= Constants.SwerveConstants.kMaxSpeedMetersPerSecond)   
+        //             {
+        //             m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
+        //             m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
+        //             }
+        //         }
 
-            }   if (poseShooter.isPresent()) {
+        //     }   
+                if (poseShooter.isPresent()) {
                     if (poseShooter.get().estimatedPose.getX() > 0 && 
                     poseShooter.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
                     poseShooter.get().estimatedPose.getY() > 0 && 

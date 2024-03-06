@@ -102,7 +102,7 @@ public class Robot extends LoggedRobot {
       // m_robotContainer.m_robotDrive.updateSmartDashBoard();
       // m_robotContainer.m_shooter.updateSmartDashBoard();
       m_robotContainer.m_elevator.updateSmartDashBoard();
-      // m_vision.updateSmartDashBoard();
+      m_vision.updateSmartDashBoard();
 
     }
   }

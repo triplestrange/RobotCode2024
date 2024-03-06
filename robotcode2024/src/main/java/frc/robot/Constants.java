@@ -238,7 +238,7 @@ public final class Constants {
     public static final HolonomicPathFollowerConfig HOLONOMIC_PATH_FOLLOWER_CONFIG = new HolonomicPathFollowerConfig(
         new PIDConstants(kPXTranslationController, 0.0, 0.0), // Translation PID constants
         new PIDConstants(kPThetaController, 0.0, 0.0), // Rotation PID constants
-        Constants.SwerveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
+        Constants.AutoAlign.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
         0.4, // Drive base radius in meters. Distance from robot center to furthest module.
         new ReplanningConfig(enableInitialReplanning,
             enableDynamicReplanning,
@@ -252,7 +252,7 @@ public final class Constants {
     public static final double kMaxAccelerationMetersPerSecondSquared = 2;
 
     public static final PathConstraints constraints = new PathConstraints(
-        3.0, 4.0,
+        1.0, 2.0,
         Units.degreesToRadians(540), Units.degreesToRadians(720));
   }
 
