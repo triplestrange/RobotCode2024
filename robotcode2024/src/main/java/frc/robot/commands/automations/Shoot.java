@@ -38,6 +38,7 @@ public class Shoot {
      **/
 
     RobotContainer m_RobotContainer;
+    public DriveTo driveTo;
 
     // these are the points used for stage
     // https://imgur.com/a/OeuetIS
@@ -59,6 +60,8 @@ public class Shoot {
 
     Boolean canShoot;
 
+    public Boolean hasNote;
+
     // variables for shooting
 
     Rotation2d shootingRotation;
@@ -69,6 +72,13 @@ public class Shoot {
         // Use addRequirements() here to declare subsystem dependencies.
 
         this.m_RobotContainer = m_RobotContainer;
+
+        driveTo = new DriveTo(new Pose2d(
+                speakerTranslation3d.getX() + Units.inchesToMeters(16) + Units.inchesToMeters(36.241382),
+                speakerTranslation3d.getY(), new Rotation2d().fromDegrees(0)), 0, 0, m_RobotContainer.m_robotDrive,
+                m_RobotContainer.m_robot);
+
+        hasNote = m_RobotContainer.m_conveyor.getConveyorSensor();
     }
 
     public void prepare() {
@@ -80,28 +90,53 @@ public class Shoot {
 
         shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                 .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
-        shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY()) .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle().plus(new Rotation2d().fromDegrees(180));
+        shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
+                .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
+                .plus(new Rotation2d().fromDegrees(180));
 
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
         m_RobotContainer.m_flywheel.setFWSpeed(-5676);
 
-        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math.hypot(m_RobotContainer.m_robotDrive.getPose().getX(), m_RobotContainer.m_robotDrive.getPose().getY()))) - 90 + 32.5;
+        if (isAllianceRed()) {
+            shootingAngle = Units.radiansToDegrees(Math.atan2(flipTranslation3d(speakerTranslation3d).getZ(), Math
+                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX()
+                            - flipTranslation3d(speakerTranslation3d).getX(),
+                            m_RobotContainer.m_robotDrive.getPose().getY()
+                                    - flipTranslation3d(speakerTranslation3d).getY())))
+                    - 90 + 32.5;
+        } else {
+            shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
+                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX(),
+                            m_RobotContainer.m_robotDrive.getPose().getY())))
+                    - 90 + 32.5;
+        }
 
     }
 
     public void execute() {
 
-        shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
-                .hypot(m_RobotContainer.m_robotDrive.getPose().getX(), m_RobotContainer.m_robotDrive.getPose().getY())))
-                - 90 + 32.5;
         m_RobotContainer.m_shooter.setShooterAngle(shootingAngle);
     }
 
     public void shoot() {
-        if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()) {
+        if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
 
             m_RobotContainer.m_conveyor.runConvIn();
         }
+    }
+
+    public void autoShoot() {
+        prepare();
+
+        if (swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            driveTo.cancel();
+            execute();
+            shoot();
+        } else {
+            driveTo.schedule();
+        }
+
     }
 
     public Boolean swerveCheck(Pose2d robotPose2d) {
@@ -135,7 +170,7 @@ public class Shoot {
             lowerY = y * (robotPose2dInches.getX() - c.getX()) + c.getY();
         }
 
-        canShoot = (lowerY >= robotPose2dInches.getY()) && (robotPose2dInches.getY() >= upperY);
+        canShoot = ((lowerY > robotPose2dInches.getY()) || (robotPose2dInches.getY() > upperY));
 
         return canShoot;
     }
@@ -144,8 +179,12 @@ public class Shoot {
         return Math.abs(m_RobotContainer.m_shooter.getAngle() - shootingAngle) < 0.1;
     }
 
+    public Boolean rotationCheck(Pose2d robotPose2d) {
+        return robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 3;
+    }
+
     public Boolean flyWheelCheck() {
-        return Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-5676)) < 100;
+        return Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-5676)) < 500;
     }
 
     public Pose2d flipPose(Pose2d pose) {

@@ -87,13 +87,13 @@ public class FlyWheel extends SubsystemBase {
 
     public void setFWSpeed(double RPM) {
         lFlyWheelSetpoint = RPM;
-        rFlyWheelSetpoint = -(RPM - Constants.ShooterConstants.rotationalSpeed);
+        rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
 
     }
 
     public void flyWheelOn() {
         lFlyWheelSetpoint = -900;
-        rFlyWheelSetpoint = -(900 - Constants.ShooterConstants.rotationalSpeed);
+        rFlyWheelSetpoint = 900;
     }
 
     public void flyWheelOff() {

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.Optional;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -12,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -111,6 +114,14 @@ public class SwerveDrive extends SubsystemBase {
     );
   }
 
+  public Boolean isRedAlliance() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
+    }
+    return false;
+  }
+
   /**
    * Returns the angle of the robot as a Rotation2d.
    *
@@ -134,7 +145,6 @@ public class SwerveDrive extends SubsystemBase {
     // Update the odometry in the periodic block
     updateOdometry();
     updateChassisSpeeds();
-
 
     // System.out.print("xSpeed: " + xAutoSpeed + ";\n ySpeed: " + yAutoSpeed + ";\n
     // rSpeed: " + rAutoSpeed);
@@ -220,9 +230,16 @@ public class SwerveDrive extends SubsystemBase {
    * Zeroes the heading of the robot.
    */
   public void zeroHeading() {
+
     navX.reset();
-    resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(0)));
-    m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
+
+    if (isRedAlliance()) {
+      resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(180)));
+      m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
+    } else {
+      resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(0)));
+      m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
+    }
 
     gyroReset = true;
   }

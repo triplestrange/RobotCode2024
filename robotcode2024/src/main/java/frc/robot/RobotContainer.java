@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.XboxController;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
@@ -34,7 +36,7 @@ import frc.robot.commands.automations.Shoot;
  */
 public class RobotContainer {
         // The robot's subsystems
-        private final Robot m_robot;
+        public final Robot m_robot;
         public final SwerveDrive m_robotDrive;
         public final Elevator m_elevator;
         public final Intake m_intake;
@@ -106,10 +108,12 @@ public class RobotContainer {
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));
 
-                JoystickButtons.dA.onTrue(new RunCommand(() -> m_shoot.prepare(), m_shooter, m_flywheel));
-                JoystickButtons.dY.onTrue(new RunCommand(() -> m_shoot.execute(), m_shooter, m_flywheel, m_conveyor));
-                JoystickButtons.dX.onTrue(new RunCommand(() -> m_shoot.shoot(), m_shooter, m_flywheel, m_conveyor));
-                JoystickButtons.dB.whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot));
+                JoystickButtons.dX.whileTrue(
+                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
+                                                .until(() -> m_shoot.hasNote).andThen(new WaitCommand(0.5)));
+
+                JoystickButtons.dB
+                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot));
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
                                                 -0.5 * JoystickButtons.m_operatorController.getLeftY(),
@@ -130,9 +134,10 @@ public class RobotContainer {
                 // m_shooter));
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));                // m_climb.setDefaultCommand(new RunCommand(
-                
-                //climb worky :D
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel)); // m_climb.setDefaultCommand(new
+                                                                                                          // RunCommand(
+
+                // climb worky :D
                 // m_climb.setDefaultCommand(new RunCommand(
                 // () -> m_climb.moveClimb(
                 // -JoystickButtons.m_operatorController.getRightY(),
@@ -141,9 +146,9 @@ public class RobotContainer {
 
                 // Conveyor
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake));
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(),m_intake));
-                 m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(),m_conveyor));
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake));
+                m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor));
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor));
                 m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
 
