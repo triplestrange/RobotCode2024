@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +21,8 @@ import java.util.Optional;
 import org.photonvision.*;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import frc.robot.Constants;
+import frc.robot.Constants.SwerveConstants;;
 public class Vision extends SubsystemBase {
 
     private SwerveDrive m_SwerveDrive;
@@ -44,6 +47,12 @@ public class Vision extends SubsystemBase {
     public Optional<EstimatedRobotPose> poseShooter;
     public Optional<EstimatedRobotPose> poseIntake;
 
+    public Translation2d lastLeftTranslation;
+    public Translation2d lastRightTranslation;
+
+    public double lastLeftTime;
+    public double lastRightTime;
+
     public Field2d m_field = new Field2d();
 
 
@@ -56,7 +65,7 @@ public class Vision extends SubsystemBase {
 
     visionLeft = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camLeft, new Transform3d(new Translation3d(0, -0.32385, 0.5969), new Rotation3d(0,-Math.PI/4,Math.PI/2)));
     visionRight = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camRight, new Transform3d(new Translation3d(0, 0.32385, 0.5969), new Rotation3d(0,-Math.PI/4, -Math.PI/2)));
-    visionShooter = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camShooter, new Transform3d(new Translation3d(0, 0, 0.66), new Rotation3d(0, 0, Math.PI)));
+    visionShooter = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camShooter, new Transform3d(new Translation3d(0, 0, 0.66), new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI)));
 
         this.m_SwerveDrive = m_SwerveDrive;
 
@@ -73,23 +82,63 @@ public class Vision extends SubsystemBase {
         poseRight = getEstimatedPose(visionRight, m_SwerveDrive.getPose());
         poseShooter = getEstimatedPose(visionShooter, m_SwerveDrive.getPose());
 
-        // if (poseLeft.isPresent() && poseLeft.get().estimatedPose.getX() > 0 && poseLeft.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength())  {
-        //     m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(), poseLeft.get().timestampSeconds);
-        //     m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
+        if (poseLeft.isPresent()) {
+            if (poseLeft.get().estimatedPose.getX() > 0 && 
+            poseLeft.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
+            poseLeft.get().estimatedPose.getY() > 0 && 
+            poseLeft.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
+                if (
+                    (Math.sqrt(
+                    Math.pow(lastLeftTranslation.getX() - poseLeft.get().estimatedPose.getX(), 2) + 
+                    Math.pow(lastLeftTranslation.getY() - poseLeft.get().estimatedPose.getY(), 2))
 
-        // }
+                    / (lastLeftTime - poseLeft.get().timestampSeconds)) 
+                    <= 20)   
+                {
+                m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(), poseLeft.get().timestampSeconds);
+                m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
+                }
+            }
 
-        // if (poseRight.isPresent() && poseRight.get().estimatedPose.getX() > 0 && poseRight.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength())  {
-        //     m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
-        //     m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
+        }
 
-        // }
+        if (poseRight.isPresent()) {
+            if (poseRight.get().estimatedPose.getX() > 0 && 
+            poseRight.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
+            poseRight.get().estimatedPose.getY() > 0 && 
+            poseRight.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
+                if (
+                    (Math.sqrt(
+                    Math.pow(lastRightTranslation.getX() - poseRight.get().estimatedPose.getX(), 2) + 
+                    Math.pow(lastRightTranslation.getY() - poseRight.get().estimatedPose.getY(), 2))
+
+                    / (lastRightTime - poseRight.get().timestampSeconds)) 
+                    <= 20)   
+                {
+
+                    m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
+                    m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
+                    }
+                }
+
+            } 
 
         if (poseShooter.isPresent() && poseShooter.get().estimatedPose.getX() > 0 && poseShooter.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength())  {
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.get().estimatedPose.toPose2d(), poseShooter.get().timestampSeconds);
             m_field.getObject("poseShooter").setPose(poseShooter.get().estimatedPose.toPose2d());
 
         }
+
+        if (poseLeft.isPresent())  {
+            lastLeftTranslation = new Translation2d(poseLeft.get().estimatedPose.getY(), poseLeft.get().estimatedPose.getY());
+            lastLeftTime = poseLeft.get().timestampSeconds;
+        }
+
+        if (poseRight.isPresent())  {
+            lastRightTranslation = new Translation2d(poseRight.get().estimatedPose.getY(), poseRight.get().estimatedPose.getY());
+            lastRightTime = poseRight.get().timestampSeconds;
+        }
+
         m_field.setRobotPose(m_SwerveDrive.getPose());
 
 

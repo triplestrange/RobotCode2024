@@ -37,6 +37,7 @@ public final class Constants {
     public static final IntakePosition groundIntakePos = new IntakePosition(0, -130);
     public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
     public static final IntakePosition ampIntakePos = new IntakePosition(27, -100);
+    public static final IntakePosition trapIntakePos = new IntakePosition(33, -100);
 
     public static final double testPivotPos = -20;
 

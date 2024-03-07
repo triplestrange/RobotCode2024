@@ -4,27 +4,27 @@
     {
       "anchor": {
         "x": 1.78,
-        "y": 7.089313835769361
+        "y": 6.69250063500127
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.78,
-        "y": 6.999313835769361
+        "y": 6.60250063500127
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
         "x": 1.78,
-        "y": 7.658100801914721
+        "y": 7.301309278544483
       },
       "prevControl": {
         "x": 1.78,
-        "y": 7.656990929669264
+        "y": 7.300199406299026
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     }
   ],
@@ -32,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "goToAmpPos",
+      "name": "amp",
       "waypointRelativePos": 0.0,
       "command": {
         "type": "sequential",
@@ -50,7 +50,7 @@
     },
     {
       "name": "runIntake",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0,
       "command": {
         "type": "sequential",
         "data": {

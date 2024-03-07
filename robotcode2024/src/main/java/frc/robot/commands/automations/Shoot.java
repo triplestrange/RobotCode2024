@@ -87,13 +87,11 @@ public class Shoot {
                     flipTranslation3d(speakerTranslation3d).getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
         }
-
-        shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
-                .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
+        else {
         shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                 .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
                 .plus(new Rotation2d().fromDegrees(180));
-
+        }
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
         m_RobotContainer.m_flywheel.setFWSpeed(-5676);
 
