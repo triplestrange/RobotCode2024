@@ -22,10 +22,12 @@ import org.photonvision.*;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import frc.robot.Constants;
-import frc.robot.Constants.SwerveConstants;;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.automations.Shoot;;
 public class Vision extends SubsystemBase {
 
     private SwerveDrive m_SwerveDrive;
+    private Shoot m_Shoot;
 
     // Left and Right are on the center
     // Front and Back are close to swerve encoders
@@ -57,7 +59,7 @@ public class Vision extends SubsystemBase {
 
 
 
-    public Vision(SwerveDrive m_SwerveDrive) {
+    public Vision(SwerveDrive m_SwerveDrive, Shoot m_shoot) {
         camLeft = new PhotonCamera("camLeft");
         camRight = new PhotonCamera("camRight");
         camShooter = new PhotonCamera("camShooter");
@@ -68,6 +70,7 @@ public class Vision extends SubsystemBase {
     visionShooter = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camShooter, new Transform3d(new Translation3d(0, 0, 0.66), new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI)));
 
         this.m_SwerveDrive = m_SwerveDrive;
+        this.m_Shoot = m_shoot;
 
     }
 
@@ -82,48 +85,49 @@ public class Vision extends SubsystemBase {
         poseRight = getEstimatedPose(visionRight, m_SwerveDrive.getPose());
         poseShooter = getEstimatedPose(visionShooter, m_SwerveDrive.getPose());
 
-        if (poseLeft.isPresent()) {
-            if (poseLeft.get().estimatedPose.getX() > 0 && 
-            poseLeft.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
-            poseLeft.get().estimatedPose.getY() > 0 && 
-            poseLeft.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
-                if (
-                    (Math.sqrt(
-                    Math.pow(lastLeftTranslation.getX() - poseLeft.get().estimatedPose.getX(), 2) + 
-                    Math.pow(lastLeftTranslation.getY() - poseLeft.get().estimatedPose.getY(), 2))
+        // if (poseLeft.isPresent()) {
+        //     if (poseLeft.get().estimatedPose.getX() > 0 && 
+        //     poseLeft.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
+        //     poseLeft.get().estimatedPose.getY() > 0 && 
+        //     poseLeft.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
+        //         if (
+        //             (Math.sqrt(
+        //             Math.pow(lastLeftTranslation.getX() - poseLeft.get().estimatedPose.getX(), 2) + 
+        //             Math.pow(lastLeftTranslation.getY() - poseLeft.get().estimatedPose.getY(), 2))
 
-                    / (lastLeftTime - poseLeft.get().timestampSeconds)) 
-                    <= 20)   
-                {
-                m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(), poseLeft.get().timestampSeconds);
-                m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
-                }
-            }
+        //             / (lastLeftTime - poseLeft.get().timestampSeconds)) 
+        //             <= 20)   
+        //         {
+        //         m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(), poseLeft.get().timestampSeconds);
+        //         m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
+        //         }
+        //     }
 
-        }
+        // }
 
-        if (poseRight.isPresent()) {
-            if (poseRight.get().estimatedPose.getX() > 0 && 
-            poseRight.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
-            poseRight.get().estimatedPose.getY() > 0 && 
-            poseRight.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
-                if (
-                    (Math.sqrt(
-                    Math.pow(lastRightTranslation.getX() - poseRight.get().estimatedPose.getX(), 2) + 
-                    Math.pow(lastRightTranslation.getY() - poseRight.get().estimatedPose.getY(), 2))
+        // if (poseRight.isPresent()) {
+        //     if (poseRight.get().estimatedPose.getX() > 0 && 
+        //     poseRight.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength() && 
+        //     poseRight.get().estimatedPose.getY() > 0 && 
+        //     poseRight.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth())  {
+        //         if (
+        //             (Math.sqrt(
+        //             Math.pow(lastRightTranslation.getX() - poseRight.get().estimatedPose.getX(), 2) + 
+        //             Math.pow(lastRightTranslation.getY() - poseRight.get().estimatedPose.getY(), 2))
 
-                    / (lastRightTime - poseRight.get().timestampSeconds)) 
-                    <= 20)   
-                {
+        //             / (lastRightTime - poseRight.get().timestampSeconds)) 
+        //             <= 20)   
+        //         {
 
-                    m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
-                    m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
-                    }
-                }
+        //             m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
+        //             m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
+        //             }
+        //         }
 
-            } 
+        //     } 
 
         if (poseShooter.isPresent() && poseShooter.get().estimatedPose.getX() > 0 && poseShooter.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength())  {
+            if (new Translation2d(poseShooter.get().estimatedPose.getTranslation().getX(), poseShooter.get().estimatedPose.getY() ).minus(new Translation2d(m_Shoot.speakerTranslation3d.getX(), m_Shoot.speakerTranslation3d.getY())).getNorm() <= 5)
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.get().estimatedPose.toPose2d(), poseShooter.get().timestampSeconds);
             m_field.getObject("poseShooter").setPose(poseShooter.get().estimatedPose.toPose2d());
 

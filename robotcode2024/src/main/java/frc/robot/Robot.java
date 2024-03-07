@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutoMain;
+import frc.robot.commands.automations.Shoot;
 import frc.robot.subsystems.swerve.Vision;
 
 /**
@@ -73,7 +74,7 @@ public class Robot extends LoggedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
-    m_vision = new Vision(m_robotContainer.m_robotDrive);
+    m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot);
     m_robotContainer.m_robotDrive.zeroHeading();
   }
 
@@ -103,6 +104,9 @@ public class Robot extends LoggedRobot {
       // m_robotContainer.m_shooter.updateSmartDashBoard();
       m_robotContainer.m_elevator.updateSmartDashBoard();
       m_vision.updateSmartDashBoard();
+      m_robotContainer.m_shoot.updateSmartDashBoard();
+      m_robotContainer.m_flywheel.updateSmartDashBoard();
+      
 
     }
   }

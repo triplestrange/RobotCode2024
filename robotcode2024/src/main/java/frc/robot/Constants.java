@@ -34,7 +34,7 @@ public final class Constants {
   public static final class MechPositions {
     // use for all mechanism pre programmed positions
     public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
-    public static final IntakePosition groundIntakePos = new IntakePosition(0, -130);
+    public static final IntakePosition groundIntakePos = new IntakePosition(0, -132);
     public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
     public static final IntakePosition ampIntakePos = new IntakePosition(27, -100);
     public static final IntakePosition trapIntakePos = new IntakePosition(33, -100);
@@ -168,7 +168,7 @@ public final class Constants {
 
   public static final class ElevatorConstants {
     public final static double kMaxSpeedInchesPerSecond = 20;
-    public final static double kMaxAccelerationInchesPerSecondSquared = 20;
+    public final static double kMaxAccelerationInchesPerSecondSquared = 100;
 
     public final static double maxHeight = 33;
     public final static double minHeight = 0;

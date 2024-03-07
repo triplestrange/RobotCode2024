@@ -43,10 +43,7 @@ public class Elevator extends SubsystemBase {
 
         elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
         intake = new CANSparkMax(Constants.CAN.IPIVOT, MotorType.kBrushless);
-
-        elev.restoreFactoryDefaults();
-        intake.restoreFactoryDefaults();
-
+        
         intake.setInverted(true);
         elev.setInverted(false);
 

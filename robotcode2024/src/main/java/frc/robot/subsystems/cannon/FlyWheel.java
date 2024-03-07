@@ -111,7 +111,8 @@ public class FlyWheel extends SubsystemBase {
 
     public void updateSmartDashBoard() {
 
-        SmartDashboard.putNumber("rpm", lFlyWheel.getEncoder().getVelocity());
+        SmartDashboard.putNumber("left rpm", lFlyWheel.getEncoder().getVelocity());
+        SmartDashboard.putNumber("right rpm", rFlyWheel.getEncoder().getVelocity());
 
     }
 

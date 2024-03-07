@@ -98,10 +98,11 @@ public class RobotContainer {
 
                 // Elevator Controls
 
-                JoystickButtons.opY.onTrue(new InstantCommand(
-                                () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
                 JoystickButtons.opA.onTrue(new InstantCommand(
+                                () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                JoystickButtons.opY.onTrue(new InstantCommand(
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
+                JoystickButtons.opDpadD.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
 
                 // Climb Controls
 
@@ -109,7 +110,7 @@ public class RobotContainer {
                                 () -> m_climb.moveClimb(
                                                 0.2 * JoystickButtons.m_operatorController.getLeftY(),
                                                 0.2 * JoystickButtons.m_operatorController.getLeftY()),
-                                m_elevator));
+                                m_climb));
 
                 JoystickButtons.opX.whileTrue(new RunCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos), m_shooter).alongWith(new RunCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.trapIntakePos))));
 
@@ -144,11 +145,11 @@ public class RobotContainer {
 
                 JoystickButtons.dX.whileTrue(
                                 new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
-                                                .until(() -> m_shoot.hasNote).andThen(new WaitCommand(0.5)));
+                                                .until(() -> m_shoot.hasNote).andThen(new WaitCommand(0.5))).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("test"), 0, m_robotDrive, m_robot));
+                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot));
         }
 
         /**
