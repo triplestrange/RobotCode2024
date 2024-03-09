@@ -11,9 +11,8 @@ import frc.robot.subsystems.cannon.Conveyor;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
-public class NoteToIntake extends Command {
+public class GroundToIntake extends Command {
     private Intake m_Intake;
-    private Conveyor m_Conveyor;
 
     /**
      * Creates a new Drive.
@@ -21,10 +20,9 @@ public class NoteToIntake extends Command {
      * normal = 2.5
      * slow = 0.75
      */
-    public NoteToIntake(Intake m_Intake, Conveyor m_Conveyor) {
-        addRequirements(m_Intake, m_Conveyor);
+    public GroundToIntake(Intake m_Intake) {
+        addRequirements(m_Intake);
         this.m_Intake = m_Intake;
-        this.m_Conveyor = m_Conveyor;
 
     }
 

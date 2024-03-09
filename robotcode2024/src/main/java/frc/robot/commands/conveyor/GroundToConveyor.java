@@ -12,23 +12,26 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.cannon.Shooter;
 
-public class IntakeToConveyor extends Command {
+public class GroundToConveyor extends Command {
     private Conveyor m_Conveyor;
+    private Intake m_Intake;
     /**
      * Creates a new Drive.
      * 
      * normal = 2.5
      * slow = 0.75
      */
-    public IntakeToConveyor(Conveyor m_Conveyor) {
+    public GroundToConveyor(Conveyor m_Conveyor, Intake m_Intake) {
         addRequirements(m_Conveyor);
         this.m_Conveyor = m_Conveyor;
+        this.m_Intake = m_Intake;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         m_Conveyor.runConvIn();
+        m_Intake.runIntake();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -40,6 +43,7 @@ public class IntakeToConveyor extends Command {
     @Override
     public void end(boolean interrupted) {
         m_Conveyor.conveyorOff();
+        m_Intake.intakeOff();
     }
 
     // Returns true when the command should end.
