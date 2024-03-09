@@ -1,0 +1,85 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7027864796470336,
+      "y": 4.422592169258413
+    },
+    "rotation": -58.967291823677364
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Bottom Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Bottom Travel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Eighth Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "8th Note to Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker to 7th"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Seventh Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "7th to Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
