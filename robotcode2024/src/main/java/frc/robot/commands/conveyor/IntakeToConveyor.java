@@ -23,7 +23,7 @@ public class IntakeToConveyor extends Command {
      * normal = 2.5
      * slow = 0.75
      */
-    public IntakeToConveyor(Intake m_Intake, Conveyor m_Conveyor, Shooter m_Shooter) {
+    public IntakeToConveyor(Intake m_Intake, Conveyor m_Conveyor) {
         addRequirements(m_Intake, m_Conveyor, m_Shooter);
         this.m_Intake = m_Intake;
         this.m_Conveyor = m_Conveyor;

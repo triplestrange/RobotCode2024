@@ -39,7 +39,7 @@ public final class Constants {
     public static final IntakePosition ampIntakePos = new IntakePosition(27, -100);
     public static final IntakePosition trapIntakePos = new IntakePosition(33, -100);
 
-    public static final double testPivotPos = -20;
+    public static final double clearancePivotPos = -20;
 
     public static final double underChainPivotPos = -45;
     public static final double climbPivotPos = 0;

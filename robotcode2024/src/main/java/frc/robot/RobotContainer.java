@@ -47,7 +47,7 @@ public class RobotContainer {
         public final Shoot m_shoot;
 
         // private final SendableChooser<Command> choose;
-        // public final AutoMain m_Autos;
+        public final AutoMain m_Autos;
 
         // The driver's controller
         /**
@@ -62,6 +62,7 @@ public class RobotContainer {
                 m_climb = new Climb();
                 m_conveyor = new Conveyor();
                 m_flywheel = new FlyWheel();
+                m_Autos = new AutoMain(this);
                 m_shoot = new Shoot(this);
 
                 configureButtonBindings();
@@ -116,7 +117,7 @@ public class RobotContainer {
                                                 0.2 * JoystickButtons.m_operatorController.getLeftY()),
                                 m_climb));
 
-                JoystickButtons.opX.whileTrue(new RunCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos), m_shooter).alongWith(new RunCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.trapIntakePos))));
+                JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)).alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.trapIntakePos))));
 
 
                 // Pivot Controls
@@ -127,33 +128,34 @@ public class RobotContainer {
                 //                 m_shooter));
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
-                                () -> m_shooter.setShooterAngle(Constants.MechPositions.testPivotPos), m_shooter));
+                                () -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
                 // Intake and Conveyor Controls
 
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
+                JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).alongWith(new InstantCommand(() -> m_conveyor.runConvIn())).andThen(new InstantCommand(() -> m_intake.intakeOff())));
 
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
+                JoystickButtons.oplBump.whileTrue(new InstantCommand(() -> m_intake.runOutake()).alongWith(new InstantCommand(() -> m_conveyor.runConvOut())).andThen(new InstantCommand(() -> m_conveyor.conveyorOff())));
+                
+                // m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff()));
 
-                m_intake.setDefaultCommand(new RunCommand(() -> m_intake.intakeOff(), m_intake));
-
-                m_conveyor.setDefaultCommand(new RunCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
+                // m_conveyor.setDefaultCommand(new InstantCommand(() -> m_conveyor.conveyorOff()));
 
 
                 // Fly Wheels controls
 
-                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676), m_flywheel));
+                JoystickButtons.drBump.whileTrue(new InstantCommand(() -> m_flywheel.setFWSpeed(-5676)));
                 
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
+                m_flywheel.setDefaultCommand(new InstantCommand(() -> m_flywheel.flyWheelOff()));
 
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
                                 new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
-                                                .until(() -> m_shoot.hasNote).andThen(new WaitCommand(0.5))).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
+                                                .until(() -> !m_shoot.hasNote).andThen(new WaitCommand(0.5))).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot));
+                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot).alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
+                                        Constants.MechPositions.ampIntakePos))));
         }
 
         /**

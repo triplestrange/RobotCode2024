@@ -40,7 +40,6 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private AutoMain m_autoMain;  
   public Vision m_vision;
   private int i;
 
@@ -143,7 +142,7 @@ public class Robot extends LoggedRobot {
     }
     m_robotContainer.m_robotDrive.m_odometry
         .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
-    m_autonomousCommand = m_autoMain.getAutoChooser();
+    m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
