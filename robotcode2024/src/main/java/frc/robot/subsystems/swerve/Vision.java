@@ -116,8 +116,8 @@ public class Vision extends SubsystemBase {
         }
 
         if (poseRight.isPresent() && isTargetCloseEnough(poseRight))  {
-        m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
-        m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
+            m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
+            m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
         }
 
         if (poseIntake.isPresent() && isTargetCloseEnough(poseIntake))  {
