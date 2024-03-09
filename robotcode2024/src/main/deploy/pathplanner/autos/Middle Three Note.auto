@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4202091506034866,
-      "y": 3.419590024365234
+      "x": 1.3244815332223259,
+      "y": 5.5406218543918575
     },
     "rotation": 0
   },
@@ -15,12 +15,6 @@
           "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Middle One Travel"
-                }
-              },
               {
                 "type": "named",
                 "data": {

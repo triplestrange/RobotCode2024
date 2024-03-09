@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4202091506034866,
-      "y": 3.419590024365234
+      "x": 1.2955613411226825,
+      "y": 5.549113820449863
     },
     "rotation": 0
   },
@@ -16,9 +16,15 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "shoot"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle One Travel"
+                  "pathName": "Second Note 2"
                 }
               },
               {
@@ -42,13 +48,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Second Note"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "shoot"
+                  "pathName": "Middle Three Travel"
                 }
               },
               {
