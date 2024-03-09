@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.111160087875997,
-        "y": 6.99
+        "x": 2.5890635059198344,
+        "y": 6.9762268452716825
       },
       "isLocked": false,
       "linkedName": null
@@ -23,22 +23,6 @@
         "x": 2.5484404718020977,
         "y": 6.99
       },
-      "nextControl": {
-        "x": 2.531559528197902,
-        "y": 6.99
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.8,
-        "y": 6.990623147912962
-      },
-      "prevControl": {
-        "x": 2.5899269498984885,
-        "y": 6.990623147912962
-      },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
@@ -46,7 +30,12 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.0,
+      "rotationDegrees": 0,
+      "rotateFast": true
+    },
+    {
+      "waypointRelativePos": 0.0,
       "rotationDegrees": 0,
       "rotateFast": true
     }
@@ -81,28 +70,11 @@
           ]
         }
       }
-    },
-    {
-      "name": "intakeOff",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intakeOff"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },

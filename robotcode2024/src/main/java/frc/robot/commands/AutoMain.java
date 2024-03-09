@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import java.lang.constant.Constable;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -25,11 +23,12 @@ public class AutoMain extends Command {
                 // Class Variables
                 this.m_robotContainer = m_robotContainer;
 
+                registerCommands();
+
                 autoChooser = AutoBuilder.buildAutoChooser();
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
-                registerCommands();
 
         }
 
@@ -52,12 +51,12 @@ public class AutoMain extends Command {
                 // Conveyor Commands
                 NamedCommands.registerCommand("conveyorOut", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvOut()));
 
-                NamedCommands.registerCommand("conveyorIn", new InstantCommand(new IntakeToConveyor(m_robotContainer.m_intake, m_robotContainer.m_conveyor)));
+                NamedCommands.registerCommand("conveyorIn", new IntakeToConveyor(m_robotContainer.m_intake, m_robotContainer.m_conveyor));
 
                 NamedCommands.registerCommand("conveyorOff", new InstantCommand(() -> m_robotContainer.m_conveyor.conveyorOff()));
-                NamedComm
+                
                 // Shooter
-                NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.shoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_conveyor, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_shoot.hasNote).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
+                NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_conveyor, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_shoot.hasNote).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
         }
 
         public Command getAutoChooser() {

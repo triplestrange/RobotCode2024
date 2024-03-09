@@ -47,7 +47,7 @@ public class RobotContainer {
         public final Shoot m_shoot;
 
         // private final SendableChooser<Command> choose;
-        // public final AutoMain m_Autos;
+        public final AutoMain m_Autos;
 
         // The driver's controller
         /**
@@ -62,6 +62,7 @@ public class RobotContainer {
                 m_climb = new Climb();
                 m_conveyor = new Conveyor();
                 m_flywheel = new FlyWheel();
+                m_Autos = new AutoMain(this);
                 m_shoot = new Shoot(this);
 
                 configureButtonBindings();

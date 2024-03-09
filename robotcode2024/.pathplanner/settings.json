@@ -12,8 +12,8 @@
     "Feeder",
     "Speaker"
   ],
-  "defaultMaxVel": 1.0,
-  "defaultMaxAccel": 3.0,
+  "defaultMaxVel": 0.5,
+  "defaultMaxAccel": 10.0,
   "defaultMaxAngVel": 720.0,
   "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 4.77

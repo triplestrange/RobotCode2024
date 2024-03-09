@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.0,
-        "y": 2.47
+        "x": 2.069517939961806,
+        "y": 4.331971608387661
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.311160087875997,
-        "y": 2.47
+        "x": 1.3587463193444909,
+        "y": 5.685163430512047
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.741547464909902,
-        "y": 2.47
+        "x": 2.184070405177848,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 7.749987936712,
-        "y": 2.47
+        "x": 2.1925108769799455,
+        "y": 5.55
       },
       "nextControl": {
-        "x": 7.733106993107804,
-        "y": 2.47
+        "x": 2.1756299333757503,
+        "y": 5.55
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.0,
-        "y": 2.47
+        "x": 2.55,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 7.789926949898491,
-        "y": 2.47
+        "x": 2.5553415366089993,
+        "y": 5.537771404246512
       },
       "nextControl": null,
       "isLocked": false,
@@ -76,23 +76,6 @@
               "type": "named",
               "data": {
                 "name": "conveyorIn"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "intakeOff",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intakeOff"
               }
             }
           ]

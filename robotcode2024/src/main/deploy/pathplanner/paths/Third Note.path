@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8,
-        "y": 4.12
+        "x": 1.8972438593025336,
+        "y": 5.564078683712922
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.111160087875997,
-        "y": 4.12
+        "x": 1.378580701605848,
+        "y": 3.8058854034374723
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.54,
-        "y": 4.12
+        "x": 2.445480437257171,
+        "y": 4.087070433400127
       },
       "prevControl": {
-        "x": 2.5484404718020977,
-        "y": 4.12
-      },
-      "nextControl": {
-        "x": 2.531559528197902,
-        "y": 4.12
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.8,
-        "y": 4.117333211714446
-      },
-      "prevControl": {
-        "x": 2.5899269498984885,
-        "y": 4.117333211714446
+        "x": 2.4539209090592684,
+        "y": 4.087070433400127
       },
       "nextControl": null,
       "isLocked": false,
@@ -81,28 +65,11 @@
           ]
         }
       }
-    },
-    {
-      "name": "intakeOff",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intakeOff"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },
