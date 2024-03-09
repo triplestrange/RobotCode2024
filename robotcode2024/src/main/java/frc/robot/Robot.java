@@ -73,7 +73,7 @@ public class Robot extends LoggedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
-    m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot);
+    m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot, m_robotContainer.m_elevator);
     m_robotContainer.m_robotDrive.zeroHeading();
   }
 
@@ -105,7 +105,8 @@ public class Robot extends LoggedRobot {
       m_vision.updateSmartDashBoard();
       m_robotContainer.m_shoot.updateSmartDashBoard();
       m_robotContainer.m_flywheel.updateSmartDashBoard();
-      
+      m_robotContainer.m_intake.updateSmartDashBoard();
+      m_robotContainer.m_conveyor.updateSmartDashBoard();
 
     }
   }
@@ -141,10 +142,10 @@ public class Robot extends LoggedRobot {
       Shuffleboard.startRecording();
     }
     m_robotContainer.m_robotDrive.m_odometry
-        .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
+          .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
     m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 
-    // schedule the autonomous command (example)
+    // schedule the  autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -164,8 +165,6 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.m_robotDrive.m_odometry
-        .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
   }
 
   /** This function is called periodically during operator control. */

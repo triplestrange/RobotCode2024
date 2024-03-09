@@ -24,11 +24,13 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.commands.automations.Shoot;;
+import frc.robot.commands.automations.Shoot;
+import frc.robot.subsystems.intake.Elevator;;
 public class Vision extends SubsystemBase {
 
     private SwerveDrive m_SwerveDrive;
     private Shoot m_Shoot;
+    private Elevator m_Elevator;
 
     // Left and Right are on the center
     // Front and Back are close to swerve encoders
@@ -60,7 +62,7 @@ public class Vision extends SubsystemBase {
 
 
 
-    public Vision(SwerveDrive m_SwerveDrive, Shoot m_shoot) {
+    public Vision(SwerveDrive m_SwerveDrive, Shoot m_shoot, Elevator m_Elevator) {
         camLeft = new PhotonCamera("camLeft");
         camRight = new PhotonCamera("camRight");
         camShooter = new PhotonCamera("camShooter");
@@ -69,9 +71,11 @@ public class Vision extends SubsystemBase {
     visionLeft = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camLeft, new Transform3d(new Translation3d(0, -0.32385, 0.5969), new Rotation3d(0,-Math.PI/4,Math.PI/2)));
     visionRight = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camRight, new Transform3d(new Translation3d(0, 0.32385, 0.5969), new Rotation3d(0,-Math.PI/4, -Math.PI/2)));
     visionShooter = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camShooter, new Transform3d(new Translation3d(0, 0, 0.66), new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI)));
+    visionIntake = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camIntake, new Transform3d(new Translation3d(.152, 0, 0.66), new Rotation3d(0, -Math.PI/4, 0)));
 
         this.m_SwerveDrive = m_SwerveDrive;
         this.m_Shoot = m_shoot;
+        this.m_Elevator = m_Elevator;
 
     }
 
@@ -88,7 +92,7 @@ public class Vision extends SubsystemBase {
     public Boolean isTargetCloseEnough(Optional<EstimatedRobotPose> estimatedRobotPose)    {
        
         for (PhotonTrackedTarget target:estimatedRobotPose.get().targetsUsed) {
-            if (getDistanceFromTarget(target) > 5)  {
+            if (getDistanceFromTarget(target) > 3)  {
                 return false;
             }
         }
@@ -102,6 +106,7 @@ public class Vision extends SubsystemBase {
         poseLeft = getEstimatedPose(visionLeft, m_SwerveDrive.getPose());
         poseRight = getEstimatedPose(visionRight, m_SwerveDrive.getPose());
         poseShooter = getEstimatedPose(visionShooter, m_SwerveDrive.getPose());
+        poseIntake = getEstimatedPose(visionIntake, m_SwerveDrive.getPose());
 
         if (poseShooter.isPresent() && isTargetCloseEnough(poseShooter))  {
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.get().estimatedPose.toPose2d(), poseShooter.get().timestampSeconds);
@@ -132,6 +137,13 @@ public class Vision extends SubsystemBase {
         
     }
 
+    public double getIntakeVisionOffset()   {
+        if (m_Elevator.getElevPos()  > 14)  {
+            return 0.66 + Units.inchesToMeters(m_Elevator.getElevPos() - 14);
+        } 
+        return 0.66;
+    }
+
     public void updateSmartDashBoard() {
         if (poseLeft != null && poseLeft.isPresent()) {
             SmartDashboard.putNumber("camleft x", poseLeft.get().estimatedPose.getX());
@@ -152,7 +164,9 @@ public class Vision extends SubsystemBase {
     }
 
     public void periodic() {
-
+        if (camIntake != null)  {
+        visionIntake.setRobotToCameraTransform(new Transform3d(new Translation3d(.152, 0, getIntakeVisionOffset()), new Rotation3d(0, -Math.PI/4, 0)));
+        }
         addVisionMeasurement();
 
     }

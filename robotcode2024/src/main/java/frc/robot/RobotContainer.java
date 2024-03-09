@@ -27,6 +27,8 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
+import frc.robot.commands.conveyor.GroundToConveyor;
+import frc.robot.commands.conveyor.GroundToIntake;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -106,7 +108,7 @@ public class RobotContainer {
 
                 m_elevator.setDefaultCommand(new RunCommand(
                                                 () -> m_elevator.moveElev(
-                                                                -0.2 * JoystickButtons.m_operatorController.getRightY(),
+                                                                -1 * JoystickButtons.m_operatorController.getRightY(),
                                                                 0.2 * (JoystickButtons.m_operatorController.getRightTriggerAxis()
                                                                 - JoystickButtons.m_operatorController
                                                                                 .getLeftTriggerAxis())),
@@ -114,8 +116,8 @@ public class RobotContainer {
 
                  m_climb.setDefaultCommand(new RunCommand(
                                 () -> m_climb.moveClimb(
-                                                0.2 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0.2 * JoystickButtons.m_operatorController.getLeftY()),
+                                                0.6 * JoystickButtons.m_operatorController.getLeftY(),
+                                                0.6 * JoystickButtons.m_operatorController.getLeftY()),
                                 m_climb));
 
 
@@ -129,20 +131,27 @@ public class RobotContainer {
 
                 // Intake and Conveyor Controls
 
-                JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).alongWith(new InstantCommand(() -> m_conveyor.runConvIn())).andThen(new InstantCommand(() -> m_intake.intakeOff())));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
 
-                JoystickButtons.oplBump.whileTrue(new InstantCommand(() -> m_intake.runOutake()).alongWith(new InstantCommand(() -> m_conveyor.runConvOut())).andThen(new InstantCommand(() -> m_conveyor.conveyorOff())));
+                // JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).andThen(new InstantCommand(() -> m_intake.intakeOff())));
+
+                // JoystickButtons.dDpadL.whileTrue(new GroundToIntake(m_intake));
+
+                // JoystickButtons.dDpadR.whileTrue(new GroundToConveyor(m_conveyor, m_intake));
+
+
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
                 
-                // m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff()));
+                m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
 
-                // m_conveyor.setDefaultCommand(new InstantCommand(() -> m_conveyor.conveyorOff()));
+                m_conveyor.setDefaultCommand(new InstantCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
 
 
                 // Fly Wheels controls
 
-                JoystickButtons.dlBump.whileTrue(new InstantCommand(() -> m_flywheel.setFWSpeed(-5676)));
+                JoystickButtons.dlBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676)));
                 
-                m_flywheel.setDefaultCommand(new InstantCommand(() -> m_flywheel.flyWheelOff()));
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(), m_flywheel));
 
                 // Shooting Automations
 

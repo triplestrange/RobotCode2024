@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.conveyor.GroundToConveyor;
 import frc.robot.commands.conveyor.IntakeToConveyor;
 import frc.robot.subsystems.intake.Elevator.IntakePosition;
 
@@ -51,7 +52,7 @@ public class AutoMain extends Command {
                 // Conveyor Commands
                 NamedCommands.registerCommand("conveyorOut", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvOut()));
 
-                NamedCommands.registerCommand("conveyorIn", new IntakeToConveyor(m_robotContainer.m_intake, m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("conveyorIn", new IntakeToConveyor(m_robotContainer.m_conveyor));
 
                 NamedCommands.registerCommand("conveyorOff", new InstantCommand(() -> m_robotContainer.m_conveyor.conveyorOff()));
                 

@@ -192,7 +192,7 @@ public final class Constants {
     public final static double kMaxAngularSpeedMetersPerSecond = 360;
     public final static double kMaxAngularAccelerationMetersPerSecondSquared = 1200;
 
-    public final static double intakeAbsOffset = -78.33;
+    public final static double intakeAbsOffset = -78.33 + 10.7 - 22;
 
     public final static double kP = 0.055 * .5;
     public final static double kI = 0;
@@ -269,8 +269,8 @@ public final class Constants {
 
     public static final int climbCurrentLimit = 40;
 
-    public static final int conveyorDigitalInput = 0;
-    public static final int intakeDigitalInput = 9;
+    public static final int conveyorDigitalInput = 4;
+    public static final int intakeDigitalInput = 1;
 
     public static final int pivotAbsInput = 2;
     public static final int intakeAbsInput = 3;
