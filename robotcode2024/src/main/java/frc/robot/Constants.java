@@ -39,10 +39,10 @@ public final class Constants {
     public static final IntakePosition ampIntakePos = new IntakePosition(27, -100);
     public static final IntakePosition trapIntakePos = new IntakePosition(33, -100);
 
-    public static final double clearancePivotPos = 0;
+    public static final double climbPivotPos = 0;
 
     public static final double underChainPivotPos = -45;
-    public static final double climbPivotPos = -10;
+    public static final double clearancePivotPos = -10;
 
     public static final double topRailPos = 0;
     public static final double bottomRailPos = 0;

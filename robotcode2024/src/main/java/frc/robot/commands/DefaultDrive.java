@@ -60,6 +60,8 @@ public class DefaultDrive extends Command {
 
     // System.out.println("gyro: " + m_swerve.getAngle().getDegrees());
     // System.out.println("desiredHeading: " + m_swerve.getRotationPreset());
+    double norm = Math.hypot(JoystickButtons.m_driverController.getLeftX(), JoystickButtons.m_driverController.getLeftY());
+    
     double speedY = JoystickButtons.m_driverController.getLeftY() * speed;
     double speedX = JoystickButtons.m_driverController.getLeftX() * speed;
 
@@ -84,8 +86,8 @@ public class DefaultDrive extends Command {
     }
 
     m_swerve.drive(
-        -speedY,
-        -speedX,
+        -speedY * Math.pow(norm, 2),
+        -speedX * Math.pow(norm, 2),
         speedR,
         true);
 

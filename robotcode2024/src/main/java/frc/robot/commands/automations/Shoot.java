@@ -87,7 +87,7 @@ public class Shoot {
         if (isAllianceRed()) {
             shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
                     flipTranslation3d(speakerTranslation3d).getY())
-                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle();
+                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle().plus(new Rotation2d().fromDegrees(180));
         }
         else {
         shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
@@ -103,12 +103,12 @@ public class Shoot {
                             - flipTranslation3d(speakerTranslation3d).getX(),
                             m_RobotContainer.m_robotDrive.getPose().getY()
                                     - flipTranslation3d(speakerTranslation3d).getY()))
-                    - 90 + 32.5 + 3.5);
+                    - 90 + 32.5);
         } else {
             shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
                     .hypot(m_RobotContainer.m_robotDrive.getPose().getX() - speakerTranslation3d.getX(),
                             m_RobotContainer.m_robotDrive.getPose().getY() - speakerTranslation3d.getY())))
-                    - 90 + 32.5 + 3.5;
+                    - 90 + 32.5;
         }
 
     }
@@ -176,11 +176,11 @@ public class Shoot {
     }
 
     public Boolean pivotCheck() {
-        return Math.abs(m_RobotContainer.m_shooter.getAngle() - shootingAngle) < .7;
+        return Math.abs(m_RobotContainer.m_shooter.getAngle() - shootingAngle) < .5;
     }
 
     public Boolean rotationCheck(Pose2d robotPose2d) {
-        return robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 5;
+        return robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 3;
     }
 
     public Boolean flyWheelCheck() {

@@ -84,11 +84,10 @@ public class RobotContainer {
                 // Swerve Controls
 
                 m_robotDrive.setDefaultCommand(
+                                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
 
-                // swerve code
-                // The left stick controls tran slation of the robot.
-                // Turning is controlled by the X axis of the right stick.
-                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
+                JoystickButtons.drBump.whileTrue(
+                                new DefaultDrive(m_robotDrive, 0.85, 1));
 
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
@@ -107,8 +106,10 @@ public class RobotContainer {
 
                 m_elevator.setDefaultCommand(new RunCommand(
                                                 () -> m_elevator.moveElev(
-                                                                0.2 * JoystickButtons.m_operatorController.getRightY(),
-                                                                0.2 * JoystickButtons.m_operatorController.getRightX()),
+                                                                -0.2 * JoystickButtons.m_operatorController.getRightY(),
+                                                                0.2 * (JoystickButtons.m_operatorController.getRightTriggerAxis()
+                                                                - JoystickButtons.m_operatorController
+                                                                                .getLeftTriggerAxis())),
                                                 m_elevator));                // Climb Controls
 
                  m_climb.setDefaultCommand(new RunCommand(
@@ -117,18 +118,15 @@ public class RobotContainer {
                                                 0.2 * JoystickButtons.m_operatorController.getLeftY()),
                                 m_climb));
 
-                JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)).alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.trapIntakePos))));
 
 
                 // Pivot Controls
 
-                // m_shooter.setDefaultCommand(new RunCommand(
-                //                 () -> m_shooter.moveShooter(
-                //                 -JoystickButtons.m_operatorController.getLeftX() * 0.2),
-                //                 m_shooter));
-
                 JoystickButtons.opB.onTrue(new InstantCommand(
                                 () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)));
+
+                JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
+
                 // Intake and Conveyor Controls
 
                 JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).alongWith(new InstantCommand(() -> m_conveyor.runConvIn())).andThen(new InstantCommand(() -> m_intake.intakeOff())));
@@ -142,7 +140,7 @@ public class RobotContainer {
 
                 // Fly Wheels controls
 
-                JoystickButtons.drBump.whileTrue(new InstantCommand(() -> m_flywheel.setFWSpeed(-5676)));
+                JoystickButtons.dlBump.whileTrue(new InstantCommand(() -> m_flywheel.setFWSpeed(-5676)));
                 
                 m_flywheel.setDefaultCommand(new InstantCommand(() -> m_flywheel.flyWheelOff()));
 
