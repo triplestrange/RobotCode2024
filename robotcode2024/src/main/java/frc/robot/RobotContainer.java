@@ -124,7 +124,7 @@ public class RobotContainer {
                                 m_shooter));
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
-                                () -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
+                                () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)));
                 // Intake and Conveyor Controls
 
                 JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).alongWith(new InstantCommand(() -> m_conveyor.runConvIn())).andThen(new InstantCommand(() -> m_intake.intakeOff())));
