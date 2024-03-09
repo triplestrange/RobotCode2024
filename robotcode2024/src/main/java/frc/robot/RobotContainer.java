@@ -105,7 +105,11 @@ public class RobotContainer {
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
 
-                // Climb Controls
+                m_elevator.setDefaultCommand(new RunCommand(
+                                                () -> m_elevator.moveElev(
+                                                                0.2 * JoystickButtons.m_operatorController.getRightY(),
+                                                                0.2 * JoystickButtons.m_operatorController.getRightX()),
+                                                m_elevator));                // Climb Controls
 
                  m_climb.setDefaultCommand(new RunCommand(
                                 () -> m_climb.moveClimb(
@@ -118,10 +122,10 @@ public class RobotContainer {
 
                 // Pivot Controls
 
-                m_shooter.setDefaultCommand(new RunCommand(
-                                () -> m_shooter.moveShooter(
-                                -JoystickButtons.m_operatorController.getLeftX() * 0.2),
-                                m_shooter));
+                // m_shooter.setDefaultCommand(new RunCommand(
+                //                 () -> m_shooter.moveShooter(
+                //                 -JoystickButtons.m_operatorController.getLeftX() * 0.2),
+                //                 m_shooter));
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
                                 () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)));
