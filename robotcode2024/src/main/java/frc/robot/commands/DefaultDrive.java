@@ -54,7 +54,7 @@ public class DefaultDrive extends Command {
       m_swerve.setPresetEnabled(false);
     }
 
-    double rot = rotation_controller.calculate(m_swerve.getAngle().getDegrees(), m_swerve.getRotationPreset());
+    double rot = rotation_controller.calculate(m_swerve.getPose().getRotation().getDegrees(), m_swerve.getRotationPreset());
     // rot = MathUtil.clamp(rot, -1, 1);
     // System.out.println("rotation PID: " + rot);
 
