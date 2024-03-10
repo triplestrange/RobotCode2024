@@ -8,9 +8,9 @@
     "Note Pickup"
   ],
   "autoFolders": [
-    "Middle",
     "Feeder",
-    "Speaker"
+    "Middle",
+    "Amp"
   ],
   "defaultMaxVel": 1.5,
   "defaultMaxAccel": 10.0,

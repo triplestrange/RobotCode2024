@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4202091506034866,
-      "y": 3.419590024365234
+      "x": 1.34,
+      "y": 5.549173204827891
     },
     "rotation": 0
   },
@@ -16,33 +16,81 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Middle One Travel"
+                  "name": "shoot fixed"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shoot"
+                  "name": "conveyorIn"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle Two Travel"
+                  "pathName": "Second Note Middle"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Third Note  2"
+                  "pathName": "M2 to Speaker"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shoot"
+                  "name": "shoot fixed"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "conveyorIn"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Third Note Middle"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "M2 to Speaker 2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shoot fixed"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "conveyorIn"
                 }
               }
             ]

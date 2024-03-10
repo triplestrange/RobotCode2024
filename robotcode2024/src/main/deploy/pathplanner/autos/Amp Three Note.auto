@@ -14,7 +14,19 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shoot fixed"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "conveyorIn"
           }
         },
         {
@@ -26,7 +38,19 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shoot fixed"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "conveyorIn"
           }
         },
         {
@@ -38,24 +62,24 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shoot fixed"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Third Note"
+            "waitTime": 1.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "conveyorIn"
           }
         }
       ]
     }
   },
-  "folder": "Speaker",
+  "folder": "Amp",
   "choreoAuto": false
 }

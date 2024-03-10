@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7027864796470336,
-      "y": 4.422592169258413
+      "x": 0.7022380835015908,
+      "y": 6.640097289728478
     },
-    "rotation": -58.967291823677364
+    "rotation": 59.45791904465198
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle Bottom Note"
+            "pathName": "First Note"
           }
         },
         {
@@ -32,19 +32,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle Bottom Travel"
+            "pathName": "Second Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Eighth Note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "8th Note to Speaker"
+            "pathName": "Third Note"
           }
         },
         {
@@ -56,6 +56,6 @@
       ]
     }
   },
-  "folder": "Feeder",
+  "folder": "Amp",
   "choreoAuto": false
 }

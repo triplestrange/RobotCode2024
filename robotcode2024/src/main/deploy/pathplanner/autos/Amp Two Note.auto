@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7027864796470336,
-      "y": 4.422592169258413
+      "x": 0.7022380835015908,
+      "y": 6.640097289728478
     },
-    "rotation": -58.967291823677364
+    "rotation": 59.45791904465198
   },
   "command": {
     "type": "sequential",
@@ -14,48 +14,54 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shoot fixed"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Middle Bottom Note"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Middle Bottom Travel"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Eighth Note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "8th Note to Speaker"
+            "waitTime": 1.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "conveyorIn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "First Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A2 to Speaker "
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot fixed"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "conveyorIn"
           }
         }
       ]
     }
   },
-  "folder": "Feeder",
+  "folder": "Amp",
   "choreoAuto": false
 }

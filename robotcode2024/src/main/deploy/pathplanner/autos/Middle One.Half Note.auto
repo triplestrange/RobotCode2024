@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7022380835015908,
-      "y": 6.640097289728478
+      "x": 1.328103980282035,
+      "y": 5.542047079464529
     },
-    "rotation": 59.45791904465198
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -14,24 +14,30 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shoot fixed"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "First Note"
+            "waitTime": 1.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "conveyorIn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Second Note Middle"
           }
         }
       ]
     }
   },
-  "folder": "Speaker",
+  "folder": "Middle",
   "choreoAuto": false
 }

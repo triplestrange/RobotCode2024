@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7027864796470336,
-      "y": 4.422592169258413
+      "x": 0.7,
+      "y": 4.42
     },
-    "rotation": -58.967291823677364
+    "rotation": -58.97000000000003
   },
   "command": {
     "type": "sequential",
@@ -14,24 +14,30 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shoot fixed"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Middle Bottom Note"
+            "waitTime": 1.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "conveyorIn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Feeder Cross Line"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Feeder",
   "choreoAuto": false
 }

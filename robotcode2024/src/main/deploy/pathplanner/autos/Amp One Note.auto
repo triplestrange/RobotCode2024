@@ -14,36 +14,30 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shoot fixed"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "First Note"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Second Note"
+            "waitTime": 1.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "conveyorIn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp Cross Line"
           }
         }
       ]
     }
   },
-  "folder": "Speaker",
+  "folder": "Amp",
   "choreoAuto": false
 }
