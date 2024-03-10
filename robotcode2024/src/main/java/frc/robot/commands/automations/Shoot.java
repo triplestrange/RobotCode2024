@@ -73,7 +73,7 @@ public class Shoot {
         // Use addRequirements() here to declare subsystem dependencies.
 
         this.m_RobotContainer = m_RobotContainer;
-        shootingRotation = m_RobotContainer.m_robotDrive.getAngle();
+        shootingRotation = m_RobotContainer.m_robotDrive.getPose().getRotation();
 
         driveTo = new DriveTo(new Pose2d(
                 speakerTranslation3d.getX() + Units.inchesToMeters(16) + Units.inchesToMeters(36.241382),
@@ -84,7 +84,7 @@ public class Shoot {
     }
 
     public void prepare() {
-        if (isAllianceRed()) {
+                if (isAllianceRed()) {
             shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
                     flipTranslation3d(speakerTranslation3d).getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle().plus(new Rotation2d().fromDegrees(180));
@@ -100,8 +100,8 @@ public class Shoot {
         if (isAllianceRed()) {
             shootingAngle = Units.radiansToDegrees(Math.atan2(flipTranslation3d(speakerTranslation3d).getZ(), Math
                     .hypot(m_RobotContainer.m_robotDrive.getPose().getX() - flipTranslation3d(speakerTranslation3d).getX(),
-                            m_RobotContainer.m_robotDrive.getPose().getY() - flipTranslation3d(speakerTranslation3d).getY()))
-                    - 90 + 32.5);
+                            m_RobotContainer.m_robotDrive.getPose().getY() - flipTranslation3d(speakerTranslation3d).getY())))
+                    - 90 + 32.5;
         } else {
             shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
                     .hypot(m_RobotContainer.m_robotDrive.getPose().getX() - speakerTranslation3d.getX(),
@@ -125,7 +125,7 @@ public class Shoot {
     }
 
     public void autoShoot() {
-        prepare();
+                prepare();
 
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
             driveTo.cancel();

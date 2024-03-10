@@ -50,7 +50,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-
+    
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
     if (isReal()) {
@@ -58,10 +58,10 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
-      setUseTiming(false); // Run as fast as possible
-      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      // setUseTiming(false); // Run as fast as possible
+      // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      // Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+      // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
     }
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in
@@ -75,7 +75,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer(this);
     m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot, m_robotContainer.m_elevator);
     m_robotContainer.m_robotDrive.zeroHeading();
-  }
+      }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items
