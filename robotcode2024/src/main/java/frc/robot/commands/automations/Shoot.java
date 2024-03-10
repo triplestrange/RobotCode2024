@@ -99,10 +99,8 @@ public class Shoot {
 
         if (isAllianceRed()) {
             shootingAngle = Units.radiansToDegrees(Math.atan2(flipTranslation3d(speakerTranslation3d).getZ(), Math
-                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX()
-                            - flipTranslation3d(speakerTranslation3d).getX(),
-                            m_RobotContainer.m_robotDrive.getPose().getY()
-                                    - flipTranslation3d(speakerTranslation3d).getY()))
+                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX() - flipTranslation3d(speakerTranslation3d).getX(),
+                            m_RobotContainer.m_robotDrive.getPose().getY() - flipTranslation3d(speakerTranslation3d).getY()))
                     - 90 + 32.5);
         } else {
             shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
@@ -210,5 +208,12 @@ public class Shoot {
         SmartDashboard.putBoolean("roation check", rotationCheck(m_RobotContainer.m_robotDrive.getPose()));
         SmartDashboard.putBoolean("pivot check", pivotCheck());
         SmartDashboard.putBoolean("flywheel check", flyWheelCheck());
-    }
+        SmartDashboard.putBoolean("Red Alliance?", isAllianceRed());
+
+        SmartDashboard.putNumber("target x", flipTranslation3d(speakerTranslation3d).getX());
+            SmartDashboard.putNumber("target y", flipTranslation3d(speakerTranslation3d).getY());
+
+        SmartDashboard.putNumber("target z", flipTranslation3d(speakerTranslation3d).getZ());
+
+        }
 }

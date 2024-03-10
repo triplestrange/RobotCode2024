@@ -114,16 +114,16 @@ public class Vision extends SubsystemBase {
 
         }
 
-        if (poseLeft.isPresent() && isTargetCloseEnough(poseLeft))  {
-            m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(), poseLeft.get().timestampSeconds);
-            m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
+        // if (poseLeft.isPresent() && isTargetCloseEnough(poseLeft))  {
+        //     m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(), poseLeft.get().timestampSeconds);
+        //     m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
 
-        }
+        // }
 
-        if (poseRight.isPresent() && isTargetCloseEnough(poseRight))  {
-            m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
-            m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
-        }
+        // if (poseRight.isPresent() && isTargetCloseEnough(poseRight))  {
+        //     m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(), poseRight.get().timestampSeconds);
+        //     m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
+        // }
 
         if (poseIntake.isPresent() && isTargetCloseEnough(poseIntake))  {
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.get().estimatedPose.toPose2d(), poseIntake.get().timestampSeconds);

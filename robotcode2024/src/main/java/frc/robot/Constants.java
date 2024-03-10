@@ -36,7 +36,7 @@ public final class Constants {
     public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition groundIntakePos = new IntakePosition(0, -132);
     public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
-    public static final IntakePosition ampIntakePos = new IntakePosition(27, -100);
+    public static final IntakePosition ampIntakePos = new IntakePosition(29.5, -136);
     public static final IntakePosition trapIntakePos = new IntakePosition(33, -100);
 
     public static final double climbPivotPos = 0;
@@ -97,7 +97,7 @@ public final class Constants {
     public static final int BR_ENCODER = 2;
     public final static double FL_ENC_OFFSET = 56; // 183
     public final static double FR_ENC_OFFSET = 13; // 179 141
-    public final static double BL_ENC_OFFSET = 153; // 221
+    public final static double BL_ENC_OFFSET = Units.radiansToDegrees(2.642752); // 221
     public final static double BR_ENC_OFFSET = 322; // 241
 
     public final static boolean driveEnableCurrentLimit = true;
