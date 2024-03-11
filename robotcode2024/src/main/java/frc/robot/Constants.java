@@ -52,6 +52,10 @@ public final class Constants {
     public static final Pose2d amp = new Pose2d(new Translation2d(1.78, 7.8), new Rotation2d().fromDegrees(90));
   }
 
+  public static final class Logger {
+    public static final Boolean tuningMode = false;
+  }
+
   public static final class SwerveConstants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kMaxSpeedMetersPerSecond = 4.7244;
@@ -87,11 +91,11 @@ public final class Constants {
 
     // adjust for calibration
     // 2/25/21 - 0.12584
-    public static final double kWheelDiameterMeters = .1016;
+    public static final double offsetRatio = 1;
+    public static final double kWheelDiameterMeters = .1016 * offsetRatio;
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
         (kWheelDiameterMeters * Math.PI) / (double) kDriveEncoderCPR;
-
     public static final double kSteerEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
         (2 * Math.PI) / (double) kSteerEncoderCPR;
