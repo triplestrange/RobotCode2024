@@ -26,7 +26,13 @@
         {
           "type": "named",
           "data": {
-            "name": "conveyorIn"
+            "name": "conveyorShoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -54,6 +60,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Second Note"
@@ -75,6 +87,12 @@
           "type": "named",
           "data": {
             "name": "conveyorIn"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         }
       ]

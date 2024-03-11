@@ -7,6 +7,8 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
@@ -36,8 +38,8 @@ public final class Constants {
     public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition groundIntakePos = new IntakePosition(0, -132);
     public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
-    public static final IntakePosition ampIntakePos = new IntakePosition(29.5, -136);
-    public static final IntakePosition trapIntakePos = new IntakePosition(33, -100);
+    public static final IntakePosition ampIntakePos = new IntakePosition(33, -136);
+    public static final IntakePosition trapIntakePos = new IntakePosition(33, -136);
 
     public static final double climbPivotPos = 0;
 
@@ -46,6 +48,8 @@ public final class Constants {
 
     public static final double topRailPos = 0;
     public static final double bottomRailPos = 0;
+
+    public static final Pose2d amp = new Pose2d(new Translation2d(1.78, 7.8), new Rotation2d().fromDegrees(90));
   }
 
   public static final class SwerveConstants {
@@ -259,9 +263,9 @@ public final class Constants {
 
   public static final class ELECTRICAL {
     public static final int swerveTurningCurrentLimit = 40;
-    public static final int swerveDrivingCurrentLimit = 20;
+    public static final int swerveDrivingCurrentLimit = 40;
 
-    public static final int elevatorCurrentLimit = 30;
+    public static final int elevatorCurrentLimit = 25;
     public static final int intakeCurrentLimit = 30;
 
     public static final int rollerCurrentLimit = 20;

@@ -26,7 +26,13 @@
         {
           "type": "named",
           "data": {
-            "name": "conveyorIn"
+            "name": "conveyorShoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {

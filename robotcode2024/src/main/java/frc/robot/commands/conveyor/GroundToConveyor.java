@@ -22,7 +22,7 @@ public class GroundToConveyor extends Command {
      * slow = 0.75
      */
     public GroundToConveyor(Conveyor m_Conveyor, Intake m_Intake) {
-        addRequirements(m_Conveyor);
+        addRequirements(m_Conveyor, m_Intake);
         this.m_Conveyor = m_Conveyor;
         this.m_Intake = m_Intake;
     }

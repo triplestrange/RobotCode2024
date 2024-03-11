@@ -30,7 +30,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "conveyorIn"
+                  "name": "conveyorShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
                 }
               },
               {
@@ -64,6 +70,12 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
                 "type": "path",
                 "data": {
                   "pathName": "Third Note Middle"
@@ -91,6 +103,12 @@
                 "type": "named",
                 "data": {
                   "name": "conveyorIn"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
                 }
               }
             ]

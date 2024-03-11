@@ -95,7 +95,9 @@ public class RobotContainer {
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? -90 : 90)));
+                JoystickButtons.dDpadU.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 0 : 180)));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 90 : -90)));
+                JoystickButtons.dDpadD.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 180 : 0)));
 
 
                 // Elevator Controls
@@ -135,9 +137,9 @@ public class RobotContainer {
 
                 // JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).andThen(new InstantCommand(() -> m_intake.intakeOff())));
 
-                // JoystickButtons.dDpadL.whileTrue(new GroundToIntake(m_intake));
+                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
-                // JoystickButtons.dDpadR.whileTrue(new GroundToConveyor(m_conveyor, m_intake));
+                JoystickButtons.opDpadL.whileTrue(new GroundToConveyor(m_conveyor, m_intake));
 
 
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
@@ -151,7 +153,7 @@ public class RobotContainer {
 
                 JoystickButtons.dlBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676)));
                 
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(), m_flywheel));
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
 
                 // Shooting Automations
 
@@ -161,7 +163,7 @@ public class RobotContainer {
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(PathPlannerPath.fromPathFile("amp"), 0, m_robotDrive, m_robot).alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
+                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot).alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
                                         Constants.MechPositions.ampIntakePos))));
         }
 
