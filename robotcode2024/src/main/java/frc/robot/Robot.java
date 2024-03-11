@@ -13,8 +13,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -26,7 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutoMain;
-import frc.robot.util.LocalADStarAK;
+import frc.robot.commands.automations.Shoot;
+import frc.robot.subsystems.swerve.Vision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,9 +40,8 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private AutoMain m_autoMain;
+  public Vision m_vision;
   private int i;
-  // private int w;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -52,7 +50,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-
+    
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
     if (isReal()) {
@@ -60,23 +58,24 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
-      setUseTiming(false); // Run as fast as possible
-      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      // setUseTiming(false); // Run as fast as possible
+      // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      // Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+      // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
     }
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in
     // the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
-    Pathfinding.setPathfinder(new LocalADStarAK());
-
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
+    // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
+    m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot, m_robotContainer.m_elevator);
     m_robotContainer.m_robotDrive.zeroHeading();
-  }
+      }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items
@@ -100,9 +99,14 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
     i++;
     if (i % 10 == 0) {
-      // m_robotContainer.m_robotDrive.updateSmartDashBoard();
-      m_robotContainer.m_shooter.updateSmartDashBoard();
-      // m_robotContainer.m_elevator.updateSmartDashBoard();
+      m_robotContainer.m_robotDrive.updateSmartDashBoard();
+      // m_robotContainer.m_shooter.updateSmartDashBoard();
+      m_robotContainer.m_elevator.updateSmartDashBoard();
+      m_vision.updateSmartDashBoard();
+      m_robotContainer.m_shoot.updateSmartDashBoard();
+      m_robotContainer.m_flywheel.updateSmartDashBoard();
+      m_robotContainer.m_intake.updateSmartDashBoard();
+      m_robotContainer.m_conveyor.updateSmartDashBoard();
 
     }
   }
@@ -110,7 +114,6 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.m_robotDrive.zeroHeading();
 
   }
 
@@ -139,10 +142,10 @@ public class Robot extends LoggedRobot {
       Shuffleboard.startRecording();
     }
     m_robotContainer.m_robotDrive.m_odometry
-        .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
-    m_autonomousCommand = m_autoMain.getAutoChooser();
+          .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+    m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 
-    // schedule the autonomous command (example)
+    // schedule the  autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -159,11 +162,11 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_robotContainer.m_robotDrive.m_odometry
+        .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.m_robotDrive.m_odometry
-        .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
   }
 
   /** This function is called periodically during operator control. */

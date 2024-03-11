@@ -13,21 +13,16 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.cannon.Shooter;
 
 public class IntakeToConveyor extends Command {
-    private Intake m_Intake;
     private Conveyor m_Conveyor;
-    private Shooter m_Shooter;
-
     /**
      * Creates a new Drive.
      * 
      * normal = 2.5
      * slow = 0.75
      */
-    public IntakeToConveyor(Intake m_Intake, Conveyor m_Conveyor, Shooter m_Shooter) {
-        addRequirements(m_Intake, m_Conveyor, m_Shooter);
-        this.m_Intake = m_Intake;
+    public IntakeToConveyor(Conveyor m_Conveyor) {
+        addRequirements(m_Conveyor);
         this.m_Conveyor = m_Conveyor;
-        this.m_Shooter = m_Shooter;
     }
 
     // Called when the command is initially scheduled.

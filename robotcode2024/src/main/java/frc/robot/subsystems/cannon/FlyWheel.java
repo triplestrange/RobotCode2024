@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 public class FlyWheel extends SubsystemBase {
 
     private CANSparkMax lFlyWheel;
@@ -45,7 +44,7 @@ public class FlyWheel extends SubsystemBase {
 
         rFWController = rFlyWheel.getPIDController();
         rFWEncoder = rFlyWheel.getEncoder();
-        
+
         int smartMotionSlot = 0;
 
         // fly wheel
@@ -88,13 +87,19 @@ public class FlyWheel extends SubsystemBase {
 
     public void setFWSpeed(double RPM) {
         lFlyWheelSetpoint = RPM;
-        rFlyWheelSetpoint = -(RPM - Constants.ShooterConstants.rotationalSpeed);
+        rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
 
+    }
+
+    public void flyWheelOn() {
+        lFlyWheelSetpoint = -900;
+        rFlyWheelSetpoint = 900;
     }
 
     public void flyWheelOff() {
         lFlyWheelSetpoint = 0;
         rFlyWheelSetpoint = 0;
+
     }
 
     @Override
@@ -106,8 +111,8 @@ public class FlyWheel extends SubsystemBase {
 
     public void updateSmartDashBoard() {
 
-        SmartDashboard.putNumber("rpm", lFlyWheel.getEncoder().getVelocity());
-
+        SmartDashboard.putNumber("left rpm", lFlyWheel.getEncoder().getVelocity());
+        SmartDashboard.putNumber("right rpm", rFlyWheel.getEncoder().getVelocity());
 
     }
 

@@ -53,7 +53,7 @@ public class SwerveModule {
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
-    m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
+    //m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
     m_turningMotor.restoreFactoryDefaults();
 
     m_turningEncoder = m_turningMotor.getEncoder();
@@ -70,7 +70,8 @@ public class SwerveModule {
     // This is the the angle through an entire rotation (2 * wpi::math::pi)
     // divided by the encoder resolution.
 
-    m_driveMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(ModuleConstants.kDriveEncoderDistancePerPulse));
+    m_driveMotor.getConfigurator()
+        .apply(new FeedbackConfigs().withSensorToMechanismRatio(1.0 / ModuleConstants.kDriveEncoderDistancePerPulse));
 
     m_turningEncoder.setPositionConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse);
     m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse / 60.);
@@ -107,7 +108,6 @@ public class SwerveModule {
     m_turningMotor.setInverted(true);
     m_driveMotor.setInverted(true);
 
-    
     m_turningMotor.burnFlash();
   }
 

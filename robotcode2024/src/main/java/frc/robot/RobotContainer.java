@@ -5,18 +5,30 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
+import frc.robot.subsystems.cannon.Conveyor;
+import frc.robot.subsystems.cannon.FlyWheel;
+import frc.robot.subsystems.cannon.Climb;
+import frc.robot.subsystems.cannon.Shooter;
+import frc.robot.subsystems.intake.Elevator;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.commands.DefaultDrive;
+import frc.robot.commands.automations.DriveTo;
+import frc.robot.commands.automations.Shoot;
+import frc.robot.commands.conveyor.GroundToConveyor;
+import frc.robot.commands.conveyor.GroundToIntake;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -26,18 +38,25 @@ import frc.robot.commands.DefaultDrive;
  */
 public class RobotContainer {
         // The robot's subsystems
-        private final Robot m_Robot;
+        public final Robot m_robot;
         public final SwerveDrive m_robotDrive;
+        public final Elevator m_elevator;
+        public final Intake m_intake;
+        public final Shooter m_shooter;
+        public final FlyWheel m_flywheel;
+        public final Climb m_climb;
+        public final Conveyor m_conveyor;
+        public final Shoot m_shoot;
 
         // private final SendableChooser<Command> choose;
-        // public final AutoMain m_Autos;
+        public final AutoMain m_Autos;
 
         // The driver's controller
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer(Robot m_Robot) {
-                this.m_Robot = m_Robot;
+                this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(m_Robot);
                 m_elevator = new Elevator();
                 m_intake = new Intake();
@@ -45,8 +64,9 @@ public class RobotContainer {
                 m_climb = new Climb();
                 m_conveyor = new Conveyor();
                 m_flywheel = new FlyWheel();
+                m_Autos = new AutoMain(this);
+                m_shoot = new Shoot(this);
 
-                
                 configureButtonBindings();
 
         }
@@ -63,50 +83,88 @@ public class RobotContainer {
 
         private void configureButtonBindings() {
 
-                // Driver Controls
+                // Swerve Controls
+
                 m_robotDrive.setDefaultCommand(
-                                // The left stick controls tran slation of the robot.
-                                // Turning is controlled by the X axis of the right stick.
-                                new DefaultDrive(m_robotDrive, 1, 1));// 2.5, 1));
-                // m_robotDrive.setDefaultCommand(new FilteredDrive(m_robotDrive,
-                // XBOX
-                // () -> JoystickButtons.m_driverController.getLeftY() * 5,
-                // () -> JoystickButtons.m_driverController.getLeftX() * 5,
-                // () -> JoystickButtons.m_driverController.getRightX() * 5));
-                // Logitech
-                // () -> JoystickButtons.m_driverController.getLeftY() * 2,
-                // () -> JoystickButtons.m_driverController.getLeftX() * 2,
-                // () -> JoystickButtons.m_driverController.getRawAxis(2) * 5));
+                                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
+
+                JoystickButtons.drBump.whileTrue(
+                                new DefaultDrive(m_robotDrive, 0.85, 1));
+
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 
-                new Trigger(() -> Math.abs(JoystickButtons.m_driverController.getLeftTriggerAxis()) > 0.05)
-                                .onTrue(new InstantCommand(() -> {
-                                        m_robotDrive.setPresetEnabled(true, -180.0);
-                                }));
+                JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? -90 : 90)));
+                JoystickButtons.dDpadU.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 0 : 180)));
+                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 90 : -90)));
+                JoystickButtons.dDpadD.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 180 : 0)));
 
-                new Trigger(() -> Math.abs(JoystickButtons.m_driverController.getRightTriggerAxis()) > 0.05)
-                                .onTrue(new InstantCommand(() -> {
-                                        m_robotDrive.setPresetEnabled(true, 0);
 
-                                }));
+                // Elevator Controls
 
-                JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, 90)));
-                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, -90)));
+                JoystickButtons.opA.onTrue(new InstantCommand(
+                                () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                JoystickButtons.opY.onTrue(new InstantCommand(
+                                () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
+                JoystickButtons.opDpadD.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
 
-                // Y | high: 29.25, 29.11, 34
-                // X | mid: -
-                // dR| cube: -42.7,-133.7,43.5
-                // dU| cone upright: -34.69, -139.75, 37.55
-                // B | feeder slope: -2, -162.5, 115.2
-                // dD| cone lying: -56.45, -139.75, 95.84
-                // A | default: -0.6, -169.63, 137.6
-                // dL| feed slide -2.78, -73.08, -57.43
+                m_elevator.setDefaultCommand(new RunCommand(
+                                                () -> m_elevator.moveElev(
+                                                                -1 * JoystickButtons.m_operatorController.getRightY(),
+                                                                0.2 * (JoystickButtons.m_operatorController.getRightTriggerAxis()
+                                                                - JoystickButtons.m_operatorController
+                                                                                .getLeftTriggerAxis())),
+                                                m_elevator));                // Climb Controls
 
-                // // JoystickButtons.oplWing.whileTrue(new InstantCommand(() -> {
-                // // m_robotDrive.setPresetEnabled(true, 0);
+                 m_climb.setDefaultCommand(new RunCommand(
+                                () -> m_climb.moveClimb(
+                                                0.6 * JoystickButtons.m_operatorController.getLeftY(),
+                                                0.6 * JoystickButtons.m_operatorController.getLeftY()),
+                                m_climb));
 
-                // }));
+
+
+                // Pivot Controls
+
+                JoystickButtons.opB.onTrue(new InstantCommand(
+                                () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)));
+
+                JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
+
+                // Intake and Conveyor Controls
+
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
+
+                // JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).andThen(new InstantCommand(() -> m_intake.intakeOff())));
+
+                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
+
+                JoystickButtons.opDpadL.whileTrue(new GroundToConveyor(m_conveyor, m_intake));
+
+
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
+                
+                m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
+
+                m_conveyor.setDefaultCommand(new InstantCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
+
+
+                // Fly Wheels controls
+
+                JoystickButtons.dlBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676)));
+                
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
+
+                // Shooting Automations
+
+                JoystickButtons.dX.whileTrue(
+                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
+                                                .until(() -> !m_shoot.hasNote).andThen(new WaitCommand(0.5))).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
+                // Amp Automations
+
+                JoystickButtons.dB
+                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot).alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
+                                        Constants.MechPositions.ampIntakePos))));
         }
 
         /**

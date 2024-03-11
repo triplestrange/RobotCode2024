@@ -44,10 +44,9 @@ public class Climb extends SubsystemBase {
         lWinch.setSmartCurrentLimit(Constants.ELECTRICAL.climbCurrentLimit);
         lWinch.setInverted(true);
 
-
         rWinch.setIdleMode(IdleMode.kBrake);
         rWinch.setSmartCurrentLimit(Constants.ELECTRICAL.climbCurrentLimit);
-        
+
         lWinchController = lWinch.getPIDController();
         lWinchEncoder = lWinch.getEncoder();
         lWinchEncoder.setPositionConversionFactor(Constants.ClimbConstants.climbPosConv);
@@ -103,13 +102,16 @@ public class Climb extends SubsystemBase {
     }
 
     public void moveClimb(double motorLWinchPower, double motorRWinchPower) {
-     /*    if (getLWinchPos() >= Constants.ClimbConstants.maxHeight - Constants.ClimbConstants.safeZone) {
-            motorLWinchPower = 0;
-        }
-        if (getLWinchPos() <= Constants.ClimbConstants.minHeight + Constants.ClimbConstants.safeZone) {
-            motorLWinchPower = 0;
-        }
-        */
+        /*
+         * if (getLWinchPos() >= Constants.ClimbConstants.maxHeight -
+         * Constants.ClimbConstants.safeZone) {
+         * motorLWinchPower = 0;
+         * }
+         * if (getLWinchPos() <= Constants.ClimbConstants.minHeight +
+         * Constants.ClimbConstants.safeZone) {
+         * motorLWinchPower = 0;
+         * }
+         */
 
         if (Math.abs(motorLWinchPower) < 0.05) {
             lWinchPIDEnabled = true;
@@ -117,24 +119,28 @@ public class Climb extends SubsystemBase {
             lWinchPower = motorLWinchPower;
             lWinch.set(lWinchPower);
             lWinchSetpoint = getLWinchPos();
-            // lWinchController.setReference(getLWinchPos(), CANSparkMax.ControlType.kSmartMotion);
+            // lWinchController.setReference(getLWinchPos(),
+            // CANSparkMax.ControlType.kSmartMotion);
             lWinchPIDEnabled = false;
         }
-/*
-        if (getRWinchPos() >= Constants.ClimbConstants.maxHeight - Constants.ClimbConstants.safeZone) {
-            motorRWinchPower = 0;
-        }
-        if (getRWinchPos() <= Constants.ClimbConstants.minHeight + Constants.ClimbConstants.safeZone) {
-            motorRWinchPower = 0;
-        }
-*/
+        /*
+         * if (getRWinchPos() >= Constants.ClimbConstants.maxHeight -
+         * Constants.ClimbConstants.safeZone) {
+         * motorRWinchPower = 0;
+         * }
+         * if (getRWinchPos() <= Constants.ClimbConstants.minHeight +
+         * Constants.ClimbConstants.safeZone) {
+         * motorRWinchPower = 0;
+         * }
+         */
         if (Math.abs(motorRWinchPower) < 0.05) {
             rWinchPIDEnabled = true;
         } else {
             rWinchPower = motorRWinchPower;
             rWinch.set(rWinchPower);
             rWinchSetpoint = getRWinchPos();
-            // rWinchController.setReference(getRWinchPos(), CANSparkMax.ControlType.kSmartMotion);
+            // rWinchController.setReference(getRWinchPos(),
+            // CANSparkMax.ControlType.kSmartMotion);
             rWinchPIDEnabled = false;
         }
     }
