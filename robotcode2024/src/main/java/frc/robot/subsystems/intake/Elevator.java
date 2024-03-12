@@ -1,5 +1,7 @@
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -7,15 +9,28 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Elevator extends SubsystemBase {
+    @AutoLogOutput
+    public Mechanism2d intakeMech;
+
+    public MechanismRoot2d elevatorRoot2d;
+
+    public MechanismLigament2d elevator;
+    public MechanismLigament2d intakeStatic;
+    public MechanismLigament2d intakeJoint;
+
     private final CANSparkMax elev;
     private final CANSparkMax intake;
 
@@ -43,7 +58,7 @@ public class Elevator extends SubsystemBase {
 
         elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
         intake = new CANSparkMax(Constants.CAN.IPIVOT, MotorType.kBrushless);
-        
+
         intake.setInverted(true);
         elev.setInverted(false);
 
@@ -93,6 +108,17 @@ public class Elevator extends SubsystemBase {
 
         elev.burnFlash();
         intake.burnFlash();
+        intakeMech = new Mechanism2d(Units.inchesToMeters(24), Units.inchesToMeters(23.625));
+
+        elevatorRoot2d = intakeMech.getRoot("elevator root", 13, 9.5);
+
+        elevator = elevatorRoot2d
+                .append(new MechanismLigament2d("elevator", Units.inchesToMeters(23.635), 90));
+        intakeStatic = elevator.append(
+                new MechanismLigament2d("intake static", Units.inchesToMeters(878500), 0));
+        intakeJoint = intakeStatic.append(
+                new MechanismLigament2d("intake joint", Units.inchesToMeters(12.227660), 90));
+
     }
 
     public double getElevPos() {
@@ -120,13 +146,15 @@ public class Elevator extends SubsystemBase {
             elevPIDEnabled = false;
         }
 
-        // if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone)
-        //         && motorIntakePower > 0) {
-        //     motorIntakePower = 0;
+        // if ((getIntakePos() >= Constants.IntakeConstants.maxAngle -
+        // Constants.IntakeConstants.safeZone)
+        // && motorIntakePower > 0) {
+        // motorIntakePower = 0;
         // }
-        // if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone
-        //         && motorIntakePower < 0) {
-        //     motorIntakePower = 0;
+        // if (getIntakePos() <= Constants.IntakeConstants.minAngle +
+        // Constants.IntakeConstants.safeZone
+        // && motorIntakePower < 0) {
+        // motorIntakePower = 0;
         // }
 
         if (Math.abs(motorIntakePower) < 0.05) {
@@ -195,6 +223,9 @@ public class Elevator extends SubsystemBase {
         }
 
         intake.set(intakePower);
+
+        intakeJoint.setAngle(getIntakePos());
+        elevator.setLength(getElevPos());
     }
 
     public void updateSmartDashBoard() {

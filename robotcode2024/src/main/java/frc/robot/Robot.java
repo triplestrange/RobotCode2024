@@ -50,8 +50,10 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    
-    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+
+    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+
+    Logger.recordMetadata("RobotCode2024", "MyProject"); // Set a metadata value
 
     if (isReal()) {
       // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
@@ -59,9 +61,11 @@ public class Robot extends LoggedRobot {
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
       // setUseTiming(false); // Run as fast as possible
-      // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from
+      // AdvantageScope (or prompt the user)
       // Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath,
+      // "_sim"))); // Save outputs to a new log
     }
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in
@@ -75,7 +79,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer(this);
     m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot, m_robotContainer.m_elevator);
     m_robotContainer.m_robotDrive.zeroHeading();
-      }
+  }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items
@@ -142,10 +146,10 @@ public class Robot extends LoggedRobot {
       Shuffleboard.startRecording();
     }
     m_robotContainer.m_robotDrive.m_odometry
-          .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+        .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
     m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 
-    // schedule the  autonomous command (example)
+    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
