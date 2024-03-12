@@ -1,11 +1,10 @@
 package frc.robot.commands;
 
-import java.time.Instant;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,14 +12,13 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.commands.conveyor.GroundToConveyor;
-import frc.robot.commands.conveyor.IntakeToConveyor;
-import frc.robot.subsystems.intake.Elevator.IntakePosition;
+import frc.robot.commands.indexer.IntakeToIndexer;
 
 public class AutoMain extends Command {
 
         RobotContainer m_robotContainer;
-        private final SendableChooser<Command> autoChooser;
+        
+        private final LoggedDashboardChooser<Command> autoChooser;
 
         public AutoMain(RobotContainer m_robotContainer) {
                 // Class Variables
@@ -28,9 +26,9 @@ public class AutoMain extends Command {
 
                 registerCommands();
 
-                autoChooser = AutoBuilder.buildAutoChooser();
+                autoChooser = new LoggedDashboardChooser<>("Auto Routine", AutoBuilder.buildAutoChooser());
 
-                SmartDashboard.putData("Auto Chooser", autoChooser);
+                SmartDashboard.putData("Auto Chooser", autoChooser.getSendableChooser());
 
 
         }
@@ -51,22 +49,22 @@ public class AutoMain extends Command {
                 NamedCommands.registerCommand("intakeOff", new InstantCommand(() -> m_robotContainer.m_intake
                                 .intakeOff(), m_robotContainer.m_intake));
 
-                // Conveyor Commands
-                NamedCommands.registerCommand("conveyorOut", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvOut(), m_robotContainer.m_conveyor));
+                // indexer Commands
+                NamedCommands.registerCommand("indexerOut", new InstantCommand(() -> m_robotContainer.m_indexer.runConvOut(), m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("conveyorIn", new IntakeToConveyor(m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("indexerIn", new IntakeToIndexer(m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("conveyorShoot", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvIn(), m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("indexerShoot", new InstantCommand(() -> m_robotContainer.m_indexer.runConvIn(), m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("conveyorOff", new InstantCommand(() -> m_robotContainer.m_conveyor.conveyorOff(), m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("indexerOff", new InstantCommand(() -> m_robotContainer.m_indexer.indexerOff(), m_robotContainer.m_indexer));
                 
                 // Shooter
-                NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_conveyor, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_shoot.hasNote).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
+                NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_indexer, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_shoot.hasNote).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(() -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter).alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676), m_robotContainer.m_flywheel)));
         }
 
         public Command getAutoChooser() {
-                return autoChooser.getSelected();
+                return autoChooser.get();
         }
 }

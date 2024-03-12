@@ -1,4 +1,4 @@
-package frc.robot.subsystems.cannon;
+package frc.robot.subsystems.cannon.shooter;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;

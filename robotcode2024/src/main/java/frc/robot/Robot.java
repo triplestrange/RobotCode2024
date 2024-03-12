@@ -4,28 +4,16 @@
 
 package frc.robot;
 
-import java.util.Optional;
-
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.AutoMain;
-import frc.robot.commands.automations.Shoot;
-import frc.robot.subsystems.swerve.Vision;
+import frc.robot.subsystems.vision.Vision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -110,7 +98,7 @@ public class Robot extends LoggedRobot {
       m_robotContainer.m_shoot.updateSmartDashBoard();
       m_robotContainer.m_flywheel.updateSmartDashBoard();
       m_robotContainer.m_intake.updateSmartDashBoard();
-      m_robotContainer.m_conveyor.updateSmartDashBoard();
+      m_robotContainer.m_indexer.updateSmartDashBoard();
 
     }
   }

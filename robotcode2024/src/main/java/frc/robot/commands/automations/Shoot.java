@@ -80,7 +80,7 @@ public class Shoot {
                 speakerTranslation3d.getY(), new Rotation2d().fromDegrees(0)), 0, 0, m_RobotContainer.m_robotDrive,
                 m_RobotContainer.m_robot);
 
-        hasNote = m_RobotContainer.m_conveyor.getConveyorSensor();
+        hasNote = m_RobotContainer.m_indexer.getindexerSensor();
     }
 
     public void prepare() {
@@ -120,7 +120,7 @@ public class Shoot {
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
 
-            m_RobotContainer.m_conveyor.runConvIn();
+            m_RobotContainer.m_indexer.runConvIn();
         }
     }
 

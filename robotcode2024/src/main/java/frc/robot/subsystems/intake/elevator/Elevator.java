@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.intake.elevator;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 

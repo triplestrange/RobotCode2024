@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "conveyorShoot"
+            "name": "indexerShoot"
           }
         },
         {
@@ -62,7 +62,7 @@
         {
           "type": "named",
           "data": {
-            "name": "conveyorIn"
+            "name": "indexerIn"
           }
         },
         {

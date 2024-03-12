@@ -17,7 +17,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.subsystems.intake.Elevator.IntakePosition;
+import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -214,7 +214,7 @@ public final class Constants {
     public final static double allowedErr = 0;
 
     public final static double intakeSpeed = 1;
-    public final static double conveyorSpeed = 1;
+    public final static double indexerSpeed = 1;
   }
 
   public static final class VisionConstants {
@@ -273,11 +273,11 @@ public final class Constants {
     public static final int intakeCurrentLimit = 30;
 
     public static final int rollerCurrentLimit = 20;
-    public static final int conveyorCurrentLimit = 20;
+    public static final int indexerCurrentLimit = 20;
 
     public static final int climbCurrentLimit = 40;
 
-    public static final int conveyorDigitalInput = 4;
+    public static final int indexerDigitalInput = 4;
     public static final int intakeDigitalInput = 1;
 
     public static final int pivotAbsInput = 2;
@@ -301,7 +301,7 @@ public final class Constants {
     public static final int ELEVATOR = 9;
 
     public static final int ROLLERS = 5;
-    public static final int CONVEYOR = 10;
+    public static final int indexer = 10;
 
     public static final int IPIVOT = 23;
 

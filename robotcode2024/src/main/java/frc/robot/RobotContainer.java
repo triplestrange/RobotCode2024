@@ -17,18 +17,18 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
-import frc.robot.subsystems.cannon.Conveyor;
-import frc.robot.subsystems.cannon.FlyWheel;
-import frc.robot.subsystems.cannon.Climb;
-import frc.robot.subsystems.cannon.Shooter;
-import frc.robot.subsystems.intake.Elevator;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.cannon.climb.Climb;
+import frc.robot.subsystems.cannon.flywheel.FlyWheel;
+import frc.robot.subsystems.cannon.indexer.Indexer;
+import frc.robot.subsystems.cannon.shooter.Shooter;
+import frc.robot.subsystems.intake.elevator.Elevator;
+import frc.robot.subsystems.intake.wrist.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
-import frc.robot.commands.conveyor.GroundToConveyor;
-import frc.robot.commands.conveyor.GroundToIntake;
+import frc.robot.commands.indexer.GroundToIndexer;
+import frc.robot.commands.indexer.GroundToIntake;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -45,7 +45,7 @@ public class RobotContainer {
         public final Shooter m_shooter;
         public final FlyWheel m_flywheel;
         public final Climb m_climb;
-        public final Conveyor m_conveyor;
+        public final Indexer m_indexer;
         public final Shoot m_shoot;
 
         // private final SendableChooser<Command> choose;
@@ -62,7 +62,7 @@ public class RobotContainer {
                 m_intake = new Intake();
                 m_shooter = new Shooter();
                 m_climb = new Climb();
-                m_conveyor = new Conveyor();
+                m_indexer = new Indexer();
                 m_flywheel = new FlyWheel();
                 m_Autos = new AutoMain(this);
                 m_shoot = new Shoot(this);
@@ -131,22 +131,22 @@ public class RobotContainer {
 
                 JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
 
-                // Intake and Conveyor Controls
+                // Intake and indexer Controls
 
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_indexer.runConvIn(), m_indexer)));
 
                 // JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).andThen(new InstantCommand(() -> m_intake.intakeOff())));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
-                JoystickButtons.opDpadL.whileTrue(new GroundToConveyor(m_conveyor, m_intake));
+                JoystickButtons.opDpadL.whileTrue(new GroundToIndexer(m_indexer, m_intake));
 
 
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)));
                 
                 m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
 
-                m_conveyor.setDefaultCommand(new InstantCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
+                m_indexer.setDefaultCommand(new InstantCommand(() -> m_indexer.indexerOff(), m_indexer));
 
 
                 // Fly Wheels controls
@@ -158,7 +158,7 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
+                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer)
                                                 .until(() -> !m_shoot.hasNote).andThen(new WaitCommand(0.5))).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
                 // Amp Automations
 
