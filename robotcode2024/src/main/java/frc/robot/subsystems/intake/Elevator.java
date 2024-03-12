@@ -43,10 +43,7 @@ public class Elevator extends SubsystemBase {
 
         elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
         intake = new CANSparkMax(Constants.CAN.IPIVOT, MotorType.kBrushless);
-
-        elev.restoreFactoryDefaults();
-        intake.restoreFactoryDefaults();
-
+        
         intake.setInverted(true);
         elev.setInverted(false);
 
@@ -103,14 +100,16 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveElev(double motorElevPower, double motorIntakePower) {
-        if (getElevPos() >= Constants.ElevatorConstants.maxHeight - Constants.ElevatorConstants.safeZone
-                && motorElevPower > 0) {
-            motorElevPower = 0;
-        }
-        if (getElevPos() <= Constants.ElevatorConstants.minHeight + Constants.ElevatorConstants.safeZone
-                && motorElevPower < 0) {
-            motorElevPower = 0;
-        }
+        // if (getElevPos() >= Constants.ElevatorConstants.maxHeight -
+        // Constants.ElevatorConstants.safeZone
+        // && motorElevPower > 0) {
+        // motorElevPower = 0;
+        // }
+        // if (getElevPos() <= Constants.ElevatorConstants.minHeight +
+        // Constants.ElevatorConstants.safeZone
+        // && motorElevPower < 0) {
+        // motorElevPower = 0;
+        // }
 
         if (Math.abs(motorElevPower) < 0.05) {
             elevPIDEnabled = true;
@@ -121,20 +120,19 @@ public class Elevator extends SubsystemBase {
             elevPIDEnabled = false;
         }
 
-        if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone)
-                && motorIntakePower > 0) {
-            motorIntakePower = 0;
-        }
-        if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone
-                && motorIntakePower < 0) {
-            motorIntakePower = 0;
-        }
+        // if ((getIntakePos() >= Constants.IntakeConstants.maxAngle - Constants.IntakeConstants.safeZone)
+        //         && motorIntakePower > 0) {
+        //     motorIntakePower = 0;
+        // }
+        // if (getIntakePos() <= Constants.IntakeConstants.minAngle + Constants.IntakeConstants.safeZone
+        //         && motorIntakePower < 0) {
+        //     motorIntakePower = 0;
+        // }
 
         if (Math.abs(motorIntakePower) < 0.05) {
             intakePIDEnabled = true;
         } else {
             intakePower = motorIntakePower;
-            intake.set(intakePower);
             intakeSetpoint = getIntakePos();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
@@ -187,7 +185,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         if (elevPIDEnabled) {
             elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
-        } else
+        }
 
         if (intakePIDEnabled) {
             intakePower = intakeController.calculate(getIntakePos(), intakeSetpoint);
@@ -204,9 +202,9 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putBoolean("Is Encoder Plugged", intakeEncoder.isConnected());
         SmartDashboard.putNumber("angle setpoint", intakeSetpoint);
         SmartDashboard.putNumber("Power", intakePower);
-        // SmartDashboard.putNumber("height", getElevPos());
-        // SmartDashboard.putNumber("height setpoint", elevSetpoint);
-        // SmartDashboard.putNumber("Elev Power", elevPower);
+        SmartDashboard.putNumber("height", getElevPos());
+        SmartDashboard.putNumber("height setpoint", elevSetpoint);
+        SmartDashboard.putNumber("Elev Power", elevPower);
 
     }
 }
