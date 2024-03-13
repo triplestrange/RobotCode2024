@@ -8,6 +8,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants;
+import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
 public class ElevatorIOSim implements ElevatorIO {
     private ElevatorSim elevatorSim = new ElevatorSim(DCMotor.getNEO(1), Constants.ElevatorConstants.elevSimPosConv,
@@ -26,7 +27,7 @@ public class ElevatorIOSim implements ElevatorIO {
     }
 
     @Override
-    public void moveElevator(double speed) {
+    public void moveElev(double motorElevPower, double motorIntakePower) {
         elevatorSim.setInputVoltage(winchAppliedVolts);
     }
 
