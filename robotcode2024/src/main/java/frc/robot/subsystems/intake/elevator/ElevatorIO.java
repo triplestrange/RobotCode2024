@@ -38,7 +38,7 @@ public interface ElevatorIO {
     public default void setVoltage(double volts) {
     }
 
-    public default void setIdleMode(IdleMode elevIdleMode, IdleMode intakIdleMode)   {
+    public default void setIdleMode(IdleMode elevIdleMode, IdleMode intakIdleMode) {
     }
 
 }

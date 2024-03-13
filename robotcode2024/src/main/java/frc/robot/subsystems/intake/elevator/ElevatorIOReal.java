@@ -16,68 +16,64 @@ import frc.robot.Constants;
 import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
 public class ElevatorIOReal implements ElevatorIO {
-    private CANSparkMax elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
-    private CANSparkMax intake = new CANSparkMax(Constants.CAN.IPIVOT, MotorType.kBrushless);
-    private SparkPIDController elevController;
-    private ProfiledPIDController intakeController;
-    private RelativeEncoder elevRelativeEncoder = elev.getEncoder();
-    private DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.intakeAbsInput);
+  private CANSparkMax elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
+  private CANSparkMax intake = new CANSparkMax(Constants.CAN.IPIVOT, MotorType.kBrushless);
+  private SparkPIDController elevController;
+  private ProfiledPIDController intakeController;
+  private RelativeEncoder elevRelativeEncoder = elev.getEncoder();
+  private DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.intakeAbsInput);
 
+  private boolean intakePIDEnabled;
+  public double intakeSetpoint;
 
+  private boolean elevPIDEnabled;
+  public double elevSetpoint;
 
-    private boolean intakePIDEnabled;
-    public double intakeSetpoint;
+  private double elevPower;
 
-    private boolean elevPIDEnabled;
-    public double elevSetpoint;
+  private double intakePower;
 
-    private double elevPower;
-
-    private double intakePower;
-
-    private double inputVolts = 0.0;
+  private double inputVolts = 0.0;
 
   public ElevatorIOReal() {
 
+    intake.setInverted(true);
+    elev.setInverted(false);
 
-        intake.setInverted(true);
-        elev.setInverted(false);
+    elev.setIdleMode(IdleMode.kBrake);
+    elev.setSmartCurrentLimit(Constants.ELECTRICAL.elevatorCurrentLimit);
 
-        elev.setIdleMode(IdleMode.kBrake);
-        elev.setSmartCurrentLimit(Constants.ELECTRICAL.elevatorCurrentLimit);
+    intake.setIdleMode(IdleMode.kBrake);
+    intake.setSmartCurrentLimit(Constants.ELECTRICAL.intakeCurrentLimit);
 
-        intake.setIdleMode(IdleMode.kBrake);
-        intake.setSmartCurrentLimit(Constants.ELECTRICAL.intakeCurrentLimit);
+    elevRelativeEncoder = elev.getEncoder();
 
-        elevRelativeEncoder = elev.getEncoder();
+    elevRelativeEncoder.setPositionConversionFactor(Constants.ElevatorConstants.elevPosConv);
 
-        elevRelativeEncoder.setPositionConversionFactor(Constants.ElevatorConstants.elevPosConv);
+    elevController = elev.getPIDController();
 
+    elevRelativeEncoder.setPosition(0);
 
-        elevController = elev.getPIDController();
+    intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
+        Constants.IntakeConstants.kD,
+        new Constraints(Constants.IntakeConstants.kMaxAngularSpeedMetersPerSecond,
+            Constants.IntakeConstants.kMaxAngularAccelerationMetersPerSecondSquared));
 
-        elevRelativeEncoder.setPosition(0);
+    // set PID coefficients
+    elevController.setP(Constants.ElevatorConstants.kP);
+    elevController.setI(Constants.ElevatorConstants.kI);
+    elevController.setD(Constants.ElevatorConstants.kD);
+    elevController.setOutputRange(Constants.ElevatorConstants.kMinOutput, Constants.ElevatorConstants.kMaxOutput);
 
-        intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
-                Constants.IntakeConstants.kD,
-                new Constraints(Constants.IntakeConstants.kMaxAngularSpeedMetersPerSecond,
-                        Constants.IntakeConstants.kMaxAngularAccelerationMetersPerSecondSquared));
+    elevController.setSmartMotionMaxVelocity(Constants.ElevatorConstants.maxVel, 0);
+    elevController.setSmartMotionMinOutputVelocity(Constants.ElevatorConstants.minVel, 0);
+    elevController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, 0);
+    elevController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, 0);
 
-        // set PID coefficients
-        elevController.setP(Constants.ElevatorConstants.kP);
-        elevController.setI(Constants.ElevatorConstants.kI);
-        elevController.setD(Constants.ElevatorConstants.kD);
-        elevController.setOutputRange(Constants.ElevatorConstants.kMinOutput, Constants.ElevatorConstants.kMaxOutput);
+    elevSetpoint = getElevPos();
 
-        elevController.setSmartMotionMaxVelocity(Constants.ElevatorConstants.maxVel, 0);
-        elevController.setSmartMotionMinOutputVelocity(Constants.ElevatorConstants.minVel, 0);
-        elevController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, 0);
-        elevController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, 0);
-
-        elevSetpoint = getElevPos();
-
-        elev.burnFlash();
-        intake.burnFlash();
+    elev.burnFlash();
+    intake.burnFlash();
   }
 
   public double getElevPos() {
@@ -85,8 +81,8 @@ public class ElevatorIOReal implements ElevatorIO {
   }
 
   public double getIntakePos() {
-        return MathUtil.inputModulus(
-                -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset, -160, 20);
+    return MathUtil.inputModulus(
+        -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset, -160, 20);
   }
 
   public void resetPIDs() {
@@ -97,27 +93,27 @@ public class ElevatorIOReal implements ElevatorIO {
     intakePIDEnabled = true;
     elevPIDEnabled = true;
 
-}
+  }
 
   @Override
   public void moveElev(double motorElevPower, double motorIntakePower) {
     if (Math.abs(motorElevPower) < 0.05) {
-        elevPIDEnabled = true;
+      elevPIDEnabled = true;
     } else {
-        elevPower = motorElevPower;
-        elev.set(elevPower);
-        elevSetpoint = getElevPos();
-        elevPIDEnabled = false;
+      elevPower = motorElevPower;
+      elev.set(elevPower);
+      elevSetpoint = getElevPos();
+      elevPIDEnabled = false;
     }
     if (Math.abs(motorIntakePower) < 0.05) {
-        intakePIDEnabled = true;
+      intakePIDEnabled = true;
     } else {
-        intakePower = motorIntakePower;
-        intakeSetpoint = getIntakePos();
-        intakeController.reset(intakeSetpoint);
-        intakePIDEnabled = false;
+      intakePower = motorIntakePower;
+      intakeSetpoint = getIntakePos();
+      intakeController.reset(intakeSetpoint);
+      intakePIDEnabled = false;
     }
-}
+  }
 
   @Override
   public void setElev(IntakePosition position) {
@@ -133,9 +129,11 @@ public class ElevatorIOReal implements ElevatorIO {
     elev.setIdleMode(elevIdleMode);
     intake.setIdleMode(intakIdleMode);
   }
+
   @Override
   public void setVoltage(double volts) {
   }
+
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
   }

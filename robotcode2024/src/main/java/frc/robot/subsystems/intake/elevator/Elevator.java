@@ -89,10 +89,6 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    
-
-    
-
     @Override
     public void periodic() {
         if (elevPIDEnabled) {

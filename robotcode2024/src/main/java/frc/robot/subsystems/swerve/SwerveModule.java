@@ -49,7 +49,7 @@ public class SwerveModule {
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
-    //m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
+    // m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
     m_turningMotor.restoreFactoryDefaults();
 
     m_turningEncoder = m_turningMotor.getEncoder();

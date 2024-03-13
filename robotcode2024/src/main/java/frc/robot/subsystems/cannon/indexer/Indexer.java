@@ -50,7 +50,7 @@ public class Indexer extends SubsystemBase {
         // This method will be called once per scheduler run
     }
 
-    public void updateSmartDashBoard()  {
+    public void updateSmartDashBoard() {
         SmartDashboard.putBoolean("conveor sensor", getindexerSensor());
     }
 }

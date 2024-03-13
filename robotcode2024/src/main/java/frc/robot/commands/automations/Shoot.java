@@ -84,23 +84,25 @@ public class Shoot {
     }
 
     public void prepare() {
-                if (isAllianceRed()) {
+        if (isAllianceRed()) {
             shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
                     flipTranslation3d(speakerTranslation3d).getY())
-                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle().plus(new Rotation2d().fromDegrees(180));
-        }
-        else {
-        shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
-                .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
-                .plus(new Rotation2d().fromDegrees(180));
+                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
+                    .plus(new Rotation2d().fromDegrees(180));
+        } else {
+            shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
+                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
+                    .plus(new Rotation2d().fromDegrees(180));
         }
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
         m_RobotContainer.m_flywheel.setFWSpeed(-5676);
 
         if (isAllianceRed()) {
             shootingAngle = Units.radiansToDegrees(Math.atan2(flipTranslation3d(speakerTranslation3d).getZ(), Math
-                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX() - flipTranslation3d(speakerTranslation3d).getX(),
-                            m_RobotContainer.m_robotDrive.getPose().getY() - flipTranslation3d(speakerTranslation3d).getY())))
+                    .hypot(m_RobotContainer.m_robotDrive.getPose().getX()
+                            - flipTranslation3d(speakerTranslation3d).getX(),
+                            m_RobotContainer.m_robotDrive.getPose().getY()
+                                    - flipTranslation3d(speakerTranslation3d).getY())))
                     - 90 + 32.5;
         } else {
             shootingAngle = Units.radiansToDegrees(Math.atan2(speakerTranslation3d.getZ(), Math
@@ -125,7 +127,7 @@ public class Shoot {
     }
 
     public void autoShoot() {
-                prepare();
+        prepare();
 
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
             driveTo.cancel();
@@ -203,17 +205,17 @@ public class Shoot {
         return false;
     }
 
-    public void updateSmartDashBoard()  {
-        SmartDashboard.putBoolean( "swerve check ",swerveCheck(m_RobotContainer.m_robotDrive.getPose()));
+    public void updateSmartDashBoard() {
+        SmartDashboard.putBoolean("swerve check ", swerveCheck(m_RobotContainer.m_robotDrive.getPose()));
         SmartDashboard.putBoolean("roation check", rotationCheck(m_RobotContainer.m_robotDrive.getPose()));
         SmartDashboard.putBoolean("pivot check", pivotCheck());
         SmartDashboard.putBoolean("flywheel check", flyWheelCheck());
         SmartDashboard.putBoolean("Red Alliance?", isAllianceRed());
 
         SmartDashboard.putNumber("target x", flipTranslation3d(speakerTranslation3d).getX());
-            SmartDashboard.putNumber("target y", flipTranslation3d(speakerTranslation3d).getY());
+        SmartDashboard.putNumber("target y", flipTranslation3d(speakerTranslation3d).getY());
 
         SmartDashboard.putNumber("target z", flipTranslation3d(speakerTranslation3d).getZ());
 
-        }
+    }
 }
