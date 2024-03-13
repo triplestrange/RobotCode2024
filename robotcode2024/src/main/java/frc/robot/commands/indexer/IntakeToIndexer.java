@@ -9,11 +9,12 @@ import frc.robot.Constants;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.subsystems.cannon.indexer.Indexer;
 import frc.robot.subsystems.cannon.shooter.Shooter;
-import frc.robot.subsystems.intake.wrist.Intake;
+import frc.robot.subsystems.intake.rollers.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class IntakeToIndexer extends Command {
     private Indexer m_indexer;
+
     /**
      * Creates a new Drive.
      * 

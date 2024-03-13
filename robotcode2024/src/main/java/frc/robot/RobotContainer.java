@@ -22,7 +22,7 @@ import frc.robot.subsystems.cannon.flywheel.FlyWheel;
 import frc.robot.subsystems.cannon.indexer.Indexer;
 import frc.robot.subsystems.cannon.shooter.Shooter;
 import frc.robot.subsystems.intake.elevator.Elevator;
-import frc.robot.subsystems.intake.wrist.Intake;
+import frc.robot.subsystems.intake.rollers.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.automations.DriveTo;
@@ -94,11 +94,14 @@ public class RobotContainer {
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 
-                JoystickButtons.dDpadL.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? -90 : 90)));
-                JoystickButtons.dDpadU.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 0 : 180)));
-                JoystickButtons.dDpadR.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 90 : -90)));
-                JoystickButtons.dDpadD.onTrue(new InstantCommand(() -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 180 : 0)));
-
+                JoystickButtons.dDpadL.onTrue(new InstantCommand(
+                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? -90 : 90)));
+                JoystickButtons.dDpadU.onTrue(new InstantCommand(
+                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 0 : 180)));
+                JoystickButtons.dDpadR.onTrue(new InstantCommand(
+                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 90 : -90)));
+                JoystickButtons.dDpadD.onTrue(new InstantCommand(
+                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 180 : 0)));
 
                 // Elevator Controls
 
@@ -106,65 +109,69 @@ public class RobotContainer {
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
                 JoystickButtons.opY.onTrue(new InstantCommand(
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
-                JoystickButtons.opDpadD.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
+                JoystickButtons.opDpadD.onTrue(new InstantCommand(
+                                () -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
 
                 m_elevator.setDefaultCommand(new RunCommand(
-                                                () -> m_elevator.moveElev(
-                                                                -1 * JoystickButtons.m_operatorController.getRightY(),
-                                                                0.2 * (JoystickButtons.m_operatorController.getRightTriggerAxis()
+                                () -> m_elevator.moveElev(
+                                                -1 * JoystickButtons.m_operatorController.getRightY(),
+                                                0.2 * (JoystickButtons.m_operatorController.getRightTriggerAxis()
                                                                 - JoystickButtons.m_operatorController
                                                                                 .getLeftTriggerAxis())),
-                                                m_elevator));                // Climb Controls
+                                m_elevator)); // Climb Controls
 
-                 m_climb.setDefaultCommand(new RunCommand(
+                m_climb.setDefaultCommand(new RunCommand(
                                 () -> m_climb.moveClimb(
                                                 0.6 * JoystickButtons.m_operatorController.getLeftY(),
                                                 0.6 * JoystickButtons.m_operatorController.getLeftY()),
                                 m_climb));
-
-
 
                 // Pivot Controls
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
                                 () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)));
 
-                JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
+                JoystickButtons.opX.whileTrue(new InstantCommand(
+                                () -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
 
                 // Intake and indexer Controls
 
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_indexer.runConvIn(), m_indexer)));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake)
+                                .alongWith(new RunCommand(() -> m_indexer.runConvIn(), m_indexer)));
 
-                // JoystickButtons.oprBump.whileTrue(new InstantCommand(() -> m_intake.runIntake()).andThen(new InstantCommand(() -> m_intake.intakeOff())));
+                // JoystickButtons.oprBump.whileTrue(new InstantCommand(() ->
+                // m_intake.runIntake()).andThen(new InstantCommand(() ->
+                // m_intake.intakeOff())));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
                 JoystickButtons.opDpadL.whileTrue(new GroundToIndexer(m_indexer, m_intake));
 
+                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake)
+                                .alongWith(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)));
 
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)));
-                
                 m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
 
                 m_indexer.setDefaultCommand(new InstantCommand(() -> m_indexer.indexerOff(), m_indexer));
 
-
                 // Fly Wheels controls
 
                 JoystickButtons.dlBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676)));
-                
+
                 m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
 
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
                                 new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer)
-                                                .until(() -> !m_shoot.hasNote).andThen(new WaitCommand(0.5))).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
+                                                .until(() -> !m_shoot.hasNote).andThen(new WaitCommand(0.5)))
+                                .onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot).alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
-                                        Constants.MechPositions.ampIntakePos))));
+                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot)
+                                                .alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
+                                                                Constants.MechPositions.ampIntakePos))));
         }
 
         /**

@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.subsystems.cannon.indexer.Indexer;
-import frc.robot.subsystems.intake.wrist.Intake;
+import frc.robot.subsystems.intake.rollers.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class GroundToIntake extends Command {

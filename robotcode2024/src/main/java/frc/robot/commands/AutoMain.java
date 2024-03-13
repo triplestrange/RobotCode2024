@@ -17,7 +17,7 @@ import frc.robot.commands.indexer.IntakeToIndexer;
 public class AutoMain extends Command {
 
         RobotContainer m_robotContainer;
-        
+
         private final LoggedDashboardChooser<Command> autoChooser;
 
         public AutoMain(RobotContainer m_robotContainer) {
@@ -30,15 +30,15 @@ public class AutoMain extends Command {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser.getSendableChooser());
 
-
         }
 
         public void registerCommands() {
                 // Elev Commands
                 NamedCommands.registerCommand("amp", new InstantCommand(() -> m_robotContainer.m_elevator
                                 .setIntakePosition(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
-                NamedCommands.registerCommand("ground", new InstantCommand(() -> m_robotContainer.m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
-                
+                NamedCommands.registerCommand("ground", new InstantCommand(() -> m_robotContainer.m_elevator
+                                .setIntakePosition(Constants.MechPositions.groundIntakePos)));
+
                 NamedCommands.registerCommand("stowElev", new InstantCommand(() -> m_robotContainer.m_elevator
                                 .setIntakePosition(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
                 // Intake Commands
@@ -50,18 +50,30 @@ public class AutoMain extends Command {
                                 .intakeOff(), m_robotContainer.m_intake));
 
                 // indexer Commands
-                NamedCommands.registerCommand("indexerOut", new InstantCommand(() -> m_robotContainer.m_indexer.runConvOut(), m_robotContainer.m_indexer));
+                NamedCommands.registerCommand("indexerOut", new InstantCommand(
+                                () -> m_robotContainer.m_indexer.runConvOut(), m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("indexerIn", new IntakeToIndexer(m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("indexerShoot", new InstantCommand(() -> m_robotContainer.m_indexer.runConvIn(), m_robotContainer.m_indexer));
+                NamedCommands.registerCommand("indexerShoot", new InstantCommand(
+                                () -> m_robotContainer.m_indexer.runConvIn(), m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("indexerOff", new InstantCommand(() -> m_robotContainer.m_indexer.indexerOff(), m_robotContainer.m_indexer));
-                
+                NamedCommands.registerCommand("indexerOff", new InstantCommand(
+                                () -> m_robotContainer.m_indexer.indexerOff(), m_robotContainer.m_indexer));
+
                 // Shooter
-                NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_indexer, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_shoot.hasNote).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
+                NamedCommands.registerCommand("shoot",
+                                (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(),
+                                                m_robotContainer.m_robotDrive, m_robotContainer.m_indexer,
+                                                m_robotContainer.m_shooter, m_robotContainer.m_flywheel)
+                                                .until(() -> !m_robotContainer.m_shoot.hasNote)
+                                                .andThen(new WaitCommand(0.5))
+                                                .finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
 
-                NamedCommands.registerCommand("shoot fixed", new InstantCommand(() -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter).alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676), m_robotContainer.m_flywheel)));
+                NamedCommands.registerCommand("shoot fixed", new InstantCommand(
+                                () -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter)
+                                .alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676),
+                                                m_robotContainer.m_flywheel)));
         }
 
         public Command getAutoChooser() {

@@ -65,13 +65,15 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveShooter(double motorPivotPower) {
-        // if ((getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone)
-        //         && motorPivotPower > 0) {
-        //     motorPivotPower = 0;
+        // if ((getAngle() >= Constants.ShooterConstants.maxAngle -
+        // Constants.ShooterConstants.safeZone)
+        // && motorPivotPower > 0) {
+        // motorPivotPower = 0;
         // }
-        // if ((getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone)
-        //         && motorPivotPower < 0) {
-        //     motorPivotPower = 0;
+        // if ((getAngle() <= Constants.ShooterConstants.minAngle +
+        // Constants.ShooterConstants.safeZone)
+        // && motorPivotPower < 0) {
+        // motorPivotPower = 0;
         // }
 
         if (Math.abs(motorPivotPower) < 0.05) {

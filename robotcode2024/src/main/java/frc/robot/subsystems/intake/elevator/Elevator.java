@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake.elevator;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -31,11 +32,7 @@ public class Elevator extends SubsystemBase {
     public MechanismLigament2d intakeStatic;
     public MechanismLigament2d intakeJoint;
 
-    private final CANSparkMax elev;
-    private final CANSparkMax intake;
-
     private SparkPIDController elevController;
-    private RelativeEncoder elevRelativeEncoder;
 
     private ProfiledPIDController intakeController;
     private DutyCycleEncoder intakeEncoder;
@@ -50,23 +47,30 @@ public class Elevator extends SubsystemBase {
 
     private double intakePower;
 
+    private static Elevator instance;
+
+    public static Elevator getInstance() {
+        return instance;
+    }
+
+    private ElevatorIO io;
+    private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+
+    public static Elevator initialize(ElevatorIO io) {
+        if (instance == null) {
+            instance = new Elevator(io);
+        }
+        return instance;
+    }
+
     /**
      * Creates a new Elevator.
      */
-    public Elevator() {
+    public Elevator(ElevatorIO elevatorIO) {
         super();
 
-        elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
-        intake = new CANSparkMax(Constants.CAN.IPIVOT, MotorType.kBrushless);
-
-        intake.setInverted(true);
-        elev.setInverted(false);
-
-        elev.setIdleMode(IdleMode.kBrake);
-        elev.setSmartCurrentLimit(Constants.ELECTRICAL.elevatorCurrentLimit);
-
-        intake.setIdleMode(IdleMode.kBrake);
-        intake.setSmartCurrentLimit(Constants.ELECTRICAL.intakeCurrentLimit);
+        io = elevatorIO;
+        io.updateInputs(inputs);
 
         intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
                 Constants.IntakeConstants.kD,
@@ -106,8 +110,6 @@ public class Elevator extends SubsystemBase {
         elevController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, smartMotionSlot);
         elevController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, smartMotionSlot);
 
-        elev.burnFlash();
-        intake.burnFlash();
         intakeMech = new Mechanism2d(Units.inchesToMeters(24), Units.inchesToMeters(23.625));
 
         elevatorRoot2d = intakeMech.getRoot("elevator root", 13, 9.5);
@@ -226,6 +228,9 @@ public class Elevator extends SubsystemBase {
 
         intakeJoint.setAngle(getIntakePos());
         elevator.setLength(getElevPos());
+
+        io.updateInputs(inputs);
+        Logger.processInputs("Elevator", inputs);
     }
 
     public void updateSmartDashBoard() {

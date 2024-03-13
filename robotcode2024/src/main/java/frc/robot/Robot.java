@@ -39,9 +39,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
+    Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-
-    Logger.recordMetadata("RobotCode2024", "MyProject"); // Set a metadata value
+    Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+    Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    ; // Set a metadata value
 
     if (isReal()) {
       // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")

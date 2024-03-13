@@ -52,7 +52,7 @@ public final class Constants {
     public static final Pose2d amp = new Pose2d(new Translation2d(1.78, 7.8), new Rotation2d().fromDegrees(90));
   }
 
-  public static final class Logger {
+  public static final class LoggerConstants {
     public static final Boolean tuningMode = false;
   }
 
@@ -178,11 +178,16 @@ public final class Constants {
     public final static double kMaxSpeedInchesPerSecond = 20;
     public final static double kMaxAccelerationInchesPerSecondSquared = 100;
 
-    public final static double maxHeight = 33;
-    public final static double minHeight = 0;
+    public final static double maxHeightInches = 33;
+    public final static double minHeightInches = 0;
     public final static double safeZone = 0;
 
     public final static double elevPosConv = 33 / 101.5;
+    public final static double elevSimPosConv = 9;
+    public final static double elevCarraigeKG = Units.lbsToKilograms(13.667);
+    public final static double elevDrumRadiusMeters = Units.inchesToMeters(1.25);
+    public final static double kDt = 1 / 20;
+
     public final static double kP = 0.4;
     public final static double kI = 0;
     public final static double kD = 0;
