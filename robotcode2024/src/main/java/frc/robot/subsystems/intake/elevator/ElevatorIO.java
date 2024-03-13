@@ -3,6 +3,10 @@ package frc.robot.subsystems.intake.elevator;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.revrobotics.CANSparkBase.IdleMode;
+
+import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
+
 public interface ElevatorIO {
 
     @AutoLog
@@ -25,10 +29,16 @@ public interface ElevatorIO {
     public default void updateInputs(ElevatorIOInputs inputs) {
     }
 
-    public default void moveElevator(double speed) {
+    public default void moveElev(double motorElevPower, double motorIntakePower) {
+    }
+
+    public default void setElev(IntakePosition position) {
     }
 
     public default void setVoltage(double volts) {
+    }
+
+    public default void setIdleMode(IdleMode elevIdleMode, IdleMode intakIdleMode)   {
     }
 
 }
