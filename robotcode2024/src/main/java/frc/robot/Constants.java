@@ -44,7 +44,10 @@ public final class Constants {
     public static final double climbPivotPos = 0;
 
     public static final double underChainPivotPos = -45;
-    public static final double clearancePivotPos = -10;
+    public static final double clearancePivotPos = -15;
+    public static final double podiumPivotPos = -22.0;
+    public static final double lowPivotPos = -40.0;
+
 
     public static final double topRailPos = 0;
     public static final double bottomRailPos = 0;
@@ -102,7 +105,7 @@ public final class Constants {
     public final static double FL_ENC_OFFSET = 56; // 183
     public final static double FR_ENC_OFFSET = 13; // 179 141
     public final static double BL_ENC_OFFSET = Units.radiansToDegrees(2.642752); // 221
-    public final static double BR_ENC_OFFSET = 322; // 241
+    public final static double BR_ENC_OFFSET = 322 + 4; // 241
 
     public final static boolean driveEnableCurrentLimit = true;
     public final static int driveContinuousCurrentLimit = 35;
@@ -113,16 +116,16 @@ public final class Constants {
   public static final class ShooterConstants {
     // pivot motor constants
 
-    public final static double kMaxAngularPivotSpeedDegreesPerSecond = 70; // theoretical max speed 476.784;
-    public final static double kMaxAngularPivotAccelerationDegreesPerSecondSquared = 140;
+    public final static double kMaxAngularPivotSpeedDegreesPerSecond = 300; // theoretical max speed 476.784;
+    public final static double kMaxAngularPivotAccelerationDegreesPerSecondSquared = 300;
 
     public final static double maxAngle = 0;
     public final static double minAngle = -48;
     public final static double safeZone = 1;
 
-    public final static double pivotkP = 0.055 * .5;
-    public final static double pivotkI = 0.006;
-    public final static double pivotkD = 0.001;
+    public final static double pivotkP = 0.05;
+    public final static double pivotkI = 0.045;
+    public final static double pivotkD = 0.00025;
 
     public final static double pivotAbsOffset = -105;
 
@@ -131,21 +134,21 @@ public final class Constants {
     public final static double kMaxflyWheelSpeedMetersPerSecond = 0;
     public final static double kMaxflyWheelAccelerationMetersPerSecondSquared = 0;
 
-    public final static int flyWheelkP = 0;
-    public final static int flyWheelkI = 0;
-    public final static int flyWheelkD = 0;
+    public final static double flyWheelkP = 0.0001;
+    public final static double flyWheelkI = 0;
+    public final static double flyWheelkD = 0;
     public final static double flyWheelkIz = 0;
-    public final static double flyWheelkFF = 1. / 5767;
+    public final static double flyWheelkFF = 1. / 4950;
 
     public final static double flyWheelkMaxOutput = 1;
     public final static double flyWheelkMinOutput = -1;
-    public final static double flyWheelmaxRPM = 0;
+    public final static double flyWheelmaxRPM = 5000;
     public final static double flyWheelallowedErr = 0;
     public final static double flyWheelmaxVel = 5767;
     public final static double flyWheelminVel = -5767;
     public final static double flyWheelmaxAcc = 5000;
 
-    public final static double rotationalSpeed = 2000;
+    public final static double rotationalSpeed = 4000;
   }
 
   public static final class ClimbConstants {
@@ -216,7 +219,7 @@ public final class Constants {
   public static final class VisionConstants {
 
     public static final Vector<N3> STATE_STD_DEVS = VecBuilder.fill(0.1, 0.1, 1);
-    public static final Vector<N3> VISION_MEASUREMENT_STD_DEVS = VecBuilder.fill(0.005, 0.005, 1000000000);
+    public static final Vector<N3> VISION_MEASUREMENT_STD_DEVS = VecBuilder.fill(2, 2, 1000000000);
 
   }
 

@@ -198,9 +198,9 @@ public class Elevator extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putNumber("degree", getIntakePos());
+        SmartDashboard.putNumber("intake degree", getIntakePos());
         SmartDashboard.putBoolean("Is Encoder Plugged", intakeEncoder.isConnected());
-        SmartDashboard.putNumber("angle setpoint", intakeSetpoint);
+        SmartDashboard.putNumber("intake angle setpoint", intakeSetpoint);
         SmartDashboard.putNumber("Power", intakePower);
         SmartDashboard.putNumber("height", getElevPos());
         SmartDashboard.putNumber("height setpoint", elevSetpoint);

@@ -136,7 +136,7 @@ public class SwerveModule {
 
     double desiredDrive = state.speedMetersPerSecond / Constants.SwerveConstants.kMaxSpeedMetersPerSecond;
 
-    if (Math.abs(desiredDrive) < 0.05 && !forceAngle) {
+    if (Math.abs(desiredDrive) < 0.01 && !forceAngle) {
       m_driveMotor.set(0);
       return;
     }

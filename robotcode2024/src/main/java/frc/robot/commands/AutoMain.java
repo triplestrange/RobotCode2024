@@ -61,7 +61,7 @@ public class AutoMain extends Command {
                 NamedCommands.registerCommand("conveyorOff", new InstantCommand(() -> m_robotContainer.m_conveyor.conveyorOff(), m_robotContainer.m_conveyor));
                 
                 // Shooter
-                NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_conveyor, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_shoot.hasNote).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
+                NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_conveyor, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_conveyor.getConveyorSensor()).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(() -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter).alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676), m_robotContainer.m_flywheel)));
         }

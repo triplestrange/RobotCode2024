@@ -35,8 +35,9 @@ public class DefaultDrive extends Command {
     speed = MathUtil.clamp(speed, -Constants.SwerveConstants.kMaxSpeedMetersPerSecond,
         Constants.SwerveConstants.kMaxSpeedMetersPerSecond);
     deadzone = 0.2;
-    rotation_controller = new PIDController(0.075, 0, 0.0);
+    rotation_controller = new PIDController(0.2, 0.17, 0.015);
     rotation_controller.enableContinuousInput(0, 360);
+    rotation_controller.setIZone(10);
   }
 
   // Called when the command is initially scheduled.
@@ -55,7 +56,7 @@ public class DefaultDrive extends Command {
     }
 
     double rot = rotation_controller.calculate(m_swerve.getPose().getRotation().getDegrees(), m_swerve.getRotationPreset());
-    // rot = MathUtil.clamp(rot, -1, 1);
+    rot = MathUtil.clamp(rot, -2 * Math.PI, 2 * Math.PI);
     // System.out.println("rotation PID: " + rot);
 
     // System.out.println("gyro: " + m_swerve.getAngle().getDegrees());
@@ -74,7 +75,7 @@ public class DefaultDrive extends Command {
       }
       // rotation was reversed
       else {
-        speedR = JoystickButtons.m_driverController.getRightX() * -4 * rotationSpeed;
+        speedR = Math.pow(JoystickButtons.m_driverController.getRightX(),3) * -4 * rotationSpeed;
       }
     }
 

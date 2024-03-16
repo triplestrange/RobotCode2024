@@ -88,7 +88,7 @@ public class RobotContainer {
                 m_robotDrive.setDefaultCommand(
                                 new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
 
-                JoystickButtons.drBump.whileTrue(
+                JoystickButtons.dlBump.whileTrue(
                                 new DefaultDrive(m_robotDrive, 0.85, 1));
 
                 JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
@@ -104,7 +104,7 @@ public class RobotContainer {
 
                 JoystickButtons.opA.onTrue(new InstantCommand(
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
-                JoystickButtons.opY.onTrue(new InstantCommand(
+                JoystickButtons.opDpadU.onTrue(new InstantCommand(
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
 
@@ -121,6 +121,7 @@ public class RobotContainer {
                                                 0.6 * JoystickButtons.m_operatorController.getLeftY(),
                                                 0.6 * JoystickButtons.m_operatorController.getLeftY()),
                                 m_climb));
+                
 
 
 
@@ -130,7 +131,12 @@ public class RobotContainer {
                                 () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)));
 
                 JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
+                JoystickButtons.opY.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.lowPivotPos)));
 
+                // m_shooter.setDefaultCommand( new RunCommand(() -> 
+                // m_shooter.moveShooter(
+                //         0.1 * JoystickButtons.m_operatorController.getLeftY()
+                // ), m_shooter));
                 // Intake and Conveyor Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
@@ -139,7 +145,7 @@ public class RobotContainer {
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
-                JoystickButtons.opDpadL.whileTrue(new GroundToConveyor(m_conveyor, m_intake));
+                JoystickButtons.opDpadL.whileTrue((new GroundToConveyor(m_conveyor, m_intake)).andThen(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor).until(() -> !m_conveyor.getConveyorSensor())));
 
 
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
@@ -151,7 +157,7 @@ public class RobotContainer {
 
                 // Fly Wheels controls
 
-                JoystickButtons.dlBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676)));
+                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676)));
                 
                 m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
 
@@ -159,7 +165,7 @@ public class RobotContainer {
 
                 JoystickButtons.dX.whileTrue(
                                 new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor)
-                                                .until(() -> !m_shoot.hasNote).andThen(new WaitCommand(0.5))).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()));
+                ).onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel()).alongWith(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos))));
                 // Amp Automations
 
                 JoystickButtons.dB

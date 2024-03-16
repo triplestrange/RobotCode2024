@@ -88,7 +88,6 @@ public class FlyWheel extends SubsystemBase {
     public void setFWSpeed(double RPM) {
         lFlyWheelSetpoint = RPM;
         rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
-
     }
 
     public void flyWheelOn() {
@@ -105,14 +104,21 @@ public class FlyWheel extends SubsystemBase {
     @Override
     public void periodic() {
         lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
+        if (lFlyWheelSetpoint == 0)  {
+            lFlyWheel.set(0);
+        }
         rFWController.setReference(rFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
-
+        if (rFlyWheelSetpoint == 0)  {
+            rFlyWheel.set(0);
+        }
     }
 
     public void updateSmartDashBoard() {
 
         SmartDashboard.putNumber("left rpm", lFlyWheel.getEncoder().getVelocity());
         SmartDashboard.putNumber("right rpm", rFlyWheel.getEncoder().getVelocity());
+        SmartDashboard.putNumber("left setpoint", lFlyWheelSetpoint);
+        SmartDashboard.putNumber("right setpoint", rFlyWheelSetpoint);
 
     }
 
