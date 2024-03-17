@@ -4,41 +4,63 @@ import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import frc.robot.Constants;
 import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
 public interface ElevatorIO {
 
     @AutoLog
     public static class ElevatorIOInputs {
-        public double winchMotorAppliedVolts = 0.0;
+        public boolean elevMotorConnected = true;
+        public boolean jointAbsoluteEncoderConnected = true;
+
+        public double winchInputVolts = 0.0;
         public double winchMotorCurrent = 0.0;
         public double winchAppliedVolts = 0.0;
 
         public double elevatorPosMeters = 0.0;
         public double elevatorVelMetersPerSecond = 0.0;
 
-        public double jointMotorAppliedVolts = 0.0;
+        public double jointInputVolts = 0.0;
         public double jointMotorCurrent = 0.0;
         public double jointAppliedVolts = 0.0;
 
         public double jointPosDeg = 0.0;
-        public double joinVelDeg = 0.0;
+        public double joinVelDegPerSecond = 0.0;
+
+        public double winchTempCelcius = 0.0;
+        public double jointTempCelcius = 0.0;
+
     }
 
-    public default void updateInputs(ElevatorIOInputs inputs) {
+    default void updateInputs(ElevatorIOInputs inputs) {
     }
 
-    public default void moveElev(double motorElevPower, double motorIntakePower) {
+    /** Run to setpoint IntakePosition in meters and degrees */
+    default void runSetpoint(IntakePosition intakePosition) {
     }
 
-    public default void setElev(IntakePosition position) {
+    /** Run motors at volts */
+    default void runWinchVolts(double elevVolts) {
     }
 
-    public default void setVoltage(double volts) {
+    default void runJointVolts(double intakeVolts) {
     }
 
-    public default void setIdleMode(IdleMode elevIdleMode, IdleMode intakIdleMode) {
+    /** Set brake mode enabled */
+    default void setIdleMode(IdleMode elevIdleMode, IdleMode itnakeIdleMode) {
     }
 
+    /** Sets position of internal encoder in inches */
+    default void setElevPosition(double height) {
+    }
+
+    /** Stops motors */
+    default void stop() {
+    }
 }

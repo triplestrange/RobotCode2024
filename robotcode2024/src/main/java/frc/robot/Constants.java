@@ -183,7 +183,7 @@ public final class Constants {
     public final static double safeZone = 0;
 
     public final static double elevPosConv = 33 / 101.5;
-    public final static double elevSimPosConv = 9;
+    public final static double elevSimPosConv = 15;
     public final static double elevCarraigeKG = Units.lbsToKilograms(13.667);
     public final static double elevDrumRadiusMeters = Units.inchesToMeters(1.25);
     public final static double kDt = 1 / 20;
