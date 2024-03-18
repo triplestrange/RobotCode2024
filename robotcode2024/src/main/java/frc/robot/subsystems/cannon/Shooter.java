@@ -54,6 +54,7 @@ public class Shooter extends SubsystemBase {
         pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
 
         lPivot.setInverted(true);
+        pivotController.setIZone(1);
         int smartMotionSlot = 0;
     }
 
@@ -111,10 +112,10 @@ public class Shooter extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putNumber("degree", getAngle());
+        SmartDashboard.putNumber("cannon degree", getAngle());
         SmartDashboard.putBoolean("Is Encoder Plugged", pivotEncoder.isConnected());
         SmartDashboard.putNumber("cannon angle setpoint", pivotSetpoint);
-        SmartDashboard.putNumber("Power", pivotPower);
+        SmartDashboard.putNumber("Cannon Power", pivotPower);
     }
 
 }

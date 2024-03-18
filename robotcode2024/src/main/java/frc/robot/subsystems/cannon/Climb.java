@@ -117,7 +117,7 @@ public class Climb extends SubsystemBase {
             lWinchPIDEnabled = true;
         } else {
             lWinchPower = motorLWinchPower;
-            lWinch.set(lWinchPower);
+            // lWinch.set(lWinchPower);
             lWinchSetpoint = getLWinchPos();
             // lWinchController.setReference(getLWinchPos(),
             // CANSparkMax.ControlType.kSmartMotion);
@@ -175,10 +175,10 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
         if (lWinchPIDEnabled) {
-            lWinchController.setReference(lWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            // lWinchController.setReference(lWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
         }
         if (rWinchPIDEnabled) {
-            rWinchController.setReference(rWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            // rWinchController.setReference(rWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
         }
     }
 

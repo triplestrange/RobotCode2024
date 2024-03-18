@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -324,5 +325,12 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", navX.getAngle());
     SmartDashboard.putNumber("back left angle", m_rearLeft.m_turningEncoder.getPosition());
+
+    SmartDashboard.putNumber("BRsteering", Units.radiansToDegrees(m_rearRight.m_turningEncoder.getPosition()));
+    SmartDashboard.putNumber("FRsteering", Units.radiansToDegrees(m_frontRight.m_turningEncoder.getPosition()));
+    SmartDashboard.putNumber("FLsteering", Units.radiansToDegrees(m_frontLeft.m_turningEncoder.getPosition()));
+    SmartDashboard.putNumber("BLsteering", Units.radiansToDegrees(m_rearLeft.m_turningEncoder.getPosition()));
+
+    ;
   }
 }
