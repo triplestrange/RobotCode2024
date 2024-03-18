@@ -52,13 +52,16 @@ public class AutoMain extends Command {
                                 .intakeOff(), m_robotContainer.m_intake));
 
                 // Conveyor Commands
-                NamedCommands.registerCommand("conveyorOut", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvOut(), m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("indexerOut", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvOut(), m_robotContainer.m_conveyor));
 
                 NamedCommands.registerCommand("conveyorIn", new IntakeToConveyor(m_robotContainer.m_conveyor));
 
-                NamedCommands.registerCommand("conveyorShoot", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvIn(), m_robotContainer.m_conveyor));
+                
+                NamedCommands.registerCommand("indexerIn", new IntakeToConveyor(m_robotContainer.m_conveyor));
 
-                NamedCommands.registerCommand("conveyorOff", new InstantCommand(() -> m_robotContainer.m_conveyor.conveyorOff(), m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("indexerShoot", new InstantCommand(() -> m_robotContainer.m_conveyor.runConvIn(), m_robotContainer.m_conveyor));
+
+                NamedCommands.registerCommand("indexerOff", new InstantCommand(() -> m_robotContainer.m_conveyor.conveyorOff(), m_robotContainer.m_conveyor));
                 
                 // Shooter
                 NamedCommands.registerCommand("shoot", (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(), m_robotContainer.m_robotDrive, m_robotContainer.m_conveyor, m_robotContainer.m_shooter, m_robotContainer.m_flywheel).until(() -> !m_robotContainer.m_conveyor.getConveyorSensor()).andThen(new WaitCommand(0.5)).finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel())));

@@ -108,13 +108,7 @@ public class RobotContainer {
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
 
-                m_elevator.setDefaultCommand(new RunCommand(
-                                                () -> m_elevator.moveElev(
-                                                                -1 * JoystickButtons.m_operatorController.getRightY(),
-                                                                0.2 * (JoystickButtons.m_operatorController.getRightTriggerAxis()
-                                                                - JoystickButtons.m_operatorController
-                                                                                .getLeftTriggerAxis())),
-                                                m_elevator));                // Climb Controls
+                // Climb Controls
 
                  m_climb.setDefaultCommand(new RunCommand(
                                 () -> m_climb.moveClimb(
@@ -133,10 +127,10 @@ public class RobotContainer {
                 JoystickButtons.opX.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
                 JoystickButtons.opY.whileTrue(new InstantCommand(() -> m_shooter.setShooterAngle(Constants.MechPositions.lowPivotPos)));
 
-                // m_shooter.setDefaultCommand( new RunCommand(() -> 
-                // m_shooter.moveShooter(
-                //         0.1 * JoystickButtons.m_operatorController.getLeftY()
-                // ), m_shooter));
+                m_shooter.setDefaultCommand( new RunCommand(() -> 
+                m_shooter.moveShooter(
+                        0.1 * JoystickButtons.m_operatorController.getLeftY()
+                ), m_shooter));
                 // Intake and Conveyor Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake).alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
