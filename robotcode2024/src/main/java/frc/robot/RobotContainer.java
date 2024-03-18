@@ -27,6 +27,7 @@ import frc.robot.subsystems.intake.elevator.ElevatorIOReal;
 import frc.robot.subsystems.intake.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.rollers.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 import frc.robot.commands.DefaultDrive;
@@ -52,6 +53,7 @@ public class RobotContainer {
         public final Climb m_climb;
         public final Indexer m_indexer;
         public final Shoot m_shoot;
+        public final Vision m_vision;
 
         // private final SendableChooser<Command> choose;
         public final AutoMain m_Autos;
@@ -88,6 +90,8 @@ public class RobotContainer {
                         m_elevator = new Elevator(new ElevatorIO() {
                         });
                 }
+                m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);
+
                 m_Autos = new AutoMain(this);
 
                 configureButtonBindings();

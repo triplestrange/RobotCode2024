@@ -232,10 +232,10 @@ public class SwerveDrive extends SubsystemBase {
 
     if (isRedAlliance()) {
       resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(180)));
-      m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
+      m_Robot.m_robotContainer.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
     } else {
       resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(0)));
-      m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
+      m_Robot.m_robotContainer.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
     }
 
     gyroReset = true;

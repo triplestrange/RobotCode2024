@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.function.BiConsumer;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.rlog.RLOGServer;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
@@ -18,6 +22,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.vision.Vision;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,8 +37,7 @@ import frc.robot.subsystems.vision.Vision;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
-  public Vision m_vision;
+  public RobotContainer m_robotContainer;
   private int i;
 
   /**
@@ -48,31 +53,63 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    ; // Set a metadata value
+    // Set a metadata value
 
-    if (isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-      new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-    } else {
-      setUseTiming(false); // Run as fast as possible
-      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from
-      // AdvantageScope (or prompt the user)
-      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath,
-          "_sim"))); // Save outputs to a new log
+    switch (Constants.LoggerConstants.getMode()) {
+      case REAL:
+        // Running on a real robot, log to a USB stick ("/U/logs")
+        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
+
+      case SIM:
+        // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
+
+      case REPLAY:
+        // Replaying a log, set up replay source
+        setUseTiming(false); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.setReplaySource(new WPILOGReader(logPath));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"), 0.01));
+        break;
     }
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in
     // the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
+    // Log active commands
+    Map<String, Integer> commandCounts = new HashMap<>();
+    BiConsumer<Command, Boolean> logCommandFunction = (Command command, Boolean active) -> {
+      String name = command.getName();
+      int count = commandCounts.getOrDefault(name, 0) + (active ? 1 : -1);
+      commandCounts.put(name, count);
+      Logger.recordOutput(
+          "CommandsUnique/" + name + "_" + Integer.toHexString(command.hashCode()), active);
+      Logger.recordOutput("CommandsAll/" + name, count > 0);
+    };
+    CommandScheduler.getInstance()
+        .onCommandInitialize(
+            (Command command) -> {
+              logCommandFunction.accept(command, true);
+            });
+    CommandScheduler.getInstance()
+        .onCommandFinish(
+            (Command command) -> {
+              logCommandFunction.accept(command, false);
+            });
+    CommandScheduler.getInstance()
+        .onCommandInterrupt(
+            (Command command) -> {
+              logCommandFunction.accept(command, false);
+            });
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
-    m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot, m_robotContainer.m_elevator);
     m_robotContainer.m_robotDrive.zeroHeading();
   }
 
@@ -101,7 +138,7 @@ public class Robot extends LoggedRobot {
       m_robotContainer.m_robotDrive.updateSmartDashBoard();
       // m_robotContainer.m_shooter.updateSmartDashBoard();
       m_robotContainer.m_elevator.updateSmartDashBoard();
-      m_vision.updateSmartDashBoard();
+      m_robotContainer.m_vision.updateSmartDashBoard();
       m_robotContainer.m_shoot.updateSmartDashBoard();
       m_robotContainer.m_flywheel.updateSmartDashBoard();
       m_robotContainer.m_intake.updateSmartDashBoard();
