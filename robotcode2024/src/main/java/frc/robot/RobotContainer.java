@@ -68,7 +68,6 @@ public class RobotContainer {
                 m_climb = new Climb();
                 m_indexer = new Indexer();
                 m_flywheel = new FlyWheel();
-                m_Autos = new AutoMain(this);
                 m_shoot = new Shoot(this);
 
                 m_elevator = null;
@@ -89,6 +88,7 @@ public class RobotContainer {
                         m_elevator = new Elevator(new ElevatorIO() {
                         });
                 }
+                m_Autos = new AutoMain(this);
 
                 configureButtonBindings();
 
