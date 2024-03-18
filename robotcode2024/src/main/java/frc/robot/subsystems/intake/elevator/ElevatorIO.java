@@ -42,7 +42,7 @@ public interface ElevatorIO {
     }
 
     /** Run to setpoint IntakePosition in meters and degrees */
-    default void runSetpoint(IntakePosition intakePosition) {
+    default void runHeightSetpoint(double height) {
     }
 
     /** Run motors at volts */
@@ -58,6 +58,9 @@ public interface ElevatorIO {
 
     /** Sets position of internal encoder in inches */
     default void setElevPosition(double height) {
+    }
+
+    default void setJointPosition(double angle) {
     }
 
     /** Stops motors */

@@ -34,11 +34,15 @@ public class ElevatorIOReal implements ElevatorIO {
   public CANSparkMax elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
   public CANSparkMax intake = new CANSparkMax(Constants.CAN.IPIVOT, MotorType.kBrushless);
 
+  public SparkPIDController elevController = elev.getPIDController();
+
   public RelativeEncoder elevRelativeEncoder = elev.getEncoder();
   public DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.intakeAbsInput);
 
   private double winchInput;
   private double intakeInput;
+
+  private double offset;
 
   public ElevatorIOReal() {
 
@@ -50,6 +54,16 @@ public class ElevatorIOReal implements ElevatorIO {
 
     intake.setIdleMode(IdleMode.kBrake);
     intake.setSmartCurrentLimit(Constants.ELECTRICAL.intakeCurrentLimit);
+
+    elevController.setP(Constants.ElevatorConstants.kP);
+    elevController.setI(Constants.ElevatorConstants.kI);
+    elevController.setD(Constants.ElevatorConstants.kD);
+    elevController.setOutputRange(Constants.ElevatorConstants.kMinOutput, Constants.ElevatorConstants.kMaxOutput);
+
+    elevController.setSmartMotionMaxVelocity(Constants.ElevatorConstants.maxVel, 0);
+    elevController.setSmartMotionMinOutputVelocity(Constants.ElevatorConstants.minVel, 0);
+    elevController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, 0);
+    elevController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, 0);
 
     elev.burnFlash();
     intake.burnFlash();
@@ -69,7 +83,7 @@ public class ElevatorIOReal implements ElevatorIO {
     double jointAppliedVolts = intake.getAppliedOutput() * elev.getBusVoltage();
 
     double jointPosDeg = MathUtil.inputModulus(
-        -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset, -160, 20);
+        -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset - offset, -160, 20);
     double joinVelDeg = intake.getEncoder().getVelocity();
 
     double elevTempCelcius = elev.getMotorTemperature();
@@ -90,7 +104,7 @@ public class ElevatorIOReal implements ElevatorIO {
     inputs.winchInputVolts = winchInput;
 
     inputs.jointPosDeg = MathUtil.inputModulus(
-        -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset, -160, 20);
+        -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset - offset, -160, 20);
     inputs.jointAppliedVolts = intake.getAppliedOutput() * intake.getBusVoltage();
     inputs.jointMotorCurrent = intake.getOutputCurrent();
     inputs.jointTempCelcius = intake.getMotorTemperature();
@@ -103,7 +117,8 @@ public class ElevatorIOReal implements ElevatorIO {
   }
 
   @Override
-  public void runSetpoint(IntakePosition intakePosition) {
+  public void runHeightSetpoint(double height) {
+    elevController.setReference(height, CANSparkMax.ControlType.kPosition);
 
   }
 
@@ -129,6 +144,11 @@ public class ElevatorIOReal implements ElevatorIO {
   public void setElevPosition(double height) {
     elevRelativeEncoder.setPosition(height);
   }
+
+  // @Override
+  // public void setJointPosition(double angle) {
+  // offset = angle - inputs.jointPosDeg;
+  // }
 
   @Override
   public void stop() {

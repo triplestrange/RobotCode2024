@@ -35,12 +35,12 @@ public class AutoMain extends Command {
         public void registerCommands() {
                 // Elev Commands
                 NamedCommands.registerCommand("amp", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setIntakePosition(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
+                                .setElev(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
                 NamedCommands.registerCommand("ground", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setIntakePosition(Constants.MechPositions.groundIntakePos)));
+                                .setElev(Constants.MechPositions.groundIntakePos)));
 
                 NamedCommands.registerCommand("stowElev", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setIntakePosition(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
+                                .setElev(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
                 // Intake Commands
                 NamedCommands.registerCommand("intakeOut", new InstantCommand(() -> m_robotContainer.m_intake
                                 .runOutake(), m_robotContainer.m_intake));

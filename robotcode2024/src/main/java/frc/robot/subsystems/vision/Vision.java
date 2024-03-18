@@ -136,8 +136,8 @@ public class Vision extends SubsystemBase {
     }
 
     public double getIntakeVisionOffset() {
-        if (m_Elevator.getElevPos() > 14) {
-            return 0.66 + Units.inchesToMeters(m_Elevator.getElevPos() - 14);
+        if (m_Elevator.getIntakePos().getHeight() > 14) {
+            return 0.66 + Units.inchesToMeters(m_Elevator.getIntakePos().getHeight() - 14);
         }
         return 0.66;
     }

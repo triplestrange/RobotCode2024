@@ -14,10 +14,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
+import frc.robot.util.Alert;
+import frc.robot.util.Alert.AlertType;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -53,7 +56,52 @@ public final class Constants {
   }
 
   public static final class LoggerConstants {
+
+    private static RobotType robotType = RobotType.SIMBOT;
+
     public static final Boolean tuningMode = false;
+    public final static double kDt = 0.02;
+
+    public static RobotType getRobot() {
+      if (RobotBase.isReal() && robotType == RobotType.SIMBOT) {
+        new Alert("Invalid robot selected, using competition robot as default.", AlertType.ERROR)
+            .set(true);
+        robotType = RobotType.COMPBOT;
+      }
+      return robotType;
+    }
+
+    public static Mode getMode() {
+      return switch (robotType) {
+        case DEVBOT, COMPBOT -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+        case SIMBOT -> Mode.SIM;
+      };
+    }
+
+    public enum Mode {
+      /** Running on a real robot. */
+      REAL,
+
+      /** Running a physics simulator. */
+      SIM,
+
+      /** Replaying from a log file. */
+      REPLAY
+    }
+
+    public enum RobotType {
+      SIMBOT,
+      DEVBOT,
+      COMPBOT
+    }
+
+    /** Checks whether the robot the correct robot is selected when deploying. */
+    public static void main(String... args) {
+      if (robotType == RobotType.SIMBOT) {
+        System.err.println("Cannot deploy, invalid robot selected: " + robotType);
+        System.exit(1);
+      }
+    }
   }
 
   public static final class SwerveConstants {
@@ -186,7 +234,6 @@ public final class Constants {
     public final static double elevSimPosConv = 15;
     public final static double elevCarraigeKG = Units.lbsToKilograms(13.667);
     public final static double elevDrumRadiusMeters = Units.inchesToMeters(1.25);
-    public final static double kDt = 1 / 20;
 
     public final static double kP = 0.4;
     public final static double kI = 0;

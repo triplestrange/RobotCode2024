@@ -32,7 +32,6 @@ public class Elevator extends SubsystemBase {
     public MechanismLigament2d intakeStatic;
     public MechanismLigament2d intakeJoint;
 
-    private SparkPIDController elevController;
     private ProfiledPIDController intakeController;
 
     private boolean intakePIDEnabled;
@@ -81,22 +80,10 @@ public class Elevator extends SubsystemBase {
         intakeJoint = intakeStatic.append(
                 new MechanismLigament2d("intake joint", Units.inchesToMeters(12.227660), 90));
 
-        elevController = io..getPIDController();
-
         intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
                 Constants.IntakeConstants.kD,
                 new Constraints(Constants.IntakeConstants.kMaxAngularSpeedMetersPerSecond,
                         Constants.IntakeConstants.kMaxAngularAccelerationMetersPerSecondSquared));
-
-        elevController.setP(Constants.ElevatorConstants.kP);
-        elevController.setI(Constants.ElevatorConstants.kI);
-        elevController.setD(Constants.ElevatorConstants.kD);
-        elevController.setOutputRange(Constants.ElevatorConstants.kMinOutput, Constants.ElevatorConstants.kMaxOutput);
-
-        elevController.setSmartMotionMaxVelocity(Constants.ElevatorConstants.maxVel, 0);
-        elevController.setSmartMotionMinOutputVelocity(Constants.ElevatorConstants.minVel, 0);
-        elevController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, 0);
-        elevController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, 0);
 
         elevSetpoint = inputs.elevatorPosMeters;
 
@@ -112,20 +99,20 @@ public class Elevator extends SubsystemBase {
         }
 
         // height from bottom of carriage
-        public double getIntakeHeight() {
+        public double getHeight() {
             return elevPos;
         }
 
-        public double getIntakeAngle() {
+        public double getAngle() {
             return intakeAng;
         }
     }
 
     public void resetPIDs() {
-        intakeSetpoint = getIntakePos().getIntakeAngle();
-        elevSetpoint = getIntakePos().getIntakeHeight();
+        intakeSetpoint = getIntakePos().getAngle();
+        elevSetpoint = getIntakePos().getHeight();
         intakeController.reset(intakeSetpoint);
-        elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
+        io.setElevPosition(elevSetpoint);
         intakePIDEnabled = true;
         elevPIDEnabled = true;
 
@@ -137,7 +124,7 @@ public class Elevator extends SubsystemBase {
         } else {
             elevPower = motorElevPower;
             io.runWinchVolts(elevPower);
-            elevSetpoint = getIntakePos().getIntakeHeight();
+            elevSetpoint = getIntakePos().getHeight();
             elevPIDEnabled = false;
         }
         if (Math.abs(motorIntakePower) < 0.05) {
@@ -145,15 +132,15 @@ public class Elevator extends SubsystemBase {
         } else {
             intakePower = motorIntakePower;
             io.runJointVolts(intakePower);
-            intakeSetpoint = getIntakePos().getIntakeAngle();
+            intakeSetpoint = getIntakePos().getAngle();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
         }
     }
 
     public void setElev(IntakePosition position) {
-        elevSetpoint = position.getIntakeHeight();
-        intakeSetpoint = position.getIntakeAngle();
+        elevSetpoint = position.getHeight();
+        intakeSetpoint = position.getAngle();
 
         elevPIDEnabled = true;
         intakePIDEnabled = true;
@@ -166,11 +153,11 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         if (elevPIDEnabled) {
-            elevController.setReference(elevSetpoint, CANSparkMax.ControlType.kPosition);
+            io.setElevPosition(elevSetpoint);
         }
 
         if (intakePIDEnabled) {
-            intakePower = intakeController.calculate(getIntakePos().getIntakeAngle(), intakeSetpoint);
+            intakePower = intakeController.calculate(getIntakePos().getAngle(), intakeSetpoint);
         }
         if (!inputs.jointAbsoluteEncoderConnected) {
             intakePower = 0;
@@ -178,19 +165,19 @@ public class Elevator extends SubsystemBase {
 
         io.runJointVolts(intakePower);
 
-        intakeJoint.setAngle(getIntakePos().getIntakeAngle());
-        elevator.setLength(getIntakePos().getIntakeHeight());
+        intakeJoint.setAngle(getIntakePos().getAngle());
+        elevator.setLength(getIntakePos().getHeight());
 
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putNumber("degree", getIntakePos());
-        SmartDashboard.putBoolean("Is Encoder Plugged", intakeEncoder.isConnected());
+        SmartDashboard.putNumber("degree", getIntakePos().getAngle());
+        SmartDashboard.putBoolean("Is Encoder Plugged", inputs.jointAbsoluteEncoderConnected);
         SmartDashboard.putNumber("angle setpoint", intakeSetpoint);
         SmartDashboard.putNumber("Power", intakePower);
-        SmartDashboard.putNumber("height", getElevPos());
+        SmartDashboard.putNumber("height", getIntakePos().getHeight());
         SmartDashboard.putNumber("height setpoint", elevSetpoint);
         SmartDashboard.putNumber("Elev Power", elevPower);
 

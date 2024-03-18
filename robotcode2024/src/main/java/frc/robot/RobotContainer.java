@@ -22,8 +22,13 @@ import frc.robot.subsystems.cannon.flywheel.FlyWheel;
 import frc.robot.subsystems.cannon.indexer.Indexer;
 import frc.robot.subsystems.cannon.shooter.Shooter;
 import frc.robot.subsystems.intake.elevator.Elevator;
+import frc.robot.subsystems.intake.elevator.ElevatorIO;
+import frc.robot.subsystems.intake.elevator.ElevatorIOReal;
+import frc.robot.subsystems.intake.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.rollers.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.util.Alert;
+import frc.robot.util.Alert.AlertType;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
@@ -40,7 +45,7 @@ public class RobotContainer {
         // The robot's subsystems
         public final Robot m_robot;
         public final SwerveDrive m_robotDrive;
-        public final Elevator m_elevator;
+        public Elevator m_elevator;
         public final Intake m_intake;
         public final Shooter m_shooter;
         public final FlyWheel m_flywheel;
@@ -58,7 +63,6 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(m_Robot);
-                m_elevator = new Elevator();
                 m_intake = new Intake();
                 m_shooter = new Shooter();
                 m_climb = new Climb();
@@ -67,7 +71,30 @@ public class RobotContainer {
                 m_Autos = new AutoMain(this);
                 m_shoot = new Shoot(this);
 
+                m_elevator = null;
+
+                if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
+                        switch (Constants.LoggerConstants.getRobot()) {
+                                case COMPBOT -> {
+                                        m_elevator = new Elevator(new ElevatorIOReal());
+                                }
+                                case SIMBOT -> {
+                                        m_elevator = new Elevator(new ElevatorIOSim());
+
+                                }
+                        }
+                }
+
+                if (m_elevator == null) {
+                        m_elevator = new Elevator(new ElevatorIO() {
+                        });
+                }
+
                 configureButtonBindings();
+
+                if (Constants.LoggerConstants.tuningMode) {
+                        new Alert("Tuning mode enabled", AlertType.INFO).set(true);
+                }
 
         }
 
@@ -106,11 +133,11 @@ public class RobotContainer {
                 // Elevator Controls
 
                 JoystickButtons.opA.onTrue(new InstantCommand(
-                                () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                                () -> m_elevator.setElev(Constants.MechPositions.stowIntakePos), m_elevator));
                 JoystickButtons.opY.onTrue(new InstantCommand(
-                                () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
+                                () -> m_elevator.setElev(Constants.MechPositions.ampIntakePos), m_elevator));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(
-                                () -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
+                                () -> m_elevator.setElev(Constants.MechPositions.groundIntakePos)));
 
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
@@ -170,7 +197,7 @@ public class RobotContainer {
 
                 JoystickButtons.dB
                                 .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot)
-                                                .alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
+                                                .alongWith(new InstantCommand(() -> m_elevator.setElev(
                                                                 Constants.MechPositions.ampIntakePos))));
         }
 
