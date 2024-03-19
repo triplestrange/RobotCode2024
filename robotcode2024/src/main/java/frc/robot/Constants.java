@@ -48,7 +48,6 @@ public final class Constants {
     public static final double podiumPivotPos = -22.0;
     public static final double lowPivotPos = -40.0;
 
-
     public static final double topRailPos = 0;
     public static final double bottomRailPos = 0;
 

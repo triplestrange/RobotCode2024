@@ -149,6 +149,15 @@
                     "translationConstrained": true,
                     "headingConstrained": true,
                     "controlIntervalCount": 70
+                },
+                {
+                    "x": 11.786656379699707,
+                    "y": 12.032054901123047,
+                    "heading": 0,
+                    "isInitialGuess": false,
+                    "translationConstrained": true,
+                    "headingConstrained": true,
+                    "controlIntervalCount": 40
                 }
             ],
             "trajectory": [
@@ -9211,7 +9220,7 @@
                 {
                     "name": "Marker",
                     "target": 2,
-                    "targetTimestamp": 0.8496229461689395,
+                    "targetTimestamp": 1.0948279947218382,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9283,7 +9292,7 @@
                 {
                     "name": "Marker",
                     "target": 9,
-                    "targetTimestamp": 9.660019801399494,
+                    "targetTimestamp": 5.745818164011685,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9317,7 +9326,7 @@
                     }
                 }
             ],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         }
     },
     "splitTrajectoriesAtStopPoints": false,
