@@ -5,13 +5,15 @@
   "pathFolders": [
     "Auto Align",
     "Auto Paths",
+    "New Paths",
     "Note Pickup"
   ],
   "autoFolders": [
     "Amp",
+    "Choreo",
     "Feeder",
     "Middle",
-    "Choreo"
+    "New Paths"
   ],
   "defaultMaxVel": 4.0,
   "defaultMaxAccel": 2.0,
