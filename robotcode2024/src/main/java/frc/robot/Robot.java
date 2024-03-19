@@ -41,8 +41,7 @@ import frc.robot.subsystems.swerve.Vision;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
-  public Vision m_vision;
+  public RobotContainer m_robotContainer;
   private int i;
 
   /**
@@ -52,7 +51,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    
+
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
     if (isReal()) {
@@ -61,9 +60,11 @@ public class Robot extends LoggedRobot {
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
       // setUseTiming(false); // Run as fast as possible
-      // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from
+      // AdvantageScope (or prompt the user)
       // Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath,
+      // "_sim"))); // Save outputs to a new log
     }
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in
@@ -75,9 +76,8 @@ public class Robot extends LoggedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
-    m_vision = new Vision(m_robotContainer.m_robotDrive, m_robotContainer.m_shoot, m_robotContainer.m_elevator);
     m_robotContainer.m_robotDrive.zeroHeading();
-      }
+  }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items
@@ -104,7 +104,7 @@ public class Robot extends LoggedRobot {
       m_robotContainer.m_robotDrive.updateSmartDashBoard();
       m_robotContainer.m_shooter.updateSmartDashBoard();
       m_robotContainer.m_elevator.updateSmartDashBoard();
-      m_vision.updateSmartDashBoard();
+      m_robotContainer.m_vision.updateSmartDashBoard();
       m_robotContainer.m_shoot.updateSmartDashBoard();
       m_robotContainer.m_flywheel.updateSmartDashBoard();
       m_robotContainer.m_intake.updateSmartDashBoard();
@@ -141,10 +141,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.m_robotDrive.m_odometry
-          .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
+        .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
     m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 
-    // schedule the  autonomous command (example)
+    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }

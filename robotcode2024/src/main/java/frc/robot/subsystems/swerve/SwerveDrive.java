@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,10 +25,11 @@ import frc.robot.Constants.CAN;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SwerveDrive extends SubsystemBase {
-  private final Robot m_Robot;
+  private final RobotContainer m_RobotContainer;
   public double rotationPreset = 0;
   public boolean presetEnabled = false;
 
@@ -89,9 +91,9 @@ public class SwerveDrive extends SubsystemBase {
   /**
    * Creates a new DriveSubsystem.
    */
-  public SwerveDrive(Robot m_robot) {
+  public SwerveDrive(RobotContainer m_RobotContainer) {
     resetEncoders();
-    m_Robot = m_robot;
+    this.m_RobotContainer = m_RobotContainer;
 
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
@@ -113,8 +115,10 @@ public class SwerveDrive extends SubsystemBase {
         },
         this // Reference to this subsystem to set requirements
     );
-  }
 
+    PPHolonomicDriveController.setRotationTargetOverride(m_RobotContainer.m_shoot::getRotationTargetOverride);
+
+  }
 
   public Boolean isRedAlliance() {
     var alliance = DriverStation.getAlliance();
@@ -175,7 +179,8 @@ public class SwerveDrive extends SubsystemBase {
 
     swerveModuleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-            xSpeed, ySpeed, rot, isRedAlliance() ? getPose().getRotation().plus(Rotation2d.fromDegrees(180)) : getPose().getRotation())
+            xSpeed, ySpeed, rot,
+            isRedAlliance() ? getPose().getRotation().plus(Rotation2d.fromDegrees(180)) : getPose().getRotation())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
         SwerveConstants.kMaxSpeedMetersPerSecond);
@@ -237,10 +242,10 @@ public class SwerveDrive extends SubsystemBase {
 
     if (isRedAlliance()) {
       resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(180)));
-      m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
+      m_RobotContainer.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
     } else {
       resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(0)));
-      m_Robot.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
+      m_RobotContainer.m_vision.m_field.setRobotPose(m_odometry.getEstimatedPosition());
     }
 
     gyroReset = true;

@@ -4,6 +4,8 @@
 
 package frc.robot.commands.automations;
 
+import java.util.Optional;
+
 import javax.lang.model.util.ElementScanner14;
 import javax.swing.text.GlyphView.GlyphPainter;
 
@@ -245,6 +247,35 @@ public class Shoot {
             driveTo.schedule();
         }
 
+    }
+
+    public Rotation2d rotationToSpeaker() {
+        if (isAllianceRed()) {
+            shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
+                    flipTranslation3d(speakerTranslation3d).getY())
+                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
+                    .plus(new Rotation2d().fromDegrees(180));
+        } else {
+            shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
+                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
+                    .plus(new Rotation2d().fromDegrees(180));
+
+        }
+
+        return shootingRotation;
+
+    }
+
+    public Optional<Rotation2d> getRotationTargetOverride() {
+        // Some condition that should decide if we want to override rotation
+        if (m_RobotContainer.m_conveyor.getConveyorSensor()) {
+            // Return an optional containing the rotation override (this should be a field
+            // relative rotation)
+            return Optional.of(rotationToSpeaker());
+        } else {
+            // return an empty optional when we don't want to override the path's rotation
+            return Optional.empty();
+        }
     }
 
     public void autonomous() {
