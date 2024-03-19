@@ -928,39 +928,46 @@
                     "scope": [
                         "first"
                     ],
-                    "type": "StopPoint",
-                    "direction": 0
+                    "type": "StopPoint"
                 },
                 {
                     "scope": [
                         "last"
                     ],
-                    "type": "StopPoint",
-                    "direction": 0
+                    "type": "StopPoint"
                 },
                 {
                     "scope": [
                         2,
                         3
                     ],
-                    "type": "ZeroAngularVelocity",
-                    "direction": 0
+                    "type": "ZeroAngularVelocity"
                 },
                 {
                     "scope": [
                         2,
                         3
                     ],
-                    "type": "StraightLine",
-                    "direction": 0
+                    "type": "StraightLine"
                 },
                 {
                     "scope": [
                         6,
                         7
                     ],
-                    "type": "StraightLine",
-                    "direction": 0
+                    "type": "StraightLine"
+                },
+                {
+                    "scope": [
+                        5
+                    ],
+                    "type": "StopPoint"
+                },
+                {
+                    "scope": [
+                        8
+                    ],
+                    "type": "StopPoint"
                 }
             ],
             "usesControlIntervalGuessing": false,

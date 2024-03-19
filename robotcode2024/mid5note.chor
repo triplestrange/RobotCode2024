@@ -149,15 +149,6 @@
                     "translationConstrained": true,
                     "headingConstrained": true,
                     "controlIntervalCount": 70
-                },
-                {
-                    "x": 11.786656379699707,
-                    "y": 12.032054901123047,
-                    "heading": 0,
-                    "isInitialGuess": false,
-                    "translationConstrained": true,
-                    "headingConstrained": true,
-                    "controlIntervalCount": 40
                 }
             ],
             "trajectory": [
@@ -9208,7 +9199,7 @@
                 {
                     "name": "Marker",
                     "target": "first",
-                    "targetTimestamp": 0,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9220,7 +9211,7 @@
                 {
                     "name": "Marker",
                     "target": 2,
-                    "targetTimestamp": 1.0948279947218382,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9232,7 +9223,7 @@
                 {
                     "name": "Marker",
                     "target": 3,
-                    "targetTimestamp": 2.0316894500398788,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9244,7 +9235,7 @@
                 {
                     "name": "Marker",
                     "target": 6,
-                    "targetTimestamp": 3.5198045464507213,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9256,7 +9247,7 @@
                 {
                     "name": "Marker",
                     "target": 11,
-                    "targetTimestamp": 7.136389760833837,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9268,7 +9259,7 @@
                 {
                     "name": "Marker",
                     "target": 2,
-                    "targetTimestamp": 1.0948279947218382,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9280,7 +9271,7 @@
                 {
                     "name": "Marker",
                     "target": 4,
-                    "targetTimestamp": 2.3098702322069378,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9292,7 +9283,7 @@
                 {
                     "name": "Marker",
                     "target": 9,
-                    "targetTimestamp": 5.745818164011685,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9304,7 +9295,7 @@
                 {
                     "name": "Marker",
                     "target": "last",
-                    "targetTimestamp": 9.660019801399494,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9316,7 +9307,7 @@
                 {
                     "name": "Marker",
                     "target": 14,
-                    "targetTimestamp": 9.660019801399494,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
