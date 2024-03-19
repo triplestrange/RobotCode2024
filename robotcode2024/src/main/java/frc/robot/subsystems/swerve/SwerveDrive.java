@@ -116,7 +116,6 @@ public class SwerveDrive extends SubsystemBase {
         this // Reference to this subsystem to set requirements
     );
 
-    PPHolonomicDriveController.setRotationTargetOverride(m_RobotContainer.m_shoot::getRotationTargetOverride);
 
   }
 

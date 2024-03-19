@@ -93,10 +93,7 @@ public class AutoMain extends Command {
                                                                                 new InstantCommand(
                                                                                                 () -> m_robotContainer.m_intake
                                                                                                                 .runIntake(),
-                                                                                                m_robotContainer.m_intake))
-                                                                .alongWith(
-                                                                                new IntakeToConveyor(
-                                                                                                m_robotContainer.m_conveyor))))
+                                                                                                m_robotContainer.m_intake))))
                                                 .andThen(new InstantCommand(() -> m_robotContainer.m_elevator
                                                                 .setIntakePosition(
                                                                                 Constants.MechPositions.stowIntakePos),

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.MathUtil;
@@ -74,6 +75,9 @@ public class RobotContainer {
                 m_Autos = new AutoMain(this);
 
                 configureButtonBindings();
+
+                PPHolonomicDriveController.setRotationTargetOverride(m_shoot::getRotationTargetOverride);
+
 
         }
 
