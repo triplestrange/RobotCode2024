@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.184070405177848,
-        "y": 6.857351668407041
+        "x": 2.6513023938830362,
+        "y": 4.072661926220745
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.768498527737797,
-        "y": 6.059700702734739
+        "x": 2.4013747219813775,
+        "y": 4.824900878586032
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.184070405177848,
-        "y": 5.55
+        "x": 1.886780035918829,
+        "y": 5.514919323447405
       },
       "prevControl": {
-        "x": 2.1925108769799455,
-        "y": 5.55
+        "x": 1.7007029141176928,
+        "y": 5.068388986530798
       },
       "nextControl": {
-        "x": 2.1756299333757503,
-        "y": 5.55
+        "x": 1.8910764975130443,
+        "y": 5.5252295669886
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.55,
-        "y": 5.55
+        "x": 2.6513023938830362,
+        "y": 5.514919323447405
       },
       "prevControl": {
-        "x": 2.5553415366089993,
-        "y": 5.537771404246512
+        "x": 2.6525343905207586,
+        "y": 5.512729107202565
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,36 +46,34 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.0,
       "rotationDegrees": 0,
-      "rotateFast": true
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 0,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "intake",
-      "waypointRelativePos": 0,
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.0,
       "command": {
-        "type": "parallel",
+        "type": "deadline",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "ground"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "intakeIn"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "indexerIn"
+                "name": "intakeNote"
               }
             }
           ]
@@ -91,11 +89,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 0.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Note Pickup",
+  "folder": "New Paths",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

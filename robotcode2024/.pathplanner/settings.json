@@ -16,7 +16,7 @@
     "New Paths"
   ],
   "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 2.0,
+  "defaultMaxAccel": 8.0,
   "defaultMaxAngVel": 720.0,
   "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 4.77
