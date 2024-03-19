@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,6 +51,8 @@ public class RobotContainer {
 
         // private final SendableChooser<Command> choose;
         public final AutoMain m_Autos;
+
+        private double flywheelSetpoint;
 
         // The driver's controller
         /**
@@ -108,13 +111,19 @@ public class RobotContainer {
                                 () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(() -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
 
+                            m_elevator.setDefaultCommand(new RunCommand(
+                                () -> m_elevator.moveElev(
+                                                0.3 * JoystickButtons.m_operatorController.getRightY(),
+                                                0.3 * JoystickButtons.m_operatorController.getRightX()),
+                                m_elevator));
+
                 // Climb Controls
 
-                 m_climb.setDefaultCommand(new RunCommand(
-                                () -> m_climb.moveClimb(
-                                                0.6 * JoystickButtons.m_operatorController.getLeftY(),
-                                                0.6 * JoystickButtons.m_operatorController.getLeftY()),
-                                m_climb));
+                //  m_climb.setDefaultCommand(new RunCommand(
+                //                 () -> m_climb.moveClimb(
+                //                                 0.6 * JoystickButtons.m_operatorController.getLeftY(),
+                //                                 0.6 * JoystickButtons.m_operatorController.getLeftY()),
+                //                 m_climb));
                 
 
 
@@ -151,7 +160,16 @@ public class RobotContainer {
 
                 // Fly Wheels controls
 
-                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-5676)));
+        if (m_shoot.isAllianceRed())    {
+            flywheelSetpoint = m_robotDrive.getPose().getTranslation().getDistance(m_shoot.flipTranslation3d(m_shoot.speakerTranslation3d).toTranslation2d()) * 4850.0 / 3;
+        }   else    {
+            flywheelSetpoint = m_robotDrive.getPose().getTranslation().getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 3;
+        }
+
+        flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
+
+
+                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint)));
                 
                 m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
 

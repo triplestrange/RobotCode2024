@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoMain;
 import frc.robot.commands.automations.Shoot;
 import frc.robot.subsystems.swerve.Vision;
@@ -138,11 +140,8 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
-    if (DriverStation.isFMSAttached()) {
-      Shuffleboard.startRecording();
-    }
     m_robotContainer.m_robotDrive.m_odometry
-          .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+          .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
     m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 
     // schedule the  autonomous command (example)

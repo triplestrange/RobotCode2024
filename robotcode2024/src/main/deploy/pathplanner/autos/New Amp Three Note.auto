@@ -98,7 +98,6 @@
         {
           "type": "path",
           "data": {
-<<<<<<< Updated upstream
             "pathName": "Second Note Amp"
           }
         },
@@ -130,9 +129,6 @@
           "type": "wait",
           "data": {
             "waitTime": 1.0
-=======
-            "pathName": null
->>>>>>> Stashed changes
           }
         }
       ]

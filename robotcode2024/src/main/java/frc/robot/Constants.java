@@ -152,7 +152,7 @@ public final class Constants {
     public final static double flyWheelminVel = -5767;
     public final static double flyWheelmaxAcc = 5000;
 
-    public final static double rotationalSpeed = 4000;
+    public final static double rotationalSpeed = 3000;
   }
 
   public static final class ClimbConstants {

@@ -115,6 +115,7 @@ public class SwerveDrive extends SubsystemBase {
     );
   }
 
+
   public Boolean isRedAlliance() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
