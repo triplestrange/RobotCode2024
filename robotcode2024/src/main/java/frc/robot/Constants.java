@@ -232,10 +232,10 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXTranslationController = 2.8;
+    public static final double kPXTranslationController = 5.0;
     public static final double kDTranslationController = 0;
 
-    public static final double kPThetaController = 3;
+    public static final double kPThetaController = 5.0;
 
     public static final boolean enableInitialReplanning = false;
     public static final boolean enableDynamicReplanning = false;
