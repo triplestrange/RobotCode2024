@@ -18,7 +18,7 @@
                 {
                     "x": 0.6696489453315735,
                     "y": 6.681555271148682,
-                    "heading": 1.0483926335591485,
+                    "heading": 1.0472,
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
@@ -2033,7 +2033,7 @@
                     }
                 }
             ],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         }
     },
     "splitTrajectoriesAtStopPoints": true,
