@@ -145,6 +145,10 @@ public class SwerveDrive extends SubsystemBase {
     this.gyroReset = gyroReset;
   }
 
+  public Boolean isMovingXY() {
+    return (currentMovement.vxMetersPerSecond < 0.05) && (currentMovement.vyMetersPerSecond < 0.05); 
+  }
+
   @Override
   public void periodic() {
     // Update the odometry in the periodic block

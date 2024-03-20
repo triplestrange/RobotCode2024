@@ -89,13 +89,14 @@ public class Shoot {
                 speakerTranslation3d.getX() + Units.inchesToMeters(16) + Units.inchesToMeters(36.241382),
                 speakerTranslation3d.getY(), new Rotation2d().fromDegrees(0)), 0, 0, m_RobotContainer.m_robotDrive,
                 m_RobotContainer.m_robot);
-
-        shootingData.put(4.587, -29.5);
-        shootingData.put(5.3, -31.0);
-        shootingData.put(3.120114, -23.5);
+        
+        shootingData.put(1.0, 0.0);
         shootingData.put(1.655738, -12.2);
         shootingData.put(2.2, -16.0);
-        shootingData.put(1.0, 0.0);
+        shootingData.put(3.120114, -23.5);
+        shootingData.put(4.991135, -31.55);
+        shootingData.put(5.3, -31.0);
+        shootingData.put(6.38, -33.4);
         shootingData.put(7.39, -34.5);
 
         rotation_controller = new PIDController(0.2, 0.17, 0.015);
@@ -227,7 +228,8 @@ public class Shoot {
 
     public void autonomousShoot() {
         if (pivotCheck()
-                && rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) 
+                && velocityCheck()) {
 
             m_RobotContainer.m_conveyor.runConvIn();
 
@@ -319,6 +321,10 @@ public class Shoot {
         canShoot = ((lowerY > robotPose2dInches.getY()) || (robotPose2dInches.getY() > upperY));
 
         return canShoot;
+    }
+
+    public Boolean velocityCheck()  {
+        return m_RobotContainer.m_robotDrive.isMovingXY();
     }
 
     public Boolean pivotCheck() {
