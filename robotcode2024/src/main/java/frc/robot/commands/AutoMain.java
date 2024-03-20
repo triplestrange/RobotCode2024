@@ -102,7 +102,7 @@ public class AutoMain extends Command {
                                                 .finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel()));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
-                                () -> m_robotContainer.m_shooter.setShooterAngle(-10), m_robotContainer.m_shooter)
+                                () -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter)
                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676),
                                                 m_robotContainer.m_flywheel))
                                 .andThen(new WaitCommand(1.5)).andThen(new InstantCommand(
