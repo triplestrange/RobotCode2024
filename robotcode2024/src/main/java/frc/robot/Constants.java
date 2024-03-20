@@ -61,7 +61,7 @@ public final class Constants {
   public static final class SwerveConstants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kTheoreticalMaxSpeedMetersPerSecond = 4.7244;
-    public static final double kMaxSpeedMetersPerSecond = 3.15;
+    public static final double kMaxSpeedMetersPerSecond = 3.77;
 
     public static final double autoAlignMaxSpeedMetersPerSecond = 1;
     public static final double autoAlignRotationalMaxSpeedMetersPerSecond = 1;
