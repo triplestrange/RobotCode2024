@@ -86,19 +86,12 @@ public class AutoMain extends Command {
                                 () -> m_robotContainer.m_conveyor.conveyorOff(), m_robotContainer.m_conveyor));
 
                 NamedCommands.registerCommand("intakeNote",
-                                (new ParallelDeadlineGroup(new IntakeToConveyor(m_robotContainer.m_conveyor),
-                                                new InstantCommand(() -> m_robotContainer.m_elevator
-                                                                .setIntakePosition(
-                                                                                Constants.MechPositions.groundIntakePos))
+                                (new ParallelDeadlineGroup(new IntakeToConveyor(m_robotContainer.m_conveyor))
                                                                 .alongWith(
                                                                                 new InstantCommand(
                                                                                                 () -> m_robotContainer.m_intake
                                                                                                                 .runIntake(),
-                                                                                                m_robotContainer.m_intake))))
-                                                .andThen(new InstantCommand(() -> m_robotContainer.m_elevator
-                                                                .setIntakePosition(
-                                                                                Constants.MechPositions.stowIntakePos),
-                                                                m_robotContainer.m_elevator)));
+                                                                                                m_robotContainer.m_intake))));
 
                 // Shooter
                 NamedCommands.registerCommand("shoot",

@@ -105,10 +105,10 @@ public final class Constants {
     public static final int FR_ENCODER = 0;
     public static final int BL_ENCODER = 3;
     public static final int BR_ENCODER = 2;
-    public final static double FL_ENC_OFFSET = 56; // 183
-    public final static double FR_ENC_OFFSET = 13; // 179 141
-    public final static double BL_ENC_OFFSET = Units.radiansToDegrees(2.642752); // 221
-    public final static double BR_ENC_OFFSET = 322 + 4; // 241
+    public final static double FL_ENC_OFFSET = 56 - 4; // 183
+    public final static double FR_ENC_OFFSET = 13 -4 ; // 179 141
+    public final static double BL_ENC_OFFSET = Units.radiansToDegrees(2.642752) - 4; // 221
+    public final static double BR_ENC_OFFSET = 322 + 4 - 4; // 241
 
     public final static boolean driveEnableCurrentLimit = true;
     public final static int driveContinuousCurrentLimit = 35;

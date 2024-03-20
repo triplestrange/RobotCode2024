@@ -163,6 +163,8 @@ public class Robot extends LoggedRobot {
     // this line or comment it out.
     m_robotContainer.m_robotDrive.m_odometry
         .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+    //  m_robotContainer.m_robotDrive.m_odometry
+    //     .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
