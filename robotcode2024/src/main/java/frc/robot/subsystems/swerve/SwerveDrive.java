@@ -146,7 +146,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public Boolean isMovingXY() {
-    return (currentMovement.vxMetersPerSecond < 0.05) && (currentMovement.vyMetersPerSecond < 0.05); 
+    return (currentMovement.vxMetersPerSecond < 0.025) && (currentMovement.vyMetersPerSecond < 0.025); 
   }
 
   @Override
