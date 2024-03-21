@@ -4,7 +4,7 @@
         "mass": 71.61837776965554,
         "rotationalInertia": 6,
         "motorMaxTorque": 0.774863387978142,
-        "motorMaxVelocity": 4000,
+        "motorMaxVelocity": 2000,
         "gearing": 6.75,
         "wheelbase": 0.527,
         "trackWidth": 0.527,
@@ -9223,7 +9223,7 @@
                 {
                     "name": "Marker",
                     "target": "first",
-                    "targetTimestamp": 0,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9235,7 +9235,7 @@
                 {
                     "name": "Marker",
                     "target": 3,
-                    "targetTimestamp": 2.00371243867267,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9247,7 +9247,7 @@
                 {
                     "name": "Marker",
                     "target": 6,
-                    "targetTimestamp": 4.546192738933757,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9259,7 +9259,7 @@
                 {
                     "name": "Marker",
                     "target": 11,
-                    "targetTimestamp": 8.93218445890028,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -9269,7 +9269,7 @@
                     }
                 }
             ],
-            "isTrajectoryStale": false
+            "isTrajectoryStale": true
         }
     },
     "splitTrajectoriesAtStopPoints": true,
