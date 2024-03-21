@@ -1,6 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,21 +10,15 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.ArrayList;
-import java.util.Optional;
-
 import org.photonvision.*;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import frc.robot.Constants;
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.automations.Shoot;
 import frc.robot.subsystems.intake.Elevator;;
 
@@ -43,13 +36,8 @@ public class Vision extends SubsystemBase {
     private PhotonCamera camShooter;
     private PhotonCamera camIntake;
 
-    private PhotonPipelineResult visionShooter;
-    private PhotonPipelineResult visionIntake;
-
-    public Optional<EstimatedRobotPose> poseLeft;
-    public Optional<EstimatedRobotPose> poseRight;
-    public Optional<EstimatedRobotPose> poseShooter;
-    public Optional<EstimatedRobotPose> poseIntake;
+    public EstimatedPoseInfo poseShooter;
+    public EstimatedPoseInfo poseIntake;
 
     public Translation2d lastLeftTranslation;
     public Translation2d lastRightTranslation;
@@ -63,19 +51,10 @@ public class Vision extends SubsystemBase {
         camShooter = new PhotonCamera("camShooter");
         camIntake = new PhotonCamera("camIntake");
 
-        visionShooter = camShooter.getLatestResult();
-        visionIntake = camIntake.getLatestResult();
-
         this.m_SwerveDrive = m_SwerveDrive;
         this.m_Shoot = m_shoot;
         this.m_Elevator = m_Elevator;
 
-    }
-
-    public Optional<EstimatedRobotPose> getEstimatedPose(PhotonCamera camera,
-            Pose2d prevEstimatedPose) {
-
-        return photonPoseEstimator.update();
     }
 
     public double getDistanceToTarget(PhotonTrackedTarget target, PhotonTrackedTarget bestTarget) {
@@ -83,96 +62,105 @@ public class Vision extends SubsystemBase {
                 .minus(bestTarget.getBestCameraToTarget().getTranslation()).getNorm();
     }
 
-    public double getTargetPose2d(PhotonCamera camera) {
-        double[] cameraOffset = new double[5];
-
-        
+    public EstimatedPoseInfo getEstimatedPoseInfo(PhotonCamera camera) {
+        Pose3d cameraOffset;
+        int i = 0;
         PhotonCamera cam = camera;
         PhotonPipelineResult result = cam.getLatestResult();
+        PhotonTrackedTarget bestTarget = result.getBestTarget();
         ArrayList<Pose2d> filteredResults;
+        ArrayList<Double> filteredResultsTime;
+        Pose2d totalEstimatedPose2d;
+        Pose2d averageEstimatedPose2d;
+        filteredResults = new ArrayList<Pose2d>();
+        filteredResultsTime = new ArrayList<Double>();
+        totalEstimatedPose2d = new Pose2d();
+        averageEstimatedPose2d = new Pose2d();
 
-        if (cam.getName() == "camShooter")  {
-            cameraOffset[0] = 0;
-            cameraOffset[1] = 0;
-            cameraOffset[2] = 0;
-            cameraOffset[3] = 0;
-            cameraOffset[4] = 0;
-            cameraOffset[5] = 0;
+        if (cam.getName() == "camShooter") {
+            cameraOffset = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+        }
 
-        }   
+        if (cam.getName() == "camIntake") {
+            cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
+                    new Rotation3d(0, -Math.PI / 4, 0));
 
-        if (cam.getName() == "camIntake")   {
-            cameraOffset[0] = 0;
-            cameraOffset[1] = 0;
-            cameraOffset[2] = 0;
-            cameraOffset[3] = 0;
-            cameraOffset[4] = 0;
-            cameraOffset[5] = 0;        
+        } else {
+            cameraOffset = new Pose3d();
         }
 
         for (PhotonTrackedTarget target : result.getTargets()) {
-            if (!(getTargetPose2d(cam) > 0.1)) {
-                filteredResults.add(
-                    new Pose2d(
-                        new Translation2d(
-                            target.getYaw()
-                        )
-                    )
+            boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= 1.0;
 
-                ) 
+            if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
+                continue;
             }
+            if (rotatingTooFast) {
+                continue;
+            }
+
+            if (!(target.getBestCameraToTarget().getTranslation().getX() < aprilTagFieldLayout.getFieldLength())
+                    || !(target.getBestCameraToTarget().getTranslation().getX() > 0)
+                    || !(target.getBestCameraToTarget().getTranslation().getY() < aprilTagFieldLayout.getFieldWidth())
+                    || !(target.getBestCameraToTarget().getTranslation().getY() > 0)) {
+                continue;
+            }
+            if ((getDistanceToTarget(target, bestTarget) < 0.1)) {
+                continue;
+            }
+
+            filteredResults.add(
+                    getTargetToRobot(target, cameraOffset, m_SwerveDrive.getPose()));
         }
+
+        for (i = 0; i < filteredResults.size(); i++) {
+            totalEstimatedPose2d = new Pose2d(totalEstimatedPose2d.getX() + filteredResults.get(i).getX(),
+                    totalEstimatedPose2d.getY() + filteredResults.get(i).getY(), filteredResults.get(0).getRotation());
+        }
+
+        averageEstimatedPose2d = totalEstimatedPose2d.div(i);
+
+        return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds());
     }
 
-    public Boolean isTargetCloseEnough(Optional<EstimatedRobotPose> estimatedRobotPose) {
+    public Pose2d getTargetToRobot(PhotonTrackedTarget target, Pose3d offset, Pose2d robotPose2d) {
+        Transform3d tagPose;
+        Pose2d targetToRobot;
+        Pose2d robotToField;
 
-        for (PhotonTrackedTarget target : estimatedRobotPose.get().targetsUsed) {
-            if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
-                return false;
-            }
+        double x;
+        double y;
+        double rotation;
+
+        if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
+            tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get().minus(offset);
+        } else {
+            tagPose = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
         }
 
-        return true;
+        x = tagPose.getZ() / Math.tan(target.getPitch());
+        y = Math.tan(target.getYaw()) * x;
+        rotation = tagPose.getRotation().toRotation2d().getDegrees() - (target.getYaw());
+
+        targetToRobot = new Pose2d(x, y, new Rotation2d().fromDegrees(rotation));
+
+        robotToField = new Pose2d((tagPose.getTranslation().toTranslation2d().plus(robotPose2d.getTranslation())),
+                targetToRobot.getRotation());
+
+        return robotToField;
     }
 
     public void addVisionMeasurement() {
-        // poseLeft = getEstimatedPose(visionLeft, m_SwerveDrive.getPose());
-        // poseRight = getEstimatedPose(visionRight, m_SwerveDrive.getPose());
-        poseShooter = getEstimatedPose(visionShooter, m_SwerveDrive.getPose());
-        poseIntake = getEstimatedPose(visionIntake, m_SwerveDrive.getPose());
+        poseShooter = getEstimatedPoseInfo(camShooter);
+        poseIntake = getEstimatedPoseInfo(camIntake);
 
-        if (poseShooter.isPresent() && isTargetCloseEnough(poseShooter)) {
-            if (poseShooter.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength()
-                    && poseShooter.get().estimatedPose.getX() > 0
-                    && poseShooter.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth()
-                    && poseShooter.get().estimatedPose.getY() > 0)
-                m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.get().estimatedPose.toPose2d(),
-                        poseShooter.get().timestampSeconds);
-            m_field.getObject("poseShooter").setPose(poseShooter.get().estimatedPose.toPose2d());
-        }
+        m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
+                poseShooter.getTimestampSeconds());
+        m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
 
-        // if (poseLeft.isPresent() && isTargetCloseEnough(poseLeft)) {
-        // m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(),
-        // poseLeft.get().timestampSeconds);
-        // m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
-
-        // }
-
-        // if (poseRight.isPresent() && isTargetCloseEnough(poseRight)) {
-        // m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(),
-        // poseRight.get().timestampSeconds);
-        // m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
-        // }
-
-        if (poseIntake.isPresent() && isTargetCloseEnough(poseIntake)
-                && poseIntake.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength()
-                && poseIntake.get().estimatedPose.getX() > 0
-                && poseIntake.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth()
-                && poseIntake.get().estimatedPose.getY() > 0) {
-            m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.get().estimatedPose.toPose2d(),
-                    poseIntake.get().timestampSeconds);
-            m_field.getObject("poseIntake").setPose(poseIntake.get().estimatedPose.toPose2d());
-        }
+        m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
+                poseIntake.getTimestampSeconds());
+        m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
 
         m_field.setRobotPose(m_SwerveDrive.getPose());
 
@@ -186,30 +174,36 @@ public class Vision extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-        if (poseLeft != null && poseLeft.isPresent()) {
-            SmartDashboard.putNumber("camleft x", poseLeft.get().estimatedPose.getX());
-            SmartDashboard.putNumber("camleft y", poseLeft.get().estimatedPose.getY());
-        }
 
-        if (poseRight != null && poseRight.isPresent()) {
-            SmartDashboard.putNumber("camright x", poseRight.get().estimatedPose.getX());
-            SmartDashboard.putNumber("camright y", poseRight.get().estimatedPose.getY());
-        }
-
-        if (poseShooter != null && poseShooter.isPresent()) {
-            SmartDashboard.putNumber("camShooter x", poseShooter.get().estimatedPose.getX());
-            SmartDashboard.putNumber("camShooter y", poseShooter.get().estimatedPose.getY());
+        if (poseShooter.getPose2d() != null) {
+            SmartDashboard.putNumber("camShooter x", poseShooter.getPose2d().getX());
+            SmartDashboard.putNumber("camShooter y", poseShooter.getPose2d().getY());
         }
 
         SmartDashboard.putData("Field", m_field);
     }
 
     public void periodic() {
-        if (camIntake != null) {
-            visionIntake.setRobotToCameraTransform(new Transform3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
-                    new Rotation3d(0, -Math.PI / 4, 0)));
-        }
+
         addVisionMeasurement();
 
+    }
+
+    public static class EstimatedPoseInfo {
+        private Pose2d pos;
+        private double timestampSeconds;
+
+        public EstimatedPoseInfo(Pose2d pos, double timestampSeconds) {
+            this.pos = pos;
+            this.timestampSeconds = timestampSeconds;
+        }
+
+        public Pose2d getPose2d() {
+            return pos;
+        }
+
+        public double getTimestampSeconds() {
+            return timestampSeconds;
+        }
     }
 }
