@@ -234,7 +234,7 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXTranslationController = 5.0;
+    public static final double kPXTranslationController = 3;
     public static final double kDTranslationController = 0;
 
     public static final double kPThetaController = 5.0;
