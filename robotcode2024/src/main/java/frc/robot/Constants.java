@@ -234,10 +234,10 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXTranslationController = 3;
-    public static final double kDTranslationController = 0;
+    public static final double kPTranslationController = 3;
+    public static final double kDTranslationController = 0.3;
 
-    public static final double kPThetaController = 5.0;
+    public static final double kPThetaController = 3;
 
     public static final boolean enableInitialReplanning = false;
     public static final boolean enableDynamicReplanning = false;
@@ -249,7 +249,7 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
     public static final HolonomicPathFollowerConfig HOLONOMIC_PATH_FOLLOWER_CONFIG = new HolonomicPathFollowerConfig(
-        new PIDConstants(kPXTranslationController, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(kPTranslationController, 0.0, kDTranslationController), // Translation PID constants
         new PIDConstants(kPThetaController, 0.0, 0.0), // Rotation PID constants
         Constants.AutoAlign.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
         0.4, // Drive base radius in meters. Distance from robot center to furthest module.
@@ -276,7 +276,7 @@ public final class Constants {
     public static final int elevatorCurrentLimit = 25;
     public static final int intakeCurrentLimit = 30;
 
-    public static final int rollerCurrentLimit = 20;
+    public static final int rollerCurrentLimit = 40;
     public static final int conveyorCurrentLimit = 20;
 
     public static final int climbCurrentLimit = 40;
