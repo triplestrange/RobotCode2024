@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -57,40 +58,32 @@ public class Vision extends SubsystemBase {
 
     }
 
-    public double getDistanceToTarget(PhotonTrackedTarget target, PhotonTrackedTarget bestTarget) {
-        return target.getBestCameraToTarget().getTranslation()
-                .minus(bestTarget.getBestCameraToTarget().getTranslation()).getNorm();
-    }
-
     public EstimatedPoseInfo getEstimatedPoseInfo(PhotonCamera camera) {
         Pose3d cameraOffset;
         int i = 0;
         PhotonCamera cam = camera;
         PhotonPipelineResult result = cam.getLatestResult();
-        PhotonTrackedTarget bestTarget = result.getBestTarget();
         ArrayList<Pose2d> filteredResults;
-        ArrayList<Double> filteredResultsTime;
-        Pose2d totalEstimatedPose2d;
+        Translation2d totalEstimatedTranslation2d;
         Pose2d averageEstimatedPose2d;
         filteredResults = new ArrayList<Pose2d>();
-        filteredResultsTime = new ArrayList<Double>();
-        totalEstimatedPose2d = new Pose2d();
+        totalEstimatedTranslation2d = new Translation2d();
         averageEstimatedPose2d = new Pose2d();
 
         if (cam.getName() == "camShooter") {
-            cameraOffset = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+            cameraOffset = new Pose3d(new Translation3d(0, 0, 0.66),
+                    new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI));
         }
 
         if (cam.getName() == "camIntake") {
-            cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
-                    new Rotation3d(0, -Math.PI / 4, 0));
+            cameraOffset = new Pose3d(new Translation3d(.152, 0, 0.66), new Rotation3d(0, -Math.PI / 4, 0));
 
         } else {
             cameraOffset = new Pose3d();
         }
 
         for (PhotonTrackedTarget target : result.getTargets()) {
-            boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= 1.0;
+            boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
             if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
                 continue;
@@ -105,47 +98,57 @@ public class Vision extends SubsystemBase {
                     || !(target.getBestCameraToTarget().getTranslation().getY() > 0)) {
                 continue;
             }
-            if ((getDistanceToTarget(target, bestTarget) < 0.1)) {
-                continue;
-            }
 
             filteredResults.add(
                     getTargetToRobot(target, cameraOffset, m_SwerveDrive.getPose()));
         }
 
         for (i = 0; i < filteredResults.size(); i++) {
-            totalEstimatedPose2d = new Pose2d(totalEstimatedPose2d.getX() + filteredResults.get(i).getX(),
-                    totalEstimatedPose2d.getY() + filteredResults.get(i).getY(), filteredResults.get(0).getRotation());
+            totalEstimatedTranslation2d = new Translation2d(
+                    totalEstimatedTranslation2d.getX() + filteredResults.get(i).getX(),
+                    totalEstimatedTranslation2d.getY() + filteredResults.get(i).getY());
         }
 
-        averageEstimatedPose2d = totalEstimatedPose2d.div(i);
+        averageEstimatedPose2d = new Pose2d(totalEstimatedTranslation2d.div(i), m_SwerveDrive.getPose().getRotation());
 
         return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds());
     }
 
     public Pose2d getTargetToRobot(PhotonTrackedTarget target, Pose3d offset, Pose2d robotPose2d) {
-        Transform3d tagPose;
-        Pose2d targetToRobot;
+        Pose3d tagPose;
+        Translation2d cameraToTarget;
+        Translation2d robotToTarget;
         Pose2d robotToField;
+        Translation3d xyz_plane_translation;
 
         double x;
         double y;
-        double rotation;
+        double z;
+        Rotation2d rotation;
 
         if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
-            tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get().minus(offset);
+            tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get();
         } else {
-            tagPose = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+            tagPose = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
         }
 
-        x = tagPose.getZ() / Math.tan(target.getPitch());
-        y = Math.tan(target.getYaw()) * x;
-        rotation = tagPose.getRotation().toRotation2d().getDegrees() - (target.getYaw());
+        xyz_plane_translation = new Translation3d(1, Math.tan(target.getYaw()),
+                Math.tan(target.getPitch()))
+                .rotateBy(
+                        offset.getRotation());
 
-        targetToRobot = new Pose2d(x, y, new Rotation2d().fromDegrees(rotation));
+        x = xyz_plane_translation.getX();
+        y = xyz_plane_translation.getY();
+        z = xyz_plane_translation.getZ();
+        rotation = robotPose2d.getRotation();
+
+        cameraToTarget = new Translation2d(x, y).times((tagPose.getZ() - offset.getZ()) / z);
+
+        robotToTarget = new Translation2d(cameraToTarget.getX() - offset.getX(), cameraToTarget.getY() - offset.getY())
+                .rotateBy(rotation);
 
         robotToField = new Pose2d((tagPose.getTranslation().toTranslation2d().plus(robotPose2d.getTranslation())),
-                targetToRobot.getRotation());
+                rotation);
 
         return robotToField;
     }
