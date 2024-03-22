@@ -76,7 +76,8 @@ public class Vision extends SubsystemBase {
         }
 
         if (cam.getName() == "camIntake") {
-            cameraOffset = new Pose3d(new Translation3d(.152, 0, 0.66), new Rotation3d(0, -Math.PI / 4, 0));
+            cameraOffset = new Pose3d(new Translation3d(.152, 0, 0.66),
+                    new Rotation3d(0, -Units.degreesToRadians(40), 0));
 
         } else {
             cameraOffset = new Pose3d();
@@ -136,8 +137,8 @@ public class Vision extends SubsystemBase {
             tagPose = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
         }
 
-        xyz_plane_translation = new Translation3d(1, Math.tan(target.getYaw()),
-                Math.tan(target.getPitch()))
+        xyz_plane_translation = new Translation3d(1, Math.tan(-Units.degreesToRadians(target.getYaw())),
+                Math.tan(Units.degreesToRadians(target.getPitch())))
                 .rotateBy(
                         offset.getRotation());
 
@@ -148,10 +149,10 @@ public class Vision extends SubsystemBase {
 
         cameraToTarget = new Translation2d(x, y).times((tagPose.getZ() - offset.getZ()) / z);
 
-        robotToTarget = new Translation2d(cameraToTarget.getX() - offset.getX(), cameraToTarget.getY() - offset.getY())
+        robotToTarget = new Translation2d(cameraToTarget.getX() + offset.getX(), cameraToTarget.getY() + offset.getY())
                 .rotateBy(rotation);
 
-        robotToField = new Pose2d((tagPose.getTranslation().toTranslation2d().plus(robotPose2d.getTranslation())),
+        robotToField = new Pose2d((tagPose.getTranslation().toTranslation2d().minus(robotToTarget)),
                 rotation);
 
         return robotToField;
