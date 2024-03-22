@@ -70,12 +70,12 @@ public class Vision extends SubsystemBase {
         totalEstimatedTranslation2d = new Translation2d();
         averageEstimatedPose2d = new Pose2d();
 
-        if (cam.getName() == "camShooter") {
+        if (cam.getName().equals("camShooter")) {
             cameraOffset = new Pose3d(new Translation3d(0, 0, 0.66),
                     new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI));
         }
 
-        if (cam.getName() == "camIntake") {
+        if (cam.getName().equals("camIntake")) {
             cameraOffset = new Pose3d(new Translation3d(.152, 0, 0.66),
                     new Rotation3d(0, -Units.degreesToRadians(40), 0));
 
