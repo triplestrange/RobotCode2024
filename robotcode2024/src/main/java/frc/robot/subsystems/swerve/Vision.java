@@ -99,6 +99,10 @@ public class Vision extends SubsystemBase {
                 continue;
             }
 
+            if (target.getArea() > 50) {
+                continue;
+            }
+
             filteredResults.add(
                     getTargetToRobot(target, cameraOffset, m_SwerveDrive.getPose()));
         }
