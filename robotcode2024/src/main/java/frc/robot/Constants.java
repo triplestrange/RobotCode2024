@@ -179,7 +179,7 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants {
-    public final static double kMaxSpeedInchesPerSecond = 20;
+    public final static double kMaxSpeedInchesPerSecond = 24.5;
     public final static double kMaxAccelerationInchesPerSecondSquared = 100;
 
     public final static double maxHeight = 33;
