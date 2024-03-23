@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -34,6 +35,10 @@ import frc.robot.subsystems.intake.Elevator;
 import static org.opencv.core.CvType.CV_64FC1;
 
 public class Vision extends SubsystemBase {
+
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
     private SwerveDrive m_SwerveDrive;
     private Shoot m_Shoot;
@@ -109,10 +114,10 @@ public class Vision extends SubsystemBase {
             // continue;
             // }
 
-            if (target.getArea() > 50 || target.getArea() < 1) {
-                System.out.println("target too big or too big");
-                continue;
-            }
+            // if (target.getArea() > 50 || target.getArea() < 1) {
+            //     System.out.println("target too big or too big");
+            //     continue;
+            // }
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
                         getTargetToRobot(target, cam, m_SwerveDrive.getPose()));
@@ -162,9 +167,15 @@ public class Vision extends SubsystemBase {
             cameraOffset = new Pose3d();
         }
 
-        for (TargetCorner corner : target.getDetectedCorners()) {
+        // for (TargetCorner corner : target.getDetectedCorners()) {
+            TargetCorner corner = target.getDetectedCorners().get(0);
+
+        System.out.println(corner.x);
+        System.out.println(corner.y);
             desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
-        }
+        // }
+
+        System.out.println(desiredTargetPixel.get(0));
 
         if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
             tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get();
@@ -191,6 +202,7 @@ public class Vision extends SubsystemBase {
             robotToPoints.add(new Translation2d(cameraToTarget.getX() + cameraOffset.getX(),
                     cameraToTarget.getY() + cameraOffset.getY())
                     .rotateBy(rotation));
+
 
             i++;
 
