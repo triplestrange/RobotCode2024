@@ -113,10 +113,11 @@ public class Vision extends SubsystemBase {
                 System.out.println("target too big or too big");
                 continue;
             }
-
-            filteredResults.add(
-                    getTargetToRobot(target, cam, m_SwerveDrive.getPose()));
-            System.out.println("added target");
+            if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
+                filteredResults.add(
+                        getTargetToRobot(target, cam, m_SwerveDrive.getPose()));
+                System.out.println("added target");
+            }
         }
 
         for (i = 0; i < filteredResults.size(); i++) {
@@ -170,7 +171,10 @@ public class Vision extends SubsystemBase {
         } else {
             tagPose = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
         }
+        int i = 0;
+
         for (Translation2d point : desiredTargetPixel) {
+
             xyz_plane_translation = new Translation3d(1, point.getX(),
                     point.getY())
                     .rotateBy(
@@ -180,11 +184,15 @@ public class Vision extends SubsystemBase {
             y = xyz_plane_translation.getY();
             z = xyz_plane_translation.getZ();
 
-            cameraToTarget = new Translation2d(x, y).times((tagPose.getZ() - cameraOffset.getZ() + point.getY()) / z);
+            double offset = i == 2 || i == 3 ? Units.inchesToMeters(3.25) : -Units.inchesToMeters(3.25);
+
+            cameraToTarget = new Translation2d(x, y).times((tagPose.getZ() - cameraOffset.getZ() + offset) / z);
 
             robotToPoints.add(new Translation2d(cameraToTarget.getX() + cameraOffset.getX(),
                     cameraToTarget.getY() + cameraOffset.getY())
                     .rotateBy(rotation));
+
+            i++;
 
         }
 
@@ -219,7 +227,19 @@ public class Vision extends SubsystemBase {
 
         Calib3d.undistortImagePoints(coordMat, dst, mCameraMatrix, mDistortionCoeffients);
 
-        return new Translation2d(dst.get(0, 0)[0], dst.get(0, 0)[1]);
+        double x_pixels = dst.get(0, 0)[0];
+        double y_pixels = dst.get(0, 0)[1];
+
+        // Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
+        // OpenCV: Positive Downward and Right
+        // Robot: Positive Upward and Left
+        double nX = -(x_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
+        double nY = -(y_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
+
+        double x = nX / mCameraMatrix.get(0, 0)[0];
+        double y = nY / mCameraMatrix.get(1, 1)[0];
+
+        return new Translation2d(x, y);
     }
 
     public void addVisionMeasurement() {
