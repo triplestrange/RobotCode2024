@@ -124,7 +124,7 @@ public class RobotContainer {
 
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
-                                                0.3 * JoystickButtons.m_operatorController.getRightY(),
+                                                1 * JoystickButtons.m_operatorController.getRightY(),
                                                 0.3 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
