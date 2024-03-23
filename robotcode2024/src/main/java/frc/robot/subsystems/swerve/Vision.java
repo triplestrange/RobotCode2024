@@ -217,7 +217,7 @@ public class Vision extends SubsystemBase {
             }
         }
         for (int i = 0; i < 5; i++) {
-            mDistortionCoeffients.put(0, i, cam.getDistCoeffs().get().get(i, 1));
+            mDistortionCoeffients.put(0, i, cam.getDistCoeffs().get().get(i, 0));
         }
 
         MatOfPoint2f coordMat = new MatOfPoint2f(coord);
