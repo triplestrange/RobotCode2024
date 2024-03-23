@@ -76,8 +76,8 @@ public class Vision extends SubsystemBase {
         }
 
         if (cam.getName().equals("camIntake")) {
-            cameraOffset = new Pose3d(new Translation3d(.152, 0, 0.66),
-                    new Rotation3d(0, -Units.degreesToRadians(40), 0));
+            cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
+                    new Rotation3d(Math.PI, -Units.degreesToRadians(40), 0));
 
         } else {
             cameraOffset = new Pose3d();
@@ -87,25 +87,32 @@ public class Vision extends SubsystemBase {
             boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
             if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
+                System.out.println("target too far");
                 continue;
             }
             if (rotatingTooFast) {
+                System.out.println("robot too spin");
+               
                 continue;
             }
 
-            if (!(target.getBestCameraToTarget().getTranslation().getX() < aprilTagFieldLayout.getFieldLength())
-                    || !(target.getBestCameraToTarget().getTranslation().getX() > 0)
-                    || !(target.getBestCameraToTarget().getTranslation().getY() < aprilTagFieldLayout.getFieldWidth())
-                    || !(target.getBestCameraToTarget().getTranslation().getY() > 0)) {
-                continue;
-            }
+            // if (!(target.().getTranslation().getX() < aprilTagFieldLayout.getFieldLength())
+            //         || !(target.getBestCameraToTarget().getTranslation().getX() > 0)
+            //         || !(target.getBestCameraToTarget().getTranslation().getY() < aprilTagFieldLayout.getFieldWidth())
+            //         || !(target.getBestCameraToTarget().getTranslation().getY() > 0)) {
+            //                     System.out.println("pose not in field");
+
+            //             continue;
+            // }
 
             if (target.getArea() > 50) {
+            System.out.println("target too big");
                 continue;
             }
 
             filteredResults.add(
                     getTargetToRobot(target, cameraOffset, m_SwerveDrive.getPose()));
+                    System.out.println("added target");
         }
 
         for (i = 0; i < filteredResults.size(); i++) {
@@ -116,7 +123,7 @@ public class Vision extends SubsystemBase {
 
         averageEstimatedPose2d = new Pose2d(totalEstimatedTranslation2d.div(i), m_SwerveDrive.getPose().getRotation());
 
-        return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds());
+        return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
     }
 
     public Pose2d getTargetToRobot(PhotonTrackedTarget target, Pose3d offset, Pose2d robotPose2d) {
@@ -162,14 +169,16 @@ public class Vision extends SubsystemBase {
         poseShooter = getEstimatedPoseInfo(camShooter);
         poseIntake = getEstimatedPoseInfo(camIntake);
 
+        if (poseShooter.getNumOfTags() != 0) {
         m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
                 poseShooter.getTimestampSeconds());
         m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
-
+        }
+        if (poseIntake.getNumOfTags() != 0) {
         m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
                 poseIntake.getTimestampSeconds());
         m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
-
+        }
         m_field.setRobotPose(m_SwerveDrive.getPose());
 
     }
@@ -183,11 +192,14 @@ public class Vision extends SubsystemBase {
 
     public void updateSmartDashBoard() {
 
-        if (poseShooter.getPose2d() != null) {
+        if (poseShooter.getNumOfTags() != 0) {
             SmartDashboard.putNumber("camShooter x", poseShooter.getPose2d().getX());
             SmartDashboard.putNumber("camShooter y", poseShooter.getPose2d().getY());
         }
-
+        if (poseIntake.getNumOfTags() != 0) {
+            SmartDashboard.putNumber("intakeShooter x", poseIntake.getPose2d().getX());
+            SmartDashboard.putNumber("intakeShooter y", poseIntake.getPose2d().getY());
+        }
         SmartDashboard.putData("Field", m_field);
     }
 
@@ -200,10 +212,12 @@ public class Vision extends SubsystemBase {
     public static class EstimatedPoseInfo {
         private Pose2d pos;
         private double timestampSeconds;
+        private double numOfTags;
 
-        public EstimatedPoseInfo(Pose2d pos, double timestampSeconds) {
+        public EstimatedPoseInfo(Pose2d pos, double timestampSeconds, double numOfTags) {
             this.pos = pos;
             this.timestampSeconds = timestampSeconds;
+            this.numOfTags = numOfTags;
         }
 
         public Pose2d getPose2d() {
@@ -212,6 +226,10 @@ public class Vision extends SubsystemBase {
 
         public double getTimestampSeconds() {
             return timestampSeconds;
+        }
+
+        public double getNumOfTags()    {
+            return numOfTags;
         }
     }
 }
