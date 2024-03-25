@@ -56,7 +56,6 @@ public class RobotContainer {
         public final AutoMain m_Autos;
 
         private double flywheelSetpoint;
-
         // The driver's controller
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -129,7 +128,7 @@ public class RobotContainer {
                                 m_elevator));
 
                 // Climb Controls
-
+                
                 // m_climb.setDefaultCommand(new RunCommand(
                 // () -> m_climb.moveClimb(
                 // 0.6 * JoystickButtons.m_operatorController.getLeftY(),
@@ -147,7 +146,7 @@ public class RobotContainer {
                                 () -> m_shooter.setShooterAngle(Constants.MechPositions.lowPivotPos)));
 
                 m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.moveShooter(
-                                0.1 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
+                                0.25 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
                 // Intake and Conveyor Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake)
@@ -159,7 +158,8 @@ public class RobotContainer {
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
-                JoystickButtons.opDpadL.whileTrue((new GroundToConveyor(m_conveyor, m_intake))
+                JoystickButtons.opDpadL.whileTrue(
+                        (new GroundToConveyor(m_conveyor, m_intake))
                                 .andThen(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)
                                                 .until(() -> !m_conveyor.getConveyorSensor())));
 
@@ -197,9 +197,7 @@ public class RobotContainer {
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot)
-                                                .alongWith(new InstantCommand(() -> m_elevator.setIntakePosition(
-                                                                Constants.MechPositions.ampIntakePos))));
+                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot));
         }
 
         /**

@@ -114,10 +114,10 @@ public class Climb extends SubsystemBase {
          */
 
         if (Math.abs(motorLWinchPower) < 0.05) {
-            lWinchPIDEnabled = true;
+            lWinch.set(0);
         } else {
             lWinchPower = motorLWinchPower;
-            // lWinch.set(lWinchPower);
+            lWinch.set(lWinchPower);
             lWinchSetpoint = getLWinchPos();
             // lWinchController.setReference(getLWinchPos(),
             // CANSparkMax.ControlType.kSmartMotion);
@@ -134,7 +134,7 @@ public class Climb extends SubsystemBase {
          * }
          */
         if (Math.abs(motorRWinchPower) < 0.05) {
-            rWinchPIDEnabled = true;
+            rWinch.set(0);
         } else {
             rWinchPower = motorRWinchPower;
             rWinch.set(rWinchPower);

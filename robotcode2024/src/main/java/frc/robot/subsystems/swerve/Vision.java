@@ -137,25 +137,25 @@ public class Vision extends SubsystemBase {
         // m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
         // }
 
-        if (poseIntake.isPresent() && isTargetCloseEnough(poseIntake)
-                && poseIntake.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength()
-                && poseIntake.get().estimatedPose.getX() > 0
-                && poseIntake.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth()
-                && poseIntake.get().estimatedPose.getY() > 0) {
-            m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.get().estimatedPose.toPose2d(),
-                    poseIntake.get().timestampSeconds);
-            m_field.getObject("poseIntake").setPose(poseIntake.get().estimatedPose.toPose2d());
-        }
+        // if (poseIntake.isPresent() && isTargetCloseEnough(poseIntake) && isIntakeVisionViable()
+        //         && poseIntake.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength()
+        //         && poseIntake.get().estimatedPose.getX() > 0
+        //         && poseIntake.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth()
+        //         && poseIntake.get().estimatedPose.getY() > 0) {
+        //     m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.get().estimatedPose.toPose2d(),
+        //             poseIntake.get().timestampSeconds);
+        //     m_field.getObject("poseIntake").setPose(poseIntake.get().estimatedPose.toPose2d());
+        // }
 
         m_field.setRobotPose(m_SwerveDrive.getPose());
 
     }
 
-    public double getIntakeVisionOffset() {
+    public boolean isIntakeVisionViable() {
         if (m_Elevator.getElevPos() > 14) {
-            return 0.66 + Units.inchesToMeters(m_Elevator.getElevPos() - 14);
+            return false;
         }
-        return 0.66;
+        return true;
     }
 
     public void updateSmartDashBoard() {
@@ -178,10 +178,7 @@ public class Vision extends SubsystemBase {
     }
 
     public void periodic() {
-        if (camIntake != null) {
-            visionIntake.setRobotToCameraTransform(new Transform3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
-                    new Rotation3d(0, -Math.PI / 4, 0)));
-        }
+  
         addVisionMeasurement();
 
     }

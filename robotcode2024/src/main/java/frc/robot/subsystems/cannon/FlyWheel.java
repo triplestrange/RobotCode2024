@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -44,6 +45,9 @@ public class FlyWheel extends SubsystemBase {
 
         rFWController = rFlyWheel.getPIDController();
         rFWEncoder = rFlyWheel.getEncoder();
+
+        lFlyWheel.setIdleMode(IdleMode.kCoast);
+        rFlyWheel.setIdleMode(IdleMode.kCoast);
 
         int smartMotionSlot = 0;
 

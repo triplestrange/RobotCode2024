@@ -88,7 +88,7 @@ public class AutoMain extends Command {
                 NamedCommands.registerCommand("intakeNote",
                                 (new ParallelDeadlineGroup(new IntakeToConveyor(m_robotContainer.m_conveyor))
                                                                 .alongWith(
-                                                                                new InstantCommand(
+                                                                                new RunCommand(
                                                                                                 () -> m_robotContainer.m_intake
                                                                                                                 .runIntake(),
                                                                                                 m_robotContainer.m_intake))));
