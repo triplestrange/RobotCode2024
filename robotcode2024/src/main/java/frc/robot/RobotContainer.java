@@ -19,19 +19,24 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
-import frc.robot.subsystems.cannon.Conveyor;
-import frc.robot.subsystems.cannon.FlyWheel;
-import frc.robot.subsystems.cannon.Climb;
-import frc.robot.subsystems.cannon.Shooter;
-import frc.robot.subsystems.intake.Elevator;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.cannon.climb.Climb;
+import frc.robot.subsystems.cannon.flywheel.FlyWheel;
+import frc.robot.subsystems.cannon.indexer.Indexer;
+import frc.robot.subsystems.cannon.shooter.Shooter;
+import frc.robot.subsystems.intake.elevator.Elevator;
+import frc.robot.subsystems.intake.elevator.ElevatorIO;
+import frc.robot.subsystems.intake.elevator.ElevatorIOReal;
+import frc.robot.subsystems.intake.elevator.ElevatorIOSim;
+import frc.robot.subsystems.intake.rollers.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.swerve.Vision;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.Alert;
+import frc.robot.util.Alert.AlertType;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
-import frc.robot.commands.conveyor.GroundToConveyor;
-import frc.robot.commands.conveyor.GroundToIntake;
+import frc.robot.commands.indexer.GroundToIndexer;
+import frc.robot.commands.indexer.GroundToIntake;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -43,19 +48,20 @@ public class RobotContainer {
         // The robot's subsystems
         public final Robot m_robot;
         public final SwerveDrive m_robotDrive;
-        public final Elevator m_elevator;
+        public Elevator m_elevator;
         public final Intake m_intake;
         public final Shooter m_shooter;
         public final FlyWheel m_flywheel;
         public final Climb m_climb;
-        public final Conveyor m_conveyor;
-        public Vision m_vision;
+        public final Indexer m_indexer;
         public final Shoot m_shoot;
+        public final Vision m_vision;
 
         // private final SendableChooser<Command> choose;
         public final AutoMain m_Autos;
 
         private double flywheelSetpoint;
+
         // The driver's controller
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -63,32 +69,42 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(this);
-                m_elevator = new Elevator();
                 m_intake = new Intake();
                 m_shooter = new Shooter();
                 m_climb = new Climb();
-                m_conveyor = new Conveyor();
+                m_indexer = new Indexer();
                 m_flywheel = new FlyWheel();
                 m_shoot = new Shoot(this);
-                m_vision = new Vision(m_robotDrive, m_shoot, m_elevator);
+
+                m_elevator = null;
+
+                if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
+                        switch (Constants.LoggerConstants.getRobot()) {
+                                case COMPBOT -> {
+                                        m_elevator = new Elevator(new ElevatorIOReal());
+                                }
+                                case SIMBOT -> {
+                                        m_elevator = new Elevator(new ElevatorIOSim());
+
+                                }
+                        }
+                }
+
+                if (m_elevator == null) {
+                        m_elevator = new Elevator(new ElevatorIO() {
+                        });
+                }
+                m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);
+
                 m_Autos = new AutoMain(this);
 
                 configureButtonBindings();
 
-                PPHolonomicDriveController.setRotationTargetOverride(m_shoot::getRotationTargetOverride);
-
+                if (Constants.LoggerConstants.tuningMode) {
+                        new Alert("Tuning mode enabled", AlertType.INFO).set(true);
+                }
 
         }
-
-        /**
-         * Use this method to define your button->command mappings. Buttons can be
-         * created by
-         * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-         * subclasses ({@link
-         * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-         * passing it to a
-         * {@link JoystickButton}.
-         */
 
         private void configureButtonBindings() {
 
@@ -115,11 +131,11 @@ public class RobotContainer {
                 // Elevator Controls
 
                 JoystickButtons.opA.onTrue(new InstantCommand(
-                                () -> m_elevator.setIntakePosition(Constants.MechPositions.stowIntakePos), m_elevator));
+                                () -> m_elevator.setElev(Constants.MechPositions.stowIntakePos), m_elevator));
                 JoystickButtons.opDpadU.onTrue(new InstantCommand(
-                                () -> m_elevator.setIntakePosition(Constants.MechPositions.ampIntakePos), m_elevator));
+                                () -> m_elevator.setElev(Constants.MechPositions.ampIntakePos), m_elevator));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(
-                                () -> m_elevator.setIntakePosition(Constants.MechPositions.groundIntakePos)));
+                                () -> m_elevator.setElev(Constants.MechPositions.groundIntakePos)));
 
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
@@ -128,7 +144,7 @@ public class RobotContainer {
                                 m_elevator));
 
                 // Climb Controls
-                
+
                 // m_climb.setDefaultCommand(new RunCommand(
                 // () -> m_climb.moveClimb(
                 // 0.6 * JoystickButtons.m_operatorController.getLeftY(),
@@ -147,10 +163,10 @@ public class RobotContainer {
 
                 m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.moveShooter(
                                 0.25 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
-                // Intake and Conveyor Controls
+                // Intake and indexer Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_conveyor.runConvIn(), m_conveyor)));
+                                .alongWith(new RunCommand(() -> m_indexer.runConvIn(), m_indexer)));
 
                 // JoystickButtons.oprBump.whileTrue(new InstantCommand(() ->
                 // m_intake.runIntake()).andThen(new InstantCommand(() ->
@@ -159,16 +175,16 @@ public class RobotContainer {
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
                 JoystickButtons.opDpadL.whileTrue(
-                        (new GroundToConveyor(m_conveyor, m_intake))
-                                .andThen(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)
-                                                .until(() -> !m_conveyor.getConveyorSensor())));
+                                (new GroundToIndexer(m_indexer, m_intake))
+                                                .andThen(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)
+                                                                .until(() -> !m_indexer.getindexerSensor())));
 
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_conveyor.runConvOut(), m_conveyor)));
+                                .alongWith(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)));
 
                 m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
 
-                m_conveyor.setDefaultCommand(new InstantCommand(() -> m_conveyor.conveyorOff(), m_conveyor));
+                m_indexer.setDefaultCommand(new InstantCommand(() -> m_indexer.indexerOff(), m_indexer));
 
                 // Fly Wheels controls
 
@@ -190,7 +206,7 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_conveyor))
+                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer))
                                 .onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel())
                                                 .alongWith(new InstantCommand(() -> m_shooter.setShooterAngle(
                                                                 Constants.MechPositions.climbPivotPos))));

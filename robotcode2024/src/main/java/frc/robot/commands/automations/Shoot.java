@@ -90,7 +90,7 @@ public class Shoot {
                 speakerTranslation3d.getX() + Units.inchesToMeters(16) + Units.inchesToMeters(36.241382),
                 speakerTranslation3d.getY(), new Rotation2d().fromDegrees(0)), 0, 0, m_RobotContainer.m_robotDrive,
                 m_RobotContainer.m_robot);
-        
+
         shootingData.put(1.0, 0.0);
         shootingData.put(1.655738, -12.2);
         shootingData.put(2.2, -16.0);
@@ -220,7 +220,7 @@ public class Shoot {
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
 
-            m_RobotContainer.m_conveyor.runConvIn();
+            m_RobotContainer.m_indexer.runConvIn();
 
             m_RobotContainer.m_robotDrive.setPresetEnabled(false);
 
@@ -229,10 +229,10 @@ public class Shoot {
 
     public void autonomousShoot() {
         if (pivotCheck()
-                && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) 
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose())
                 && velocityCheck()) {
 
-            m_RobotContainer.m_conveyor.runConvIn();
+            m_RobotContainer.m_indexer.runConvIn();
 
             m_RobotContainer.m_robotDrive.setPresetEnabled(false);
 
@@ -271,7 +271,7 @@ public class Shoot {
 
     public Optional<Rotation2d> getRotationTargetOverride() {
         // Some condition that should decide if we want to override rotation
-        if (m_RobotContainer.m_conveyor.getConveyorSensor()) {
+        if (m_RobotContainer.m_indexer.getindexerSensor()) {
             // Return an optional containing the rotation override (this should be a field
             // relative rotation)
             return Optional.of(rotationToSpeaker());
@@ -324,7 +324,7 @@ public class Shoot {
         return canShoot;
     }
 
-    public Boolean velocityCheck()  {
+    public Boolean velocityCheck() {
         return m_RobotContainer.m_robotDrive.isMovingXY();
     }
 
@@ -359,24 +359,27 @@ public class Shoot {
     }
 
     public double getRelativeVerticalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
-        Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation()).getAngle();
-        Translation2d fieldOrientSpeeds = new Translation2d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond).rotateBy(robotPose.getRotation()).rotateBy(robotRot.unaryMinus());
+        Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation())
+                .getAngle();
+        Translation2d fieldOrientSpeeds = new Translation2d(robotSpeeds.vxMetersPerSecond,
+                robotSpeeds.vyMetersPerSecond).rotateBy(robotPose.getRotation()).rotateBy(robotRot.unaryMinus());
         return fieldOrientSpeeds.getX();
-    } 
+    }
 
-  public double getRelativeHorizontalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
-        Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation()).getAngle();
-        Translation2d fieldOrientSpeeds = new Translation2d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond).rotateBy(robotPose.getRotation()).rotateBy(robotRot.unaryMinus());
+    public double getRelativeHorizontalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
+        Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation())
+                .getAngle();
+        Translation2d fieldOrientSpeeds = new Translation2d(robotSpeeds.vxMetersPerSecond,
+                robotSpeeds.vyMetersPerSecond).rotateBy(robotPose.getRotation()).rotateBy(robotRot.unaryMinus());
         return fieldOrientSpeeds.getY();
-    } 
+    }
 
     public Translation3d getSpeakerForCurrentAlliance() {
-         if (isAllianceRed()) {
+        if (isAllianceRed()) {
             return flipTranslation3d(speakerTranslation3d);
-         }
-         else {
+        } else {
             return speakerTranslation3d;
-         }
+        }
     }
 
     public void updateSmartDashBoard() {

@@ -18,9 +18,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.commands.conveyor.GroundToConveyor;
-import frc.robot.commands.conveyor.IntakeToConveyor;
-import frc.robot.subsystems.intake.Elevator.IntakePosition;
+import frc.robot.commands.indexer.IntakeToIndexer;
 
 public class AutoMain extends Command {
 
@@ -41,7 +39,7 @@ public class AutoMain extends Command {
 
         public Optional<Rotation2d> getRotationTargetOverride() {
                 // Some condition that should decide if we want to override rotation
-                if (m_robotContainer.m_conveyor.getConveyorSensor()) {
+                if (m_robotContainer.m_indexer.getindexerSensor()) {
                         // Return an optional containing the rotation override (this should be a field
                         // relative rotation)
                         return Optional.of(m_robotContainer.m_shoot.rotationToSpeaker());
@@ -54,12 +52,12 @@ public class AutoMain extends Command {
         public void registerCommands() {
                 // Elev Commands
                 NamedCommands.registerCommand("amp", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setIntakePosition(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
+                                .setElev(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
                 NamedCommands.registerCommand("ground", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setIntakePosition(Constants.MechPositions.groundIntakePos)));
+                                .setElev(Constants.MechPositions.groundIntakePos)));
 
                 NamedCommands.registerCommand("stowElev", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setIntakePosition(Constants.MechPositions.stowIntakePos),
+                                .setElev(Constants.MechPositions.stowIntakePos),
                                 m_robotContainer.m_elevator));
                 // Intake Commands
                 NamedCommands.registerCommand("intakeOut", new InstantCommand(() -> m_robotContainer.m_intake
@@ -71,32 +69,32 @@ public class AutoMain extends Command {
 
                 // Conveyor Commands
                 NamedCommands.registerCommand("indexerOut", new InstantCommand(
-                                () -> m_robotContainer.m_conveyor.runConvOut(), m_robotContainer.m_conveyor));
+                                () -> m_robotContainer.m_indexer.runConvOut(), m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("conveyorIn", new IntakeToConveyor(m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("conveyorIn", new IntakeToIndexer(m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("indexerIn", new IntakeToConveyor(m_robotContainer.m_conveyor));
+                NamedCommands.registerCommand("indexerIn", new IntakeToIndexer(m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("indexerShoot", new InstantCommand(
-                                () -> m_robotContainer.m_conveyor.runConvIn(), m_robotContainer.m_conveyor));
+                                () -> m_robotContainer.m_indexer.runConvIn(), m_robotContainer.m_indexer));
                 NamedCommands.registerCommand("conveyorShoot", new InstantCommand(
-                                () -> m_robotContainer.m_conveyor.runConvIn(), m_robotContainer.m_conveyor));
+                                () -> m_robotContainer.m_indexer.runConvIn(), m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("indexerOff", new InstantCommand(
-                                () -> m_robotContainer.m_conveyor.conveyorOff(), m_robotContainer.m_conveyor));
+                                () -> m_robotContainer.m_indexer.indexerOff(), m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("intakeNote",
-                                (new ParallelDeadlineGroup(new IntakeToConveyor(m_robotContainer.m_conveyor))
-                                                                .alongWith(
-                                                                                new RunCommand(
-                                                                                                () -> m_robotContainer.m_intake
-                                                                                                                .runIntake(),
-                                                                                                m_robotContainer.m_intake))));
+                                (new ParallelDeadlineGroup(new IntakeToIndexer(m_robotContainer.m_indexer))
+                                                .alongWith(
+                                                                new RunCommand(
+                                                                                () -> m_robotContainer.m_intake
+                                                                                                .runIntake(),
+                                                                                m_robotContainer.m_intake))));
 
                 // Shooter
                 NamedCommands.registerCommand("shoot",
                                 (new RunCommand(() -> m_robotContainer.m_shoot.autonomous(),
-                                                m_robotContainer.m_robotDrive, m_robotContainer.m_conveyor,
+                                                m_robotContainer.m_robotDrive, m_robotContainer.m_indexer,
                                                 m_robotContainer.m_shooter, m_robotContainer.m_flywheel)
                                                 .withTimeout(1.5))
                                                 .finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel()));
@@ -106,8 +104,8 @@ public class AutoMain extends Command {
                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676),
                                                 m_robotContainer.m_flywheel))
                                 .andThen(new WaitCommand(1.5)).andThen(new InstantCommand(
-                                                () -> m_robotContainer.m_conveyor.runConvIn(),
-                                                m_robotContainer.m_conveyor))
+                                                () -> m_robotContainer.m_indexer.runConvIn(),
+                                                m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.5)));
         }
 

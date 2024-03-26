@@ -14,10 +14,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.subsystems.intake.Elevator.IntakePosition;
+import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
+import frc.robot.util.Alert;
+import frc.robot.util.Alert.AlertType;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -182,11 +185,15 @@ public final class Constants {
     public final static double kMaxSpeedInchesPerSecond = 24.5;
     public final static double kMaxAccelerationInchesPerSecondSquared = 100;
 
-    public final static double maxHeight = 33;
-    public final static double minHeight = 0;
-    public final static double safeZone = 0;
+    public final static double maxHeightInches = 33;
+    public final static double minHeightInches = 0;
+    public final static double safeZoneInches = 0;
 
     public final static double elevPosConv = 33 / 101.5;
+    public final static double elevSimPosConv = 15;
+    public final static double elevCarraigeKG = Units.lbsToKilograms(13.667);
+    public final static double elevDrumRadiusMeters = Units.inchesToMeters(1.25);
+
     public final static double kP = 0.4;
     public final static double kI = 0;
     public final static double kD = 0;
@@ -218,7 +225,7 @@ public final class Constants {
     public final static double allowedErr = 0;
 
     public final static double intakeSpeed = 1;
-    public final static double conveyorSpeed = 1;
+    public final static double indexerSpeed = 1;
   }
 
   public static final class VisionConstants {
@@ -226,6 +233,55 @@ public final class Constants {
     public static final Vector<N3> STATE_STD_DEVS = VecBuilder.fill(0.1, 0.1, 1);
     public static final Vector<N3> VISION_MEASUREMENT_STD_DEVS = VecBuilder.fill(2, 2, 1000000000);
 
+  }
+
+  public static final class LoggerConstants {
+
+    private static RobotType robotType = RobotType.SIMBOT;
+
+    public static final Boolean tuningMode = false;
+    public final static double kDt = 0.02;
+
+    public static RobotType getRobot() {
+      if (RobotBase.isReal() && robotType == RobotType.SIMBOT) {
+        new Alert("Invalid robot selected, using competition robot as default.", AlertType.ERROR)
+            .set(true);
+        robotType = RobotType.COMPBOT;
+      }
+      return robotType;
+    }
+
+    public static Mode getMode() {
+      return switch (robotType) {
+        case DEVBOT, COMPBOT -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+        case SIMBOT -> Mode.SIM;
+      };
+    }
+
+    public enum Mode {
+      /** Running on a real robot. */
+      REAL,
+
+      /** Running a physics simulator. */
+      SIM,
+
+      /** Replaying from a log file. */
+      REPLAY
+    }
+
+    public enum RobotType {
+      SIMBOT,
+      DEVBOT,
+      COMPBOT
+    }
+
+    /** Checks whether the robot the correct robot is selected when deploying. */
+    public static void main(String... args) {
+      if (robotType == RobotType.SIMBOT) {
+        System.err.println("Cannot deploy, invalid robot selected: " + robotType);
+        System.exit(1);
+      }
+    }
   }
 
   public static final class AutoConstants {
@@ -277,11 +333,11 @@ public final class Constants {
     public static final int intakeCurrentLimit = 30;
 
     public static final int rollerCurrentLimit = 40;
-    public static final int conveyorCurrentLimit = 20;
+    public static final int indexerCurrentLimit = 20;
 
     public static final int climbCurrentLimit = 40;
 
-    public static final int conveyorDigitalInput = 4;
+    public static final int indexerDigitalInput = 4;
     public static final int intakeDigitalInput = 1;
 
     public static final int pivotAbsInput = 2;
@@ -305,7 +361,7 @@ public final class Constants {
     public static final int ELEVATOR = 9;
 
     public static final int ROLLERS = 5;
-    public static final int CONVEYOR = 10;
+    public static final int indexer = 10;
 
     public static final int IPIVOT = 23;
 

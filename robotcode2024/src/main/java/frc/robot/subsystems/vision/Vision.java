@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swerve;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -30,7 +30,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
 import frc.robot.commands.automations.Shoot;
-import frc.robot.subsystems.intake.Elevator;
+import frc.robot.subsystems.intake.elevator.Elevator;
+import frc.robot.subsystems.swerve.SwerveDrive;
 
 import static org.opencv.core.CvType.CV_64FC1;
 
@@ -115,8 +116,8 @@ public class Vision extends SubsystemBase {
             // }
 
             // if (target.getArea() > 50 || target.getArea() < 1) {
-            //     System.out.println("target too big or too big");
-            //     continue;
+            // System.out.println("target too big or too big");
+            // continue;
             // }
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
@@ -168,11 +169,11 @@ public class Vision extends SubsystemBase {
         }
 
         // for (TargetCorner corner : target.getDetectedCorners()) {
-            TargetCorner corner = target.getDetectedCorners().get(0);
+        TargetCorner corner = target.getDetectedCorners().get(0);
 
         System.out.println(corner.x);
         System.out.println(corner.y);
-            desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
+        desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
         // }
 
         System.out.println(desiredTargetPixel.get(0));
@@ -202,7 +203,6 @@ public class Vision extends SubsystemBase {
             robotToPoints.add(new Translation2d(cameraToTarget.getX() + cameraOffset.getX(),
                     cameraToTarget.getY() + cameraOffset.getY())
                     .rotateBy(rotation));
-
 
             i++;
 
@@ -273,8 +273,8 @@ public class Vision extends SubsystemBase {
     }
 
     public double getIntakeVisionOffset() {
-        if (m_Elevator.getElevPos() > 14) {
-            return 0.66 + Units.inchesToMeters(m_Elevator.getElevPos() - 14);
+        if (m_Elevator.getIntakePos().getHeight() > 14) {
+            return 0.66 + Units.inchesToMeters(m_Elevator.getIntakePos().getHeight() - 14);
         }
         return 0.66;
     }
