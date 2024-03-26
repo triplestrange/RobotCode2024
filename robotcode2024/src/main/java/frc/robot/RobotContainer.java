@@ -158,7 +158,7 @@ public class RobotContainer {
 
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
-                                                1 * JoystickButtons.m_operatorController.getRightY(),
+                                                -1 * JoystickButtons.m_operatorController.getRightY(),
                                                 0.3 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
@@ -226,8 +226,7 @@ public class RobotContainer {
 
                 JoystickButtons.dX.whileTrue(
                                 new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer))
-                                .onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel())
-                                                .alongWith(new InstantCommand(() -> m_shooter.setShooterAngle(
+                                .onFalse((new InstantCommand(() -> m_shooter.setShooterAngle(
                                                                 Constants.MechPositions.climbPivotPos))));
                 // Amp Automations
 

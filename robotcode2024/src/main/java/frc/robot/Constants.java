@@ -245,7 +245,7 @@ public final class Constants {
 
   public static final class LoggerConstants {
 
-    private static RobotType robotType = RobotType.SIMBOT;
+    private static RobotType robotType = RobotType.COMPBOT;
 
     public static final Boolean tuningMode = false;
     public final static double kDt = 0.02;
@@ -369,7 +369,7 @@ public final class Constants {
     public static final int ELEVATOR = 9;
 
     public static final int ROLLERS = 5;
-    public static final int indexer = 10;
+    public static final int INDEXER = 10;
 
     public static final int IPIVOT = 23;
 

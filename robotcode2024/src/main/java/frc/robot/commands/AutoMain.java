@@ -96,8 +96,7 @@ public class AutoMain extends Command {
                                 (new RunCommand(() -> m_robotContainer.m_shoot.autonomous(),
                                                 m_robotContainer.m_robotDrive, m_robotContainer.m_indexer,
                                                 m_robotContainer.m_shooter, m_robotContainer.m_flywheel)
-                                                .withTimeout(1.5))
-                                                .finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel()));
+                                                .withTimeout(1.5)));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter)

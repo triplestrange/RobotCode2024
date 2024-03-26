@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 
 public class IndexerIOReal implements IndexerIO {
-  public CANSparkMax Indexer = new CANSparkMax(Constants.CAN.ROLLERS, MotorType.kBrushless);
+  public CANSparkMax Indexer = new CANSparkMax(Constants.CAN.INDEXER, MotorType.kBrushless);
 
   public RelativeEncoder IndexerRelativeEncoder = Indexer.getEncoder();
   private final DigitalInput IndexerSensor;

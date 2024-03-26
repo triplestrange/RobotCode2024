@@ -113,7 +113,7 @@ public class Elevator extends SubsystemBase {
         intakeSetpoint = getIntakePos().getAngle();
         elevSetpoint = getIntakePos().getHeight();
         intakeController.reset(intakeSetpoint);
-        io.setElevPosition(elevSetpoint);
+        io.runHeightSetpoint(elevSetpoint);
         intakePIDEnabled = true;
         elevPIDEnabled = true;
 
@@ -124,7 +124,7 @@ public class Elevator extends SubsystemBase {
             elevPIDEnabled = true;
         } else {
             elevPower = motorElevPower;
-            io.runWinchVolts(elevPower);
+            io.runWinchVolts(elevPower * 12);
             elevSetpoint = getIntakePos().getHeight();
             elevPIDEnabled = false;
         }
@@ -132,7 +132,7 @@ public class Elevator extends SubsystemBase {
             intakePIDEnabled = true;
         } else {
             intakePower = motorIntakePower;
-            io.runJointVolts(intakePower);
+            io.runJointVolts(intakePower * 12);
             intakeSetpoint = getIntakePos().getAngle();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
@@ -154,7 +154,7 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         if (elevPIDEnabled) {
-            io.setElevPosition(elevSetpoint);
+            io.runHeightSetpoint(elevSetpoint);
         }
 
         if (intakePIDEnabled) {
