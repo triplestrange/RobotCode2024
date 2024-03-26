@@ -1,9 +1,10 @@
-package frc.robot.subsystems.cannon;
+package frc.robot.subsystems.cannon.flywheel;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -44,6 +45,9 @@ public class FlyWheel extends SubsystemBase {
 
         rFWController = rFlyWheel.getPIDController();
         rFWEncoder = rFlyWheel.getEncoder();
+
+        lFlyWheel.setIdleMode(IdleMode.kCoast);
+        rFlyWheel.setIdleMode(IdleMode.kCoast);
 
         int smartMotionSlot = 0;
 
@@ -88,7 +92,6 @@ public class FlyWheel extends SubsystemBase {
     public void setFWSpeed(double RPM) {
         lFlyWheelSetpoint = RPM;
         rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
-
     }
 
     public void flyWheelOn() {
@@ -105,14 +108,21 @@ public class FlyWheel extends SubsystemBase {
     @Override
     public void periodic() {
         lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
+        if (lFlyWheelSetpoint == 0)  {
+            lFlyWheel.set(0);
+        }
         rFWController.setReference(rFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
-
+        if (rFlyWheelSetpoint == 0)  {
+            rFlyWheel.set(0);
+        }
     }
 
     public void updateSmartDashBoard() {
 
         SmartDashboard.putNumber("left rpm", lFlyWheel.getEncoder().getVelocity());
         SmartDashboard.putNumber("right rpm", rFlyWheel.getEncoder().getVelocity());
+        SmartDashboard.putNumber("left setpoint", lFlyWheelSetpoint);
+        SmartDashboard.putNumber("right setpoint", rFlyWheelSetpoint);
 
     }
 

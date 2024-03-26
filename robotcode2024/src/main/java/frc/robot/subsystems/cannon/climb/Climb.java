@@ -1,4 +1,4 @@
-package frc.robot.subsystems.cannon;
+package frc.robot.subsystems.cannon.climb;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -114,7 +114,7 @@ public class Climb extends SubsystemBase {
          */
 
         if (Math.abs(motorLWinchPower) < 0.05) {
-            lWinchPIDEnabled = true;
+            lWinch.set(0);
         } else {
             lWinchPower = motorLWinchPower;
             lWinch.set(lWinchPower);
@@ -134,7 +134,7 @@ public class Climb extends SubsystemBase {
          * }
          */
         if (Math.abs(motorRWinchPower) < 0.05) {
-            rWinchPIDEnabled = true;
+            rWinch.set(0);
         } else {
             rWinchPower = motorRWinchPower;
             rWinch.set(rWinchPower);
@@ -175,10 +175,10 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
         if (lWinchPIDEnabled) {
-            lWinchController.setReference(lWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            // lWinchController.setReference(lWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
         }
         if (rWinchPIDEnabled) {
-            rWinchController.setReference(rWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            // rWinchController.setReference(rWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
         }
     }
 

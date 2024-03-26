@@ -59,7 +59,7 @@
             {
               "type": "named",
               "data": {
-                "name": "conveyorIn"
+                "name": "indexerIn"
               }
             }
           ]
@@ -68,8 +68,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },

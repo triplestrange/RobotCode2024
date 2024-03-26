@@ -1,6 +1,5 @@
 package frc.robot.util;
 
-import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.hardware.TalonFX;

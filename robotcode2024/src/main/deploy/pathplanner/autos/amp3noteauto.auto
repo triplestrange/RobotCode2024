@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6696489453315735,
+      "y": 6.681555271148682
+    },
+    "rotation": 60.06847317554468
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ground"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot fixed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp3note.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp3note.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Choreo",
+  "choreoAuto": true
+}

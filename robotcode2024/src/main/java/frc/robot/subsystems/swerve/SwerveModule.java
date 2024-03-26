@@ -1,13 +1,10 @@
 package frc.robot.subsystems.swerve;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -19,8 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
-
-import frc.robot.subsystems.AbsoluteEncoder;
+import frc.robot.util.AbsoluteEncoder;
 
 public class SwerveModule {
   // motors
@@ -53,7 +49,7 @@ public class SwerveModule {
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
-    //m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
+    // m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
     m_turningMotor.restoreFactoryDefaults();
 
     m_turningEncoder = m_turningMotor.getEncoder();
@@ -136,7 +132,7 @@ public class SwerveModule {
 
     double desiredDrive = state.speedMetersPerSecond / Constants.SwerveConstants.kMaxSpeedMetersPerSecond;
 
-    if (Math.abs(desiredDrive) < 0.05 && !forceAngle) {
+    if (Math.abs(desiredDrive) < 0.01 && !forceAngle) {
       m_driveMotor.set(0);
       return;
     }

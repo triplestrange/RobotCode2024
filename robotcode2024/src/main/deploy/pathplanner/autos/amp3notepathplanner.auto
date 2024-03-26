@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6577731211017981,
+      "y": 6.680148684371443
+    },
+    "rotation": 60.1362161314191
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot fixed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp3notepathplanner1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp3notepathplanner2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "New Paths",
+  "choreoAuto": false
+}

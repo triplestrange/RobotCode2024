@@ -1,4 +1,4 @@
-package frc.robot.commands.conveyor;
+package frc.robot.commands.indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
@@ -7,28 +7,29 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.JoystickButtons;
-import frc.robot.subsystems.cannon.Conveyor;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.cannon.indexer.Indexer;
+import frc.robot.subsystems.cannon.shooter.Shooter;
+import frc.robot.subsystems.intake.rollers.Intake;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.cannon.Shooter;
 
-public class IntakeToConveyor extends Command {
-    private Conveyor m_Conveyor;
+public class IntakeToIndexer extends Command {
+    private Indexer m_indexer;
+
     /**
      * Creates a new Drive.
      * 
      * normal = 2.5
      * slow = 0.75
      */
-    public IntakeToConveyor(Conveyor m_Conveyor) {
-        addRequirements(m_Conveyor);
-        this.m_Conveyor = m_Conveyor;
+    public IntakeToIndexer(Indexer m_indexer) {
+        addRequirements(m_indexer);
+        this.m_indexer = m_indexer;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_Conveyor.runConvIn();
+        m_indexer.runConvIn();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -39,12 +40,12 @@ public class IntakeToConveyor extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_Conveyor.conveyorOff();
+        m_indexer.indexerOff();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return m_Conveyor.getConveyorSensor();
+        return m_indexer.getindexerSensor();
     }
 }

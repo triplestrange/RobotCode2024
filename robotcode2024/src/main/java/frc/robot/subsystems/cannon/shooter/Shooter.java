@@ -1,4 +1,4 @@
-package frc.robot.subsystems.cannon;
+package frc.robot.subsystems.cannon.shooter;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
@@ -54,6 +54,7 @@ public class Shooter extends SubsystemBase {
         pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
 
         lPivot.setInverted(true);
+        pivotController.setIZone(1);
         int smartMotionSlot = 0;
     }
 
@@ -65,13 +66,15 @@ public class Shooter extends SubsystemBase {
     }
 
     public void moveShooter(double motorPivotPower) {
-        // if ((getAngle() >= Constants.ShooterConstants.maxAngle - Constants.ShooterConstants.safeZone)
-        //         && motorPivotPower > 0) {
-        //     motorPivotPower = 0;
+        // if ((getAngle() >= Constants.ShooterConstants.maxAngle -
+        // Constants.ShooterConstants.safeZone)
+        // && motorPivotPower > 0) {
+        // motorPivotPower = 0;
         // }
-        // if ((getAngle() <= Constants.ShooterConstants.minAngle + Constants.ShooterConstants.safeZone)
-        //         && motorPivotPower < 0) {
-        //     motorPivotPower = 0;
+        // if ((getAngle() <= Constants.ShooterConstants.minAngle +
+        // Constants.ShooterConstants.safeZone)
+        // && motorPivotPower < 0) {
+        // motorPivotPower = 0;
         // }
 
         if (Math.abs(motorPivotPower) < 0.05) {
@@ -111,10 +114,10 @@ public class Shooter extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putNumber("degree", getAngle());
+        SmartDashboard.putNumber("cannon degree", getAngle());
         SmartDashboard.putBoolean("Is Encoder Plugged", pivotEncoder.isConnected());
         SmartDashboard.putNumber("cannon angle setpoint", pivotSetpoint);
-        SmartDashboard.putNumber("Power", pivotPower);
+        SmartDashboard.putNumber("Cannon Power", pivotPower);
     }
 
 }
