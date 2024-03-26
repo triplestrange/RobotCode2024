@@ -38,11 +38,11 @@ public class Intake extends SubsystemBase {
     }
 
     public void runIntake() {
-        io.runIntakeVolts(12);
+        io.runVolts(12);
     }
 
     public void runOutake() {
-        io.runIntakeVolts(-12);
+        io.runVolts(-12);
     }
 
     public void intakeOff() {
@@ -50,7 +50,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean getIntakeSensor() {
-        return io.getIntakeSensor();
+        return io.getSensor();
     }
 
     @Override

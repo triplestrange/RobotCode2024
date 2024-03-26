@@ -50,25 +50,25 @@ public class IntakeIOReal implements IntakeIO {
     intakeRelativeEncoder.setVelocityConversionFactor(
         Constants.IntakeConstants.rollerDiameterMeters * Math.PI / Constants.IntakeConstants.rollerGearing / 60);
 
-    double intakeMotorCurrent = intake.getOutputCurrent();
-    double intakeAppliedVolts = intake.getAppliedOutput() * intake.getBusVoltage();
+    double motorCurrent = intake.getOutputCurrent();
+    double appliedVolts = intake.getAppliedOutput() * intake.getBusVoltage();
 
-    double intakeatorVelMetersPerSecond = intakeRelativeEncoder.getVelocity();
+    double linearVEl = intakeRelativeEncoder.getVelocity();
 
-    double intakeTempCelcius = intake.getMotorTemperature();
+    double tempCelcius = intake.getMotorTemperature();
 
     intakeSensor = new DigitalInput(Constants.ELECTRICAL.intakeDigitalInput);
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.intakeMotorConnected = intake.getFault(FaultID.kSensorFault);
+    inputs.motorConnected = intake.getFault(FaultID.kSensorFault);
 
-    inputs.intakeLinearVel = intakeRelativeEncoder.getVelocity();
-    inputs.intakeInputVolts = intake.getAppliedOutput() * intake.getBusVoltage();
-    inputs.intakeMotorCurrent = intake.getOutputCurrent();
-    inputs.intakeTempCelcius = intake.getMotorTemperature();
-    inputs.intakeInputVolts = intakeInput;
+    inputs.linearVel = intakeRelativeEncoder.getVelocity();
+    inputs.inputVolts = intake.getAppliedOutput() * intake.getBusVoltage();
+    inputs.motorCurrent = intake.getOutputCurrent();
+    inputs.tempCelcius = intake.getMotorTemperature();
+    inputs.inputVolts = intakeInput;
 
     /*
      * inputs.joinVelDegPerSecond =
@@ -77,7 +77,7 @@ public class IntakeIOReal implements IntakeIO {
   }
 
   @Override
-  public void runIntakeVolts(double intakeVolts) {
+  public void runVolts(double intakeVolts) {
     intake.setVoltage(intakeVolts);
   }
 
@@ -87,7 +87,7 @@ public class IntakeIOReal implements IntakeIO {
   }
 
   @Override
-  public boolean getIntakeSensor() {
+  public boolean getSensor() {
     return !intakeSensor.get();
   }
 

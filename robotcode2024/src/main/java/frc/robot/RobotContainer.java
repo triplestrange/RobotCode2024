@@ -22,6 +22,9 @@ import frc.robot.commands.AutoMain;
 import frc.robot.subsystems.cannon.climb.Climb;
 import frc.robot.subsystems.cannon.flywheel.FlyWheel;
 import frc.robot.subsystems.cannon.indexer.Indexer;
+import frc.robot.subsystems.cannon.indexer.IndexerIO;
+import frc.robot.subsystems.cannon.indexer.IndexerIOReal;
+import frc.robot.subsystems.cannon.indexer.IndexerIOSim;
 import frc.robot.subsystems.cannon.shooter.Shooter;
 import frc.robot.subsystems.intake.elevator.Elevator;
 import frc.robot.subsystems.intake.elevator.ElevatorIO;
@@ -56,7 +59,7 @@ public class RobotContainer {
         public final Shooter m_shooter;
         public final FlyWheel m_flywheel;
         public final Climb m_climb;
-        public final Indexer m_indexer;
+        public Indexer m_indexer;
         public final Shoot m_shoot;
         public final Vision m_vision;
 
@@ -74,16 +77,17 @@ public class RobotContainer {
                 m_robotDrive = new SwerveDrive(this);
                 m_shooter = new Shooter();
                 m_climb = new Climb();
-                m_indexer = new Indexer();
                 m_flywheel = new FlyWheel();
                 m_shoot = new Shoot(this);
 
+                m_indexer = null;
                 m_elevator = null;
                 m_intake = null;
 
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
                                 case COMPBOT -> {
+                                        m_indexer = new Indexer(new IndexerIOReal());
                                         m_elevator = new Elevator(new ElevatorIOReal());
                                         m_intake = new Intake(new IntakeIOReal());
 
@@ -91,6 +95,7 @@ public class RobotContainer {
                                 case SIMBOT -> {
                                         m_elevator = new Elevator(new ElevatorIOSim());
                                         m_intake = new Intake(new IntakeIOSim());
+                                        m_indexer = new Indexer(new IndexerIOSim());
                                 }
                         }
                 }
@@ -99,8 +104,13 @@ public class RobotContainer {
                         m_elevator = new Elevator(new ElevatorIO() {
                         });
                 }
-                if (m_elevator == null) {
+                if (m_intake == null) {
                         m_intake = new Intake(new IntakeIO() {
+                        });
+                }
+                if (m_indexer == null) {
+                        m_indexer = new Indexer(new IndexerIO() {
+
                         });
                 }
                 m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);
@@ -175,7 +185,7 @@ public class RobotContainer {
                 // Intake and indexer Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runConvIn(), m_indexer)));
+                                .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer)));
 
                 // JoystickButtons.oprBump.whileTrue(new InstantCommand(() ->
                 // m_intake.runIntake()).andThen(new InstantCommand(() ->
@@ -185,11 +195,11 @@ public class RobotContainer {
 
                 JoystickButtons.opDpadL.whileTrue(
                                 (new GroundToIndexer(m_indexer, m_intake))
-                                                .andThen(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)
-                                                                .until(() -> !m_indexer.getindexerSensor())));
+                                                .andThen(new RunCommand(() -> m_indexer.runOut(), m_indexer)
+                                                                .until(() -> !m_indexer.getIndexerSensor())));
 
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)));
+                                .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer)));
 
                 m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
 

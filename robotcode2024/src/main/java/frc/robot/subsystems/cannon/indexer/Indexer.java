@@ -2,47 +2,55 @@ package frc.robot.subsystems.cannon.indexer;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
 
-    private final CANSparkMax indexer;
+    private static Indexer instance;
 
-    private final DigitalInput indexerInput;
+    private IndexerIO io;
+    private IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
-    /** Creates a new Intake. */
-    public Indexer() {
+    public static Indexer getInstance() {
+        return instance;
+    }
+
+    public static Indexer initialize(IndexerIO io) {
+        if (instance == null) {
+            instance = new Indexer(io);
+        }
+        return instance;
+    }
+
+    /** Creates a new Indexer. */
+    public Indexer(IndexerIO indexerIO) {
         super();
-        indexer = new CANSparkMax(Constants.CAN.indexer, MotorType.kBrushless);
-        indexer.setSmartCurrentLimit(Constants.ELECTRICAL.indexerCurrentLimit);
-        indexer.setIdleMode(IdleMode.kBrake);
-        indexerInput = new DigitalInput(Constants.ELECTRICAL.indexerDigitalInput);
 
-        // encoder to determine offset angle
+        io = indexerIO;
+        io.updateInputs(inputs);
+
+        io.setIdleMode(IdleMode.kBrake);
     }
 
-    public void runConvIn() {
-        indexer.set(-Constants.IndexerConstants.indexerSpeed);
-
+    public void runIn() {
+        io.runVolts(12);
     }
 
-    public void runConvOut() {
-        indexer.set(Constants.IndexerConstants.indexerSpeed);
+    public void runOut() {
+        io.runVolts(-12);
     }
 
     public void indexerOff() {
-        indexer.set(0);
+        io.stop();
     }
 
-    public boolean getindexerSensor() {
-        return !indexerInput.get();
+    public boolean getIndexerSensor() {
+        return io.getSensor();
     }
 
     @Override
@@ -51,6 +59,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putBoolean("conveor sensor", getindexerSensor());
+        SmartDashboard.putBoolean("Indexer sensor", getIndexerSensor());
+
     }
 }

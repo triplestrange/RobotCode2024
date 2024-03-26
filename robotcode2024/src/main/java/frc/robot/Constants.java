@@ -225,12 +225,15 @@ public final class Constants {
     public final static double allowedErr = 0;
     public final static double rollerDiameterMeters = Units.inchesToMeters(1);
     public final static double rollerGearing = 5;
+    public final static double jKGMetersPerSecondSquared = 3e-5;
 
     public final static double intakeSpeed = 1;
   }
 
   public static final class IndexerConstants {
     public final static double indexerSpeed = 1;
+    public final static double rollerGearing = 1;
+    public final static double rollerDiameterMeters = Units.inchesToMeters(1);
   }
 
   public static final class VisionConstants {
@@ -258,7 +261,7 @@ public final class Constants {
 
     public static Mode getMode() {
       return switch (robotType) {
-        case COMPBOT -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+        case DEVBOT, COMPBOT -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         case SIMBOT -> Mode.SIM;
       };
     }
@@ -276,6 +279,7 @@ public final class Constants {
 
     public enum RobotType {
       SIMBOT,
+      DEVBOT,
       COMPBOT
     }
 

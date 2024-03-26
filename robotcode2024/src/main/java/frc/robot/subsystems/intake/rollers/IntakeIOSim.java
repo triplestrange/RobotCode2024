@@ -18,7 +18,7 @@ import frc.robot.Constants;
 
 public class IntakeIOSim implements IntakeIO {
     private final FlywheelSim intakeSim = new FlywheelSim(DCMotor.getNEO(1), Constants.IntakeConstants.rollerGearing,
-            1);
+            Constants.IntakeConstants.jKGMetersPerSecondSquared);
 
     double intakeMotorCurrent = 0.0;
     double intakeAppliedVolts = 0.0;
@@ -44,18 +44,18 @@ public class IntakeIOSim implements IntakeIO {
 
         intakeSim.update(Constants.LoggerConstants.kDt);
 
-        inputs.intakeLinearVel = intakeSim.getAngularVelocityRPM() * Constants.IntakeConstants.rollerDiameterMeters
+        inputs.linearVel = intakeSim.getAngularVelocityRPM() * Constants.IntakeConstants.rollerDiameterMeters
                 * Math.PI / Constants.IntakeConstants.rollerGearing / 60;
-        inputs.intakeAppliedVolts = intakeAppliedVolts;
-        inputs.intakeMotorCurrent = intakeSim.getCurrentDrawAmps();
-        inputs.intakeTempCelcius = 0.0;
+        inputs.appliedVolts = intakeAppliedVolts;
+        inputs.motorCurrent = intakeSim.getCurrentDrawAmps();
+        inputs.tempCelcius = 0.0;
 
         // Reset input
         intakeSim.setInputVoltage(0.0);
     }
 
     @Override
-    public void runIntakeVolts(double intakeVolts) {
+    public void runVolts(double intakeVolts) {
         intakeAppliedVolts = MathUtil.clamp(intakeVolts, -12.0, 12.0);
         intakeSim.setInputVoltage(intakeAppliedVolts);
     }

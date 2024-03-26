@@ -1,22 +1,15 @@
-package frc.robot.subsystems.intake.rollers;
+package frc.robot.subsystems.cannon.indexer;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import frc.robot.Constants;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
-public interface IntakeIO {
+public interface IndexerIO {
 
     @AutoLog
-    public static class IntakeIOInputs {
+    public static class IndexerIOInputs {
         public boolean motorConnected = true;
 
         public double inputVolts = 0.0;
@@ -29,7 +22,7 @@ public interface IntakeIO {
 
     }
 
-    default void updateInputs(IntakeIOInputs inputs) {
+    default void updateInputs(IndexerIOInputs inputs) {
     }
 
     /** Run motors at volts */

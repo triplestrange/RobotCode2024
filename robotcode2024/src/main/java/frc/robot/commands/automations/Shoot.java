@@ -220,7 +220,7 @@ public class Shoot {
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
 
-            m_RobotContainer.m_indexer.runConvIn();
+            m_RobotContainer.m_indexer.runIn();
 
             m_RobotContainer.m_robotDrive.setPresetEnabled(false);
 
@@ -232,7 +232,7 @@ public class Shoot {
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose())
                 && velocityCheck()) {
 
-            m_RobotContainer.m_indexer.runConvIn();
+            m_RobotContainer.m_indexer.runIn();
 
             m_RobotContainer.m_robotDrive.setPresetEnabled(false);
 
@@ -271,7 +271,7 @@ public class Shoot {
 
     public Optional<Rotation2d> getRotationTargetOverride() {
         // Some condition that should decide if we want to override rotation
-        if (m_RobotContainer.m_indexer.getindexerSensor()) {
+        if (m_RobotContainer.m_indexer.getIndexerSensor()) {
             // Return an optional containing the rotation override (this should be a field
             // relative rotation)
             return Optional.of(rotationToSpeaker());
