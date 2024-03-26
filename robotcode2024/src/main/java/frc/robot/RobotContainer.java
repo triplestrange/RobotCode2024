@@ -43,6 +43,7 @@ import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
 import frc.robot.commands.indexer.GroundToIndexer;
 import frc.robot.commands.indexer.GroundToIntake;
+import frc.robot.commands.indexer.IntakeToIndexer;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -194,9 +195,7 @@ public class RobotContainer {
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new GroundToIndexer(m_indexer, m_intake))
-                                                .andThen(new RunCommand(() -> m_indexer.runOut(), m_indexer)
-                                                                .until(() -> !m_indexer.getIndexerSensor())));
+                                (new IntakeToIndexer(m_indexer)));
 
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake)
                                 .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer)));
