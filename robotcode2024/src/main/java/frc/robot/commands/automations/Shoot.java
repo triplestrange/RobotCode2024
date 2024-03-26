@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -355,6 +356,27 @@ public class Shoot {
             return alliance.get() == DriverStation.Alliance.Red;
         }
         return false;
+    }
+
+    public double getRelativeVerticalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
+        Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation()).getAngle();
+        Translation2d fieldOrientSpeeds = new Translation2d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond).rotateBy(robotPose.getRotation()).rotateBy(robotRot.unaryMinus());
+        return fieldOrientSpeeds.getX();
+    } 
+
+  public double getRelativeHorizontalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
+        Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation()).getAngle();
+        Translation2d fieldOrientSpeeds = new Translation2d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond).rotateBy(robotPose.getRotation()).rotateBy(robotRot.unaryMinus());
+        return fieldOrientSpeeds.getY();
+    } 
+
+    public Translation3d getSpeakerForCurrentAlliance() {
+         if (isAllianceRed()) {
+            return flipTranslation3d(speakerTranslation3d);
+         }
+         else {
+            return speakerTranslation3d;
+         }
     }
 
     public void updateSmartDashBoard() {
