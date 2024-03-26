@@ -52,6 +52,7 @@ public final class Constants {
     public static final double lowPivotPos = -40.0;
 
     public static final double topRailPos = 0;
+
     public static final double bottomRailPos = 0;
 
     public static final Pose2d amp = new Pose2d(new Translation2d(1.82, 7.68), new Rotation2d().fromDegrees(-90));

@@ -186,7 +186,7 @@ public class RobotContainer {
                 // Intake and indexer Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer)));
+                                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
 
                 // JoystickButtons.oprBump.whileTrue(new InstantCommand(() ->
                 // m_intake.runIntake()).andThen(new InstantCommand(() ->

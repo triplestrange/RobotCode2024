@@ -123,7 +123,7 @@ public class Shoot {
                         m_RobotContainer.m_robotDrive.getPose())
                      * m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance((speakerTranslation3d.toTranslation2d()))
-                     * 0.1));
+                     * -0.1));
         } else {
             shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
@@ -133,7 +133,7 @@ public class Shoot {
                         m_RobotContainer.m_robotDrive.getPose())
                      * m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance((speakerTranslation3d.toTranslation2d()))
-                     * 0.1));
+                     * -0.1));
         }
         
 
@@ -204,7 +204,7 @@ public class Shoot {
 
             m_RobotContainer.m_indexer.runIn();
 
-            m_RobotContainer.m_robotDrive.setPresetEnabled(false);
+            m_RobotContainer.m_robotDrive.setPresetEnabled(true);
 
         }
     }

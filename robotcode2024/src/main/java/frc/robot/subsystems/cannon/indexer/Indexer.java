@@ -38,11 +38,11 @@ public class Indexer extends SubsystemBase {
     }
 
     public void runIn() {
-        io.runSpeed(1);
+        io.runSpeed(-1);
     }
 
     public void runOut() {
-        io.runSpeed(-1);
+        io.runSpeed(1);
     }
 
     public void indexerOff() {
