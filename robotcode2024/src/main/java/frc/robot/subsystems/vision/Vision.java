@@ -115,8 +115,8 @@ public class Vision extends SubsystemBase {
             // continue;
             // }
 
-            // if (target.getArea() > 50 || target.getArea() < 1) {
-            // System.out.println("target too big or too big");
+            // if (target.getArea() > 99 || target.getArea() < 1) {
+            // System.out.println("target too big or too small");
             // continue;
             // }
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
@@ -160,7 +160,7 @@ public class Vision extends SubsystemBase {
                     new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI));
         }
 
-        if (cam.getName().equals("camIntake")) {
+        else if (cam.getName().equals("camIntake")) {
             cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
                     new Rotation3d(Math.PI, -Units.degreesToRadians(40), 0));
 
@@ -209,7 +209,7 @@ public class Vision extends SubsystemBase {
         }
 
         for (Translation2d translation : robotToPoints) {
-            robotToTarget.plus(translation);
+            robotToTarget = robotToTarget.plus(translation);
         }
 
         robotToField = new Pose2d((tagPose.getTranslation().toTranslation2d().minus(robotToTarget.div(4))),
