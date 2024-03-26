@@ -226,7 +226,7 @@ public class RobotContainer {
                 JoystickButtons.dX.whileTrue(
                                 new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer))
                                 .onFalse((new InstantCommand(() -> m_shooter.setShooterAngle(
-                                                                Constants.MechPositions.climbPivotPos))));
+                                                Constants.MechPositions.climbPivotPos))));
                 // Amp Automations
 
                 JoystickButtons.dB

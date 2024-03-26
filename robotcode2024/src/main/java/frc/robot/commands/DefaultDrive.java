@@ -57,14 +57,16 @@ public class DefaultDrive extends Command {
       m_swerve.setPresetEnabled(false);
     }
 
-    double rot = rotation_controller.calculate(m_swerve.getPose().getRotation().getDegrees(), m_swerve.getRotationPreset());
+    double rot = rotation_controller.calculate(m_swerve.getPose().getRotation().getDegrees(),
+        m_swerve.getRotationPreset());
     rot = MathUtil.clamp(rot, -2 * Math.PI, 2 * Math.PI);
     // System.out.println("rotation PID: " + rot);
 
     // System.out.println("gyro: " + m_swerve.getAngle().getDegrees());
     // System.out.println("desiredHeading: " + m_swerve.getRotationPreset());
-    double norm = Math.hypot(JoystickButtons.m_driverController.getLeftX(), JoystickButtons.m_driverController.getLeftY());
-    
+    double norm = Math.hypot(JoystickButtons.m_driverController.getLeftX(),
+        JoystickButtons.m_driverController.getLeftY());
+
     double speedY = JoystickButtons.m_driverController.getLeftY() * speed;
     double speedX = JoystickButtons.m_driverController.getLeftX() * speed;
 
@@ -77,7 +79,7 @@ public class DefaultDrive extends Command {
       }
       // rotation was reversed
       else {
-        speedR = Math.pow(JoystickButtons.m_driverController.getRightX(),3) * -4 * rotationSpeed;
+        speedR = Math.pow(JoystickButtons.m_driverController.getRightX(), 3) * -4 * rotationSpeed;
       }
     }
 

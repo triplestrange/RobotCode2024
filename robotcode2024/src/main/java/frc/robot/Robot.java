@@ -119,10 +119,10 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void  robotPeriodic()  {
+  public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     i++;
-    if (i % 10 == 0)  {
+    if (i % 10 == 0) {
       m_robotContainer.m_climb.updateSmartDashBoard();
       m_robotContainer.m_elevator.updateSmartDashBoard();
       m_robotContainer.m_flywheel.updateSmartDashBoard();

@@ -175,10 +175,12 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
         if (lWinchPIDEnabled) {
-            // lWinchController.setReference(lWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            // lWinchController.setReference(lWinchSetpoint,
+            // CANSparkMax.ControlType.kSmartMotion);
         }
         if (rWinchPIDEnabled) {
-            // rWinchController.setReference(rWinchSetpoint, CANSparkMax.ControlType.kSmartMotion);
+            // rWinchController.setReference(rWinchSetpoint,
+            // CANSparkMax.ControlType.kSmartMotion);
         }
     }
 

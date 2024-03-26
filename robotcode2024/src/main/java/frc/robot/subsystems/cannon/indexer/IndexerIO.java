@@ -28,7 +28,7 @@ public interface IndexerIO {
     /** Run motors at volts */
     default void runVolts(double volts) {
     }
-    
+
     default void runSpeed(double speed) {
     }
 

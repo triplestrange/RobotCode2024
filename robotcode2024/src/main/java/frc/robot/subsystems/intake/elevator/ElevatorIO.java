@@ -53,7 +53,7 @@ public interface ElevatorIO {
     default void runJointVolts(double intakeVolts) {
     }
 
-    default void runJointPower(double jointPower)   {
+    default void runJointPower(double jointPower) {
     }
 
     /** Set brake mode enabled */

@@ -128,14 +128,14 @@ public class ElevatorIOReal implements ElevatorIO {
 
   // @Override
   // public void runJointVolts(double intakeVolts) {
-  //   intakeInputVolts = intakeVolts;
-  //   intake.setVoltage(intakeInputVolts);
+  // intakeInputVolts = intakeVolts;
+  // intake.setVoltage(intakeInputVolts);
   // }
   @Override
-  public void runJointPower(double jointPower)   {
+  public void runJointPower(double jointPower) {
     intakeInputSpeed = jointPower;
     intake.set(intakeInputSpeed);
-    }
+  }
 
   @Override
   public void setIdleMode(IdleMode elevIdleMode, IdleMode intakeIdleMode) {

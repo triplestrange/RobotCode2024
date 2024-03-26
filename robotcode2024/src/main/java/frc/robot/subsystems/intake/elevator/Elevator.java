@@ -171,7 +171,6 @@ public class Elevator extends SubsystemBase {
         intakeJoint.setAngle(getIntakePos().getAngle());
         elevator.setLength(getIntakePos().getHeight());
 
-
     }
 
     public void updateSmartDashBoard() {
