@@ -1,6 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -10,24 +9,36 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.photo.Photo;
 import org.photonvision.*;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 
-import frc.robot.Constants;
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.automations.Shoot;
-import frc.robot.subsystems.intake.Elevator;;
+import frc.robot.subsystems.intake.Elevator;
+
+import static org.opencv.core.CvType.CV_64FC1;
 
 public class Vision extends SubsystemBase {
+
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
     private SwerveDrive m_SwerveDrive;
     private Shoot m_Shoot;
@@ -38,20 +49,11 @@ public class Vision extends SubsystemBase {
 
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
-    private PhotonCamera camLeft;
-    private PhotonCamera camRight;
     private PhotonCamera camShooter;
     private PhotonCamera camIntake;
 
-    private PhotonPoseEstimator visionLeft;
-    private PhotonPoseEstimator visionRight;
-    private PhotonPoseEstimator visionShooter;
-    private PhotonPoseEstimator visionIntake;
-
-    public Optional<EstimatedRobotPose> poseLeft;
-    public Optional<EstimatedRobotPose> poseRight;
-    public Optional<EstimatedRobotPose> poseShooter;
-    public Optional<EstimatedRobotPose> poseIntake;
+    public EstimatedPoseInfo poseShooter;
+    public EstimatedPoseInfo poseIntake;
 
     public Translation2d lastLeftTranslation;
     public Translation2d lastRightTranslation;
@@ -59,26 +61,16 @@ public class Vision extends SubsystemBase {
     public double lastLeftTime;
     public double lastRightTime;
 
+    public PhotonTrackedTarget testTarget;
+
+    private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
+    private Mat mDistortionCoeffients = new Mat(1, 5, CV_64FC1);
+
     public Field2d m_field = new Field2d();
 
     public Vision(SwerveDrive m_SwerveDrive, Shoot m_shoot, Elevator m_Elevator) {
-        // camLeft = new PhotonCamera("camLeft");
-        // camRight = new PhotonCamera("camRight");
         camShooter = new PhotonCamera("camShooter");
         camIntake = new PhotonCamera("camIntake");
-
-        // visionLeft = new PhotonPoseEstimator(aprilTagFieldLayout,
-        // PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camLeft, new Transform3d(new
-        // Translation3d(0, -0.32385, 0.5969), new Rotation3d(0,-Math.PI/4,Math.PI/2)));
-        // visionRight = new PhotonPoseEstimator(aprilTagFieldLayout,
-        // PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camRight, new Transform3d(new
-        // Translation3d(0, 0.32385, 0.5969), new Rotation3d(0,-Math.PI/4,
-        // -Math.PI/2)));
-        visionShooter = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camShooter,
-                new Transform3d(new Translation3d(0, 0, 0.66),
-                        new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI)));
-        visionIntake = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camIntake,
-                new Transform3d(new Translation3d(.152, 0, 0.66), new Rotation3d(0, -Units.degreesToRadians(40), 0)));
 
         this.m_SwerveDrive = m_SwerveDrive;
         this.m_Shoot = m_shoot;
@@ -86,100 +78,261 @@ public class Vision extends SubsystemBase {
 
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedPose(PhotonPoseEstimator photonPoseEstimator,
-            Pose2d prevEstimatedPose) {
-        photonPoseEstimator.setReferencePose(prevEstimatedPose);
-        return photonPoseEstimator.update();
-    }
+    public EstimatedPoseInfo getEstimatedPoseInfo(PhotonCamera camera) {
+        Pose3d cameraOffset;
+        int i = 0;
+        PhotonCamera cam = camera;
+        PhotonPipelineResult result = cam.getLatestResult();
+        ArrayList<Pose2d> filteredResults;
+        Translation2d totalEstimatedTranslation2d;
+        Pose2d averageEstimatedPose2d;
+        filteredResults = new ArrayList<Pose2d>();
+        totalEstimatedTranslation2d = new Translation2d();
+        averageEstimatedPose2d = new Pose2d();
 
-    public double getDistanceFromTarget(PhotonTrackedTarget target) {
-        return target.getBestCameraToTarget().getTranslation().getNorm();
-    }
+        for (PhotonTrackedTarget target : result.getTargets()) {
+            boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
-    public Boolean isTargetCloseEnough(Optional<EstimatedRobotPose> estimatedRobotPose) {
+            if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
+                System.out.println("target too far");
+                continue;
+            }
+            if (rotatingTooFast) {
+                System.out.println("robot too spin");
 
-        for (PhotonTrackedTarget target : estimatedRobotPose.get().targetsUsed) {
-            if (getDistanceFromTarget(target) > 4.5) {
-                return false;
+                continue;
+            }
+
+            // if (!(target.().getTranslation().getX() <
+            // aprilTagFieldLayout.getFieldLength())
+            // || !(target.getBestCameraToTarget().getTranslation().getX() > 0)
+            // || !(target.getBestCameraToTarget().getTranslation().getY() <
+            // aprilTagFieldLayout.getFieldWidth())
+            // || !(target.getBestCameraToTarget().getTranslation().getY() > 0)) {
+            // System.out.println("pose not in field");
+
+            // continue;
+            // }
+
+            // if (target.getArea() > 50 || target.getArea() < 1) {
+            //     System.out.println("target too big or too big");
+            //     continue;
+            // }
+            if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
+                filteredResults.add(
+                        getTargetToRobot(target, cam, m_SwerveDrive.getPose()));
+                System.out.println("added target");
             }
         }
 
-        return true;
+        for (i = 0; i < filteredResults.size(); i++) {
+            totalEstimatedTranslation2d = new Translation2d(
+                    totalEstimatedTranslation2d.getX() + filteredResults.get(i).getX(),
+                    totalEstimatedTranslation2d.getY() + filteredResults.get(i).getY());
+        }
+
+        averageEstimatedPose2d = new Pose2d(totalEstimatedTranslation2d.div(i), m_SwerveDrive.getPose().getRotation());
+
+        return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
     }
 
-    public void addVisionMeasurement() {
-        // poseLeft = getEstimatedPose(visionLeft, m_SwerveDrive.getPose());
-        // poseRight = getEstimatedPose(visionRight, m_SwerveDrive.getPose());
-        poseShooter = getEstimatedPose(visionShooter, m_SwerveDrive.getPose());
-        poseIntake = getEstimatedPose(visionIntake, m_SwerveDrive.getPose());
+    public Pose2d getTargetToRobot(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
+        Pose3d tagPose;
+        Translation2d cameraToTarget;
+        ArrayList<Translation2d> robotToPoints = new ArrayList<Translation2d>();
+        Translation2d robotToTarget = new Translation2d();
+        Pose2d robotToField;
+        Translation3d xyz_plane_translation;
+        Pose3d cameraOffset;
 
-        if (poseShooter.isPresent() && isTargetCloseEnough(poseShooter)) {
-            if (poseShooter.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength()
-                    && poseShooter.get().estimatedPose.getX() > 0
-                    && poseShooter.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth()
-                    && poseShooter.get().estimatedPose.getY() > 0)
-                m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.get().estimatedPose.toPose2d(),
-                        poseShooter.get().timestampSeconds);
-            m_field.getObject("poseShooter").setPose(poseShooter.get().estimatedPose.toPose2d());
+        List<Translation2d> desiredTargetPixel = new ArrayList<Translation2d>();
+
+        double x;
+        double y;
+        double z;
+        Rotation2d rotation;
+
+        rotation = robotPose2d.getRotation();
+
+        if (cam.getName().equals("camShooter")) {
+            cameraOffset = new Pose3d(new Translation3d(0, 0, 0.66),
+                    new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI));
+        }
+
+        if (cam.getName().equals("camIntake")) {
+            cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
+                    new Rotation3d(Math.PI, -Units.degreesToRadians(40), 0));
+
+        } else {
+            cameraOffset = new Pose3d();
+        }
+
+        // for (TargetCorner corner : target.getDetectedCorners()) {
+            TargetCorner corner = target.getDetectedCorners().get(0);
+
+        System.out.println(corner.x);
+        System.out.println(corner.y);
+            desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
+        // }
+
+        System.out.println(desiredTargetPixel.get(0));
+
+        if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
+            tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get();
+        } else {
+            tagPose = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+        }
+        int i = 0;
+
+        for (Translation2d point : desiredTargetPixel) {
+
+            xyz_plane_translation = new Translation3d(1, point.getX(),
+                    point.getY())
+                    .rotateBy(
+                            cameraOffset.getRotation());
+
+            x = xyz_plane_translation.getX();
+            y = xyz_plane_translation.getY();
+            z = xyz_plane_translation.getZ();
+
+            double offset = i == 2 || i == 3 ? Units.inchesToMeters(3.25) : -Units.inchesToMeters(3.25);
+
+            cameraToTarget = new Translation2d(x, y).times((tagPose.getZ() - cameraOffset.getZ() + offset) / z);
+
+            robotToPoints.add(new Translation2d(cameraToTarget.getX() + cameraOffset.getX(),
+                    cameraToTarget.getY() + cameraOffset.getY())
+                    .rotateBy(rotation));
+
+
+            i++;
 
         }
 
-        // if (poseLeft.isPresent() && isTargetCloseEnough(poseLeft)) {
-        // m_SwerveDrive.m_odometry.addVisionMeasurement(poseLeft.get().estimatedPose.toPose2d(),
-        // poseLeft.get().timestampSeconds);
-        // m_field.getObject("poseLeft").setPose(poseLeft.get().estimatedPose.toPose2d());
+        for (Translation2d translation : robotToPoints) {
+            robotToTarget.plus(translation);
+        }
 
-        // }
+        robotToField = new Pose2d((tagPose.getTranslation().toTranslation2d().minus(robotToTarget.div(4))),
+                rotation);
 
-        // if (poseRight.isPresent() && isTargetCloseEnough(poseRight)) {
-        // m_SwerveDrive.m_odometry.addVisionMeasurement(poseRight.get().estimatedPose.toPose2d(),
-        // poseRight.get().timestampSeconds);
-        // m_field.getObject("poseRight").setPose(poseRight.get().estimatedPose.toPose2d());
-        // }
+        return robotToField;
+    }
 
-        // if (poseIntake.isPresent() && isTargetCloseEnough(poseIntake) && isIntakeVisionViable()
-        //         && poseIntake.get().estimatedPose.getX() < aprilTagFieldLayout.getFieldLength()
-        //         && poseIntake.get().estimatedPose.getX() > 0
-        //         && poseIntake.get().estimatedPose.getY() < aprilTagFieldLayout.getFieldWidth()
-        //         && poseIntake.get().estimatedPose.getY() > 0) {
-        //     m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.get().estimatedPose.toPose2d(),
-        //             poseIntake.get().timestampSeconds);
-        //     m_field.getObject("poseIntake").setPose(poseIntake.get().estimatedPose.toPose2d());
-        // }
+    public Translation2d undistortFromOpenCV(Translation2d point, PhotonCamera cam) {
+        Point coord = new Point();
+        coord.x = point.getX();
+        coord.y = point.getY();
 
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                mCameraMatrix.put(i, j, cam.getCameraMatrix().get().get(i, j));
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            mDistortionCoeffients.put(0, i, cam.getDistCoeffs().get().get(i, 0));
+        }
+
+        MatOfPoint2f coordMat = new MatOfPoint2f(coord);
+
+        Point dstCoord = new Point();
+        MatOfPoint2f dst = new MatOfPoint2f(dstCoord);
+
+        Calib3d.undistortImagePoints(coordMat, dst, mCameraMatrix, mDistortionCoeffients);
+
+        double x_pixels = dst.get(0, 0)[0];
+        double y_pixels = dst.get(0, 0)[1];
+
+        // Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
+        // OpenCV: Positive Downward and Right
+        // Robot: Positive Upward and Left
+        double nX = -(x_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
+        double nY = -(y_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
+
+        double x = nX / mCameraMatrix.get(0, 0)[0];
+        double y = nY / mCameraMatrix.get(1, 1)[0];
+
+        return new Translation2d(x, y);
+    }
+
+    public void addVisionMeasurement() {
+        poseShooter = getEstimatedPoseInfo(camShooter);
+        poseIntake = getEstimatedPoseInfo(camIntake);
+
+        if (poseShooter.getNumOfTags() != 0) {
+            m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
+                    poseShooter.getTimestampSeconds());
+            m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
+        }
+        if (poseIntake.getNumOfTags() != 0) {
+            m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
+                    poseIntake.getTimestampSeconds());
+            m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
+        }
         m_field.setRobotPose(m_SwerveDrive.getPose());
 
     }
 
-    public boolean isIntakeVisionViable() {
+    public double getIntakeVisionOffset() {
         if (m_Elevator.getElevPos() > 14) {
-            return false;
+            return 0.66 + Units.inchesToMeters(m_Elevator.getElevPos() - 14);
         }
-        return true;
+        return 0.66;
     }
 
     public void updateSmartDashBoard() {
-        if (poseLeft != null && poseLeft.isPresent()) {
-            SmartDashboard.putNumber("camleft x", poseLeft.get().estimatedPose.getX());
-            SmartDashboard.putNumber("camleft y", poseLeft.get().estimatedPose.getY());
-        }
 
-        if (poseRight != null && poseRight.isPresent()) {
-            SmartDashboard.putNumber("camright x", poseRight.get().estimatedPose.getX());
-            SmartDashboard.putNumber("camright y", poseRight.get().estimatedPose.getY());
+        if (poseShooter.getNumOfTags() != 0) {
+            SmartDashboard.putNumber("camShooter x", poseShooter.getPose2d().getX());
+            SmartDashboard.putNumber("camShooter y", poseShooter.getPose2d().getY());
         }
-
-        if (poseShooter != null && poseShooter.isPresent()) {
-            SmartDashboard.putNumber("camShooter x", poseShooter.get().estimatedPose.getX());
-            SmartDashboard.putNumber("camShooter y", poseShooter.get().estimatedPose.getY());
+        if (poseIntake.getNumOfTags() != 0) {
+            SmartDashboard.putNumber("intakeShooter x", poseIntake.getPose2d().getX());
+            SmartDashboard.putNumber("intakeShooter y", poseIntake.getPose2d().getY());
         }
-
         SmartDashboard.putData("Field", m_field);
     }
 
     public void periodic() {
-  
+
         addVisionMeasurement();
 
+    }
+
+    public static class EstimatedPoseInfo {
+        private Pose2d pos;
+        private double timestampSeconds;
+        private double numOfTags;
+
+        public EstimatedPoseInfo(Pose2d pos, double timestampSeconds, double numOfTags) {
+            this.pos = pos;
+            this.timestampSeconds = timestampSeconds;
+            this.numOfTags = numOfTags;
+        }
+
+        public Pose2d getPose2d() {
+            return pos;
+        }
+
+        public double getTimestampSeconds() {
+            return timestampSeconds;
+        }
+
+        public double getNumOfTags() {
+            return numOfTags;
+        }
+
+    }
+
+    public void testPoseCalculations() {
+        double pitch_deg = -15;
+        double yaw_deg = 0;
+        int tagID = 7;
+        TargetCorner corner = new TargetCorner(0, 0);
+        PhotonTrackedTarget target = new PhotonTrackedTarget(yaw_deg, pitch_deg, 0, 0, tagID, null, null, 0, null,
+                List.of(corner, corner, corner, corner));
+
+        Pose2d robotPose = new Pose2d(0, 0, Rotation2d.fromDegrees(180));
+
+        Pose2d result = getTargetToRobot(target, camIntake, robotPose);
     }
 }

@@ -116,7 +116,6 @@ public class SwerveDrive extends SubsystemBase {
         this // Reference to this subsystem to set requirements
     );
 
-
   }
 
   public Boolean isRedAlliance() {
@@ -146,7 +145,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public Boolean isMovingXY() {
-    return (currentMovement.vxMetersPerSecond < 0.025) && (currentMovement.vyMetersPerSecond < 0.025); 
+    return (currentMovement.vxMetersPerSecond < 0.025) && (currentMovement.vyMetersPerSecond < 0.025);
   }
 
   @Override
@@ -342,4 +341,5 @@ public class SwerveDrive extends SubsystemBase {
 
     ;
   }
+
 }
