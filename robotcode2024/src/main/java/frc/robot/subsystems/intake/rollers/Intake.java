@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.intake.rollers;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -51,8 +51,8 @@ public class Intake extends SubsystemBase {
         // This method will be called once per scheduler run
     }
 
-    public void updateSmartDashBoard()  {
-                SmartDashboard.putBoolean("intake sensor", getIntakeSensor());
+    public void updateSmartDashBoard() {
+        SmartDashboard.putBoolean("intake sensor", getIntakeSensor());
 
     }
 }
