@@ -94,31 +94,14 @@ public class Vision extends SubsystemBase {
         for (PhotonTrackedTarget target : result.getTargets()) {
             boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
-            // if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
-            //     System.out.println("target too far");
-            //     continue;
-            // }
             if (rotatingTooFast) {
-                System.out.println("robot too spin");
-
                 continue;
             }
 
-            // if (!(target.getBestCameraToTarget().getTranslation().getX() <
-            // aprilTagFieldLayout.getFieldLength())
-            // || !(target.getBestCameraToTarget().getTranslation().getX() > 0)
-            // || !(target.getBestCameraToTarget().getTranslation().getY() <
-            // aprilTagFieldLayout.getFieldWidth())
-            // || !(target.getBestCameraToTarget().getTranslation().getY() > 0)) {
-            // System.out.println("pose not in field");
-
-            // continue;
-            // }
 
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
                         getTargetToRobot(target, cam, m_SwerveDrive.getPose()));
-                System.out.println("added target");
             }
         }
 
@@ -165,14 +148,8 @@ public class Vision extends SubsystemBase {
         }
 
         for (TargetCorner corner : target.getDetectedCorners()) {
-        corner = target.getDetectedCorners().get(0);
-
-        System.out.println(corner.x);
-        System.out.println(corner.y);
         desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
         }
-
-        System.out.println(desiredTargetPixel.get(0));
 
         if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
             tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get();

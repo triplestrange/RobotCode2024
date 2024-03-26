@@ -120,7 +120,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveElev(double motorElevPower, double motorIntakePower) {
-        if (Math.abs(motorElevPower) < 0.05) {
+        if (Math.abs(motorElevPower) < 0.1) {
             elevPIDEnabled = true;
         } else {
             elevPower = motorElevPower;
@@ -153,6 +153,8 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Elevator", inputs);
         if (elevPIDEnabled) {
             io.runHeightSetpoint(elevSetpoint);
         }
@@ -169,8 +171,7 @@ public class Elevator extends SubsystemBase {
         intakeJoint.setAngle(getIntakePos().getAngle());
         elevator.setLength(getIntakePos().getHeight());
 
-        io.updateInputs(inputs);
-        Logger.processInputs("Elevator", inputs);
+
     }
 
     public void updateSmartDashBoard() {

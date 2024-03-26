@@ -133,6 +133,7 @@ public class ElevatorIOReal implements ElevatorIO {
   // }
   @Override
   public void runJointPower(double jointPower)   {
+    intakeInputSpeed = jointPower;
     intake.set(intakeInputSpeed);
     }
 

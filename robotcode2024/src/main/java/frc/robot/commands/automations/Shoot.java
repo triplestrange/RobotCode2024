@@ -126,7 +126,7 @@ public class Shoot {
             shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
                     .plus(new Rotation2d().fromDegrees(180))
-                    .plus(new Rotation2d().fromDegrees(180)).plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+                    .plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
                         m_RobotContainer.m_robotDrive.getChassisSpeeds(), 
                         m_RobotContainer.m_robotDrive.getPose())
                      * m_RobotContainer.m_robotDrive.getPose().getTranslation()
