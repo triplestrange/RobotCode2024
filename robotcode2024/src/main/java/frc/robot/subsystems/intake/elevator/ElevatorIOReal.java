@@ -40,7 +40,8 @@ public class ElevatorIOReal implements ElevatorIO {
   public DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.intakeAbsInput);
 
   private double winchInput;
-  private double intakeInput;
+  private double intakeInputVolts;
+  private double intakeInputSpeed;
 
   private double offset;
 
@@ -108,11 +109,8 @@ public class ElevatorIOReal implements ElevatorIO {
     inputs.jointAppliedVolts = intake.getAppliedOutput() * intake.getBusVoltage();
     inputs.jointMotorCurrent = intake.getOutputCurrent();
     inputs.jointTempCelcius = intake.getMotorTemperature();
-    inputs.jointInputVolts = intakeInput;
-
-    /*
-     * inputs.joinVelDegPerSecond =
-     */
+    inputs.jointInputVolts = intakeInputVolts;
+    inputs.jointInputSpeed = intakeInputSpeed;
 
   }
 
@@ -128,11 +126,15 @@ public class ElevatorIOReal implements ElevatorIO {
     elev.setVoltage(winchInput);
   }
 
+  // @Override
+  // public void runJointVolts(double intakeVolts) {
+  //   intakeInputVolts = intakeVolts;
+  //   intake.setVoltage(intakeInputVolts);
+  // }
   @Override
-  public void runJointVolts(double intakeVolts) {
-    intakeInput = intakeVolts;
-    intake.setVoltage(intakeInput);
-  }
+  public void runJointPower(double jointPower)   {
+    intake.set(intakeInputSpeed);
+    }
 
   @Override
   public void setIdleMode(IdleMode elevIdleMode, IdleMode intakeIdleMode) {

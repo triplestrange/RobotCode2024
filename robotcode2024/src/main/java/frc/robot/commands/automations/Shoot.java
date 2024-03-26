@@ -115,11 +115,23 @@ public class Shoot {
             shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
                     flipTranslation3d(speakerTranslation3d).getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
-                    .plus(new Rotation2d().fromDegrees(180)).times(getRelativeHorizontalSpeedMetersPerSecond(m_RobotContainer.m_robotDrive.getChassisSpeeds(), m_RobotContainer.m_robotDrive.getPose()) * 0.1 + 1);
+                    .plus(new Rotation2d().fromDegrees(180))
+                    .plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+                        m_RobotContainer.m_robotDrive.getChassisSpeeds(), 
+                        m_RobotContainer.m_robotDrive.getPose())
+                     * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                    .getDistance((speakerTranslation3d.toTranslation2d()))
+                     * 0.1));
         } else {
             shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
-                    .plus(new Rotation2d().fromDegrees(180)).times(getRelativeHorizontalSpeedMetersPerSecond(m_RobotContainer.m_robotDrive.getChassisSpeeds(), m_RobotContainer.m_robotDrive.getPose()) * 0.1 + 1);
+                    .plus(new Rotation2d().fromDegrees(180))
+                    .plus(new Rotation2d().fromDegrees(180)).plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+                        m_RobotContainer.m_robotDrive.getChassisSpeeds(), 
+                        m_RobotContainer.m_robotDrive.getPose())
+                     * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                    .getDistance((speakerTranslation3d.toTranslation2d()))
+                     * 0.1));
         }
         rot = rotation_controller.calculate(m_RobotContainer.m_robotDrive.getPose().getRotation().getDegrees(),
                 shootingRotation.getDegrees());

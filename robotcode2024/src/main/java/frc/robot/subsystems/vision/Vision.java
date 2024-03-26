@@ -94,17 +94,17 @@ public class Vision extends SubsystemBase {
         for (PhotonTrackedTarget target : result.getTargets()) {
             boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
-            if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
-                System.out.println("target too far");
-                continue;
-            }
+            // if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
+            //     System.out.println("target too far");
+            //     continue;
+            // }
             if (rotatingTooFast) {
                 System.out.println("robot too spin");
 
                 continue;
             }
 
-            // if (!(target.().getTranslation().getX() <
+            // if (!(target.getBestCameraToTarget().getTranslation().getX() <
             // aprilTagFieldLayout.getFieldLength())
             // || !(target.getBestCameraToTarget().getTranslation().getX() > 0)
             // || !(target.getBestCameraToTarget().getTranslation().getY() <
@@ -115,10 +115,6 @@ public class Vision extends SubsystemBase {
             // continue;
             // }
 
-            // if (target.getArea() > 99 || target.getArea() < 1) {
-            // System.out.println("target too big or too small");
-            // continue;
-            // }
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
                         getTargetToRobot(target, cam, m_SwerveDrive.getPose()));
@@ -168,13 +164,13 @@ public class Vision extends SubsystemBase {
             cameraOffset = new Pose3d();
         }
 
-        // for (TargetCorner corner : target.getDetectedCorners()) {
-        TargetCorner corner = target.getDetectedCorners().get(0);
+        for (TargetCorner corner : target.getDetectedCorners()) {
+        corner = target.getDetectedCorners().get(0);
 
         System.out.println(corner.x);
         System.out.println(corner.y);
         desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
-        // }
+        }
 
         System.out.println(desiredTargetPixel.get(0));
 
@@ -261,7 +257,6 @@ public class Vision extends SubsystemBase {
         if (poseShooter.getNumOfTags() != 0) {
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
                     poseShooter.getTimestampSeconds());
-            m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
         }
         if (poseIntake.getNumOfTags() != 0) {
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
@@ -290,6 +285,11 @@ public class Vision extends SubsystemBase {
             SmartDashboard.putNumber("intakeShooter y", poseIntake.getPose2d().getY());
         }
         SmartDashboard.putData("Field", m_field);
+                if (poseShooter.getNumOfTags() != 0) {
+
+                    m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
+                }
+
     }
 
     public void periodic() {

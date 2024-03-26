@@ -132,7 +132,7 @@ public class Elevator extends SubsystemBase {
             intakePIDEnabled = true;
         } else {
             intakePower = motorIntakePower;
-            io.runJointVolts(intakePower * 12);
+            io.runJointPower(intakePower);
             intakeSetpoint = getIntakePos().getAngle();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
@@ -164,7 +164,7 @@ public class Elevator extends SubsystemBase {
             intakePower = 0;
         }
 
-        io.runJointVolts(intakePower);
+        io.runJointPower(intakePower);
 
         intakeJoint.setAngle(getIntakePos().getAngle());
         elevator.setLength(getIntakePos().getHeight());
