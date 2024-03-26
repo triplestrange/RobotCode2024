@@ -52,13 +52,10 @@ public final class Constants {
     public static final double lowPivotPos = -40.0;
 
     public static final double topRailPos = 0;
+
     public static final double bottomRailPos = 0;
 
     public static final Pose2d amp = new Pose2d(new Translation2d(1.82, 7.68), new Rotation2d().fromDegrees(-90));
-  }
-
-  public static final class Logger {
-    public static final Boolean tuningMode = false;
   }
 
   public static final class SwerveConstants {
@@ -223,9 +220,17 @@ public final class Constants {
 
     public final static double maxRPM = 0;
     public final static double allowedErr = 0;
+    public final static double rollerDiameterMeters = Units.inchesToMeters(1);
+    public final static double rollerGearing = 5;
+    public final static double jKGMetersPerSecondSquared = 3e-5;
 
     public final static double intakeSpeed = 1;
+  }
+
+  public static final class IndexerConstants {
     public final static double indexerSpeed = 1;
+    public final static double rollerGearing = 1;
+    public final static double rollerDiameterMeters = Units.inchesToMeters(1);
   }
 
   public static final class VisionConstants {
@@ -237,7 +242,7 @@ public final class Constants {
 
   public static final class LoggerConstants {
 
-    private static RobotType robotType = RobotType.SIMBOT;
+    private static RobotType robotType = RobotType.COMPBOT;
 
     public static final Boolean tuningMode = false;
     public final static double kDt = 0.02;
@@ -361,7 +366,7 @@ public final class Constants {
     public static final int ELEVATOR = 9;
 
     public static final int ROLLERS = 5;
-    public static final int indexer = 10;
+    public static final int INDEXER = 10;
 
     public static final int IPIVOT = 23;
 

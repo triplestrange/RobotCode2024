@@ -113,18 +113,18 @@ public class Elevator extends SubsystemBase {
         intakeSetpoint = getIntakePos().getAngle();
         elevSetpoint = getIntakePos().getHeight();
         intakeController.reset(intakeSetpoint);
-        io.setElevPosition(elevSetpoint);
+        io.runHeightSetpoint(elevSetpoint);
         intakePIDEnabled = true;
         elevPIDEnabled = true;
 
     }
 
     public void moveElev(double motorElevPower, double motorIntakePower) {
-        if (Math.abs(motorElevPower) < 0.05) {
+        if (Math.abs(motorElevPower) < 0.1) {
             elevPIDEnabled = true;
         } else {
             elevPower = motorElevPower;
-            io.runWinchVolts(elevPower);
+            io.runWinchVolts(elevPower * 12);
             elevSetpoint = getIntakePos().getHeight();
             elevPIDEnabled = false;
         }
@@ -132,7 +132,7 @@ public class Elevator extends SubsystemBase {
             intakePIDEnabled = true;
         } else {
             intakePower = motorIntakePower;
-            io.runJointVolts(intakePower);
+            io.runJointPower(intakePower);
             intakeSetpoint = getIntakePos().getAngle();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
@@ -153,8 +153,10 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Elevator", inputs);
         if (elevPIDEnabled) {
-            io.setElevPosition(elevSetpoint);
+            io.runHeightSetpoint(elevSetpoint);
         }
 
         if (intakePIDEnabled) {
@@ -164,13 +166,12 @@ public class Elevator extends SubsystemBase {
             intakePower = 0;
         }
 
-        io.runJointVolts(intakePower);
+        io.runJointPower(intakePower);
 
         intakeJoint.setAngle(getIntakePos().getAngle());
         elevator.setLength(getIntakePos().getHeight());
 
-        io.updateInputs(inputs);
-        Logger.processInputs("Elevator", inputs);
+
     }
 
     public void updateSmartDashBoard() {

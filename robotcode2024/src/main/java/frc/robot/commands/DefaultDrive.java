@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +21,7 @@ public class DefaultDrive extends Command {
   private double rotationSpeed;
   private Timer timer = new Timer();
   private double deadzone;
-  private PIDController rotation_controller;
+  private ProfiledPIDController rotation_controller;
 
   /**
    * Creates a new Drive.
@@ -35,7 +37,7 @@ public class DefaultDrive extends Command {
     speed = MathUtil.clamp(speed, -Constants.SwerveConstants.kMaxSpeedMetersPerSecond,
         Constants.SwerveConstants.kMaxSpeedMetersPerSecond);
     deadzone = 0.2;
-    rotation_controller = new PIDController(0.2, 0.17, 0.015);
+    rotation_controller = new ProfiledPIDController(0.2, 0.17, 0.015, new Constraints(720, 200));
     rotation_controller.enableContinuousInput(0, 360);
     rotation_controller.setIZone(10);
   }

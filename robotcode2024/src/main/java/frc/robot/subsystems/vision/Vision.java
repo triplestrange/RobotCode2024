@@ -94,13 +94,7 @@ public class Vision extends SubsystemBase {
         for (PhotonTrackedTarget target : result.getTargets()) {
             boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
-            if (target.getBestCameraToTarget().getTranslation().getNorm() > 4.5) {
-                System.out.println("target too far");
-                continue;
-            }
             if (rotatingTooFast) {
-                System.out.println("robot too spin");
-
                 continue;
             }
 
@@ -336,7 +330,6 @@ public class Vision extends SubsystemBase {
         if (poseShooter.getNumOfTags() != 0) {
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
                     poseShooter.getTimestampSeconds());
-            m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
         }
         if (poseIntake.getNumOfTags() != 0) {
             m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),

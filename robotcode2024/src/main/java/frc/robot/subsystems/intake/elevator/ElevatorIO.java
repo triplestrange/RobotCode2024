@@ -27,6 +27,7 @@ public interface ElevatorIO {
         public double elevatorVelMetersPerSecond = 0.0;
 
         public double jointInputVolts = 0.0;
+        public double jointInputSpeed = 0.0;
         public double jointMotorCurrent = 0.0;
         public double jointAppliedVolts = 0.0;
 
@@ -52,8 +53,11 @@ public interface ElevatorIO {
     default void runJointVolts(double intakeVolts) {
     }
 
+    default void runJointPower(double jointPower)   {
+    }
+
     /** Set brake mode enabled */
-    default void setIdleMode(IdleMode elevIdleMode, IdleMode itnakeIdleMode) {
+    default void setIdleMode(IdleMode elevIdleMode, IdleMode jointIdleMode) {
     }
 
     /** Sets position of internal encoder in inches */

@@ -39,7 +39,7 @@ public class AutoMain extends Command {
 
         public Optional<Rotation2d> getRotationTargetOverride() {
                 // Some condition that should decide if we want to override rotation
-                if (m_robotContainer.m_indexer.getindexerSensor()) {
+                if (m_robotContainer.m_indexer.getIndexerSensor()) {
                         // Return an optional containing the rotation override (this should be a field
                         // relative rotation)
                         return Optional.of(m_robotContainer.m_shoot.rotationToSpeaker());
@@ -69,16 +69,16 @@ public class AutoMain extends Command {
 
                 // Conveyor Commands
                 NamedCommands.registerCommand("indexerOut", new InstantCommand(
-                                () -> m_robotContainer.m_indexer.runConvOut(), m_robotContainer.m_indexer));
+                                () -> m_robotContainer.m_indexer.runOut(), m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("conveyorIn", new IntakeToIndexer(m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("indexerIn", new IntakeToIndexer(m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("indexerShoot", new InstantCommand(
-                                () -> m_robotContainer.m_indexer.runConvIn(), m_robotContainer.m_indexer));
+                                () -> m_robotContainer.m_indexer.runIn(), m_robotContainer.m_indexer));
                 NamedCommands.registerCommand("conveyorShoot", new InstantCommand(
-                                () -> m_robotContainer.m_indexer.runConvIn(), m_robotContainer.m_indexer));
+                                () -> m_robotContainer.m_indexer.runIn(), m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("indexerOff", new InstantCommand(
                                 () -> m_robotContainer.m_indexer.indexerOff(), m_robotContainer.m_indexer));
@@ -96,15 +96,14 @@ public class AutoMain extends Command {
                                 (new RunCommand(() -> m_robotContainer.m_shoot.autonomous(),
                                                 m_robotContainer.m_robotDrive, m_robotContainer.m_indexer,
                                                 m_robotContainer.m_shooter, m_robotContainer.m_flywheel)
-                                                .withTimeout(1.5))
-                                                .finallyDo(() -> m_robotContainer.m_shoot.driveTo.cancel()));
+                                                .withTimeout(1.5)));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter)
                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676),
                                                 m_robotContainer.m_flywheel))
                                 .andThen(new WaitCommand(1.5)).andThen(new InstantCommand(
-                                                () -> m_robotContainer.m_indexer.runConvIn(),
+                                                () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.5)));
         }
