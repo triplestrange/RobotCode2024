@@ -121,7 +121,7 @@ public class Vision extends SubsystemBase {
             // }
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
-                        getTargetToRobot(target, cam, m_SwerveDrive.getPose()));
+                        getFiducialToRobot(target, cam, m_SwerveDrive.getPose()));
                 System.out.println("added target");
             }
         }
@@ -137,7 +137,7 @@ public class Vision extends SubsystemBase {
         return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
     }
 
-    public Pose2d getTargetToRobot(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
+    public Pose2d getFiducialToRobot(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
         Pose3d tagPose;
         Translation2d cameraToTarget;
         ArrayList<Translation2d> robotToPoints = new ArrayList<Translation2d>();
@@ -183,6 +183,81 @@ public class Vision extends SubsystemBase {
         } else {
             tagPose = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
         }
+        int i = 0;
+
+        for (Translation2d point : desiredTargetPixel) {
+
+            xyz_plane_translation = new Translation3d(1, point.getX(),
+                    point.getY())
+                    .rotateBy(
+                            cameraOffset.getRotation());
+
+            x = xyz_plane_translation.getX();
+            y = xyz_plane_translation.getY();
+            z = xyz_plane_translation.getZ();
+
+            double offset = i == 2 || i == 3 ? Units.inchesToMeters(3.25) : -Units.inchesToMeters(3.25);
+
+            cameraToTarget = new Translation2d(x, y).times((tagPose.getZ() - cameraOffset.getZ() + offset) / z);
+
+            robotToPoints.add(new Translation2d(cameraToTarget.getX() + cameraOffset.getX(),
+                    cameraToTarget.getY() + cameraOffset.getY())
+                    .rotateBy(rotation));
+
+            i++;
+
+        }
+
+        for (Translation2d translation : robotToPoints) {
+            robotToTarget = robotToTarget.plus(translation);
+        }
+
+        robotToField = new Pose2d((tagPose.getTranslation().toTranslation2d().minus(robotToTarget.div(4))),
+                rotation);
+
+        return robotToField;
+    }
+
+    public Pose2d getObjectToRobot(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
+        Translation2d cameraToTarget;
+        ArrayList<Translation2d> robotToPoints = new ArrayList<Translation2d>();
+        Translation2d robotToTarget = new Translation2d();
+        Pose2d robotToField;
+        Translation3d xyz_plane_translation;
+        Pose3d cameraOffset;
+
+        List<Translation2d> desiredTargetPixel = new ArrayList<Translation2d>();
+
+        double x;
+        double y;
+        double z;
+        Rotation2d rotation;
+
+        rotation = robotPose2d.getRotation();
+
+        if (cam.getName().equals("camShooter")) {
+            cameraOffset = new Pose3d(new Translation3d(0, 0, 0.66),
+                    new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI));
+        }
+
+        else if (cam.getName().equals("camIntake")) {
+            cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
+                    new Rotation3d(Math.PI, -Units.degreesToRadians(40), 0));
+
+        } else {
+            cameraOffset = new Pose3d();
+        }
+
+        // for (TargetCorner corner : target.getDetectedCorners()) {
+        TargetCorner corner = target.getDetectedCorners().get(0);
+
+        System.out.println(corner.x);
+        System.out.println(corner.y);
+        desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
+        // }
+
+        System.out.println(desiredTargetPixel.get(0));
+
         int i = 0;
 
         for (Translation2d point : desiredTargetPixel) {
@@ -333,6 +408,6 @@ public class Vision extends SubsystemBase {
 
         Pose2d robotPose = new Pose2d(0, 0, Rotation2d.fromDegrees(180));
 
-        Pose2d result = getTargetToRobot(target, camIntake, robotPose);
+        Pose2d result = getFiducialToRobot(target, camIntake, robotPose);
     }
 }
