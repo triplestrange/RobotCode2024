@@ -37,13 +37,29 @@ public class Intake extends SubsystemBase {
         io.setIdleMode(IdleMode.kBrake);
     }
 
+    public void runIntake() {
+        io.runIntakeVolts(12);
+    }
+
+    public void runOutake() {
+        io.runIntakeVolts(-12);
+    }
+
+    public void intakeOff() {
+        io.stop();
+    }
+
+    public boolean getIntakeSensor() {
+        return io.getIntakeSensor();
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putBoolean("intake sensor", io.getIntakeSensor());
+        SmartDashboard.putBoolean("intake sensor", getIntakeSensor());
 
     }
 }

@@ -18,7 +18,7 @@ import frc.robot.Constants;
 
 public class IntakeIOSim implements IntakeIO {
     private final FlywheelSim intakeSim = new FlywheelSim(DCMotor.getNEO(1), Constants.IntakeConstants.rollerGearing,
-            0);
+            1);
 
     double intakeMotorCurrent = 0.0;
     double intakeAppliedVolts = 0.0;

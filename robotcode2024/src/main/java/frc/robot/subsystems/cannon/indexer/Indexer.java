@@ -29,12 +29,12 @@ public class Indexer extends SubsystemBase {
     }
 
     public void runConvIn() {
-        indexer.set(-Constants.IntakeConstants.indexerSpeed);
+        indexer.set(-Constants.IndexerConstants.indexerSpeed);
 
     }
 
     public void runConvOut() {
-        indexer.set(Constants.IntakeConstants.indexerSpeed);
+        indexer.set(Constants.IndexerConstants.indexerSpeed);
     }
 
     public void indexerOff() {

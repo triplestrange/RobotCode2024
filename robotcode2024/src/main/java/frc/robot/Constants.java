@@ -229,6 +229,10 @@ public final class Constants {
     public final static double intakeSpeed = 1;
   }
 
+  public static final class IndexerConstants {
+    public final static double indexerSpeed = 1;
+  }
+
   public static final class VisionConstants {
 
     public static final Vector<N3> STATE_STD_DEVS = VecBuilder.fill(0.1, 0.1, 1);
@@ -254,7 +258,7 @@ public final class Constants {
 
     public static Mode getMode() {
       return switch (robotType) {
-        case DEVBOT, COMPBOT -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+        case COMPBOT -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
         case SIMBOT -> Mode.SIM;
       };
     }
@@ -272,7 +276,6 @@ public final class Constants {
 
     public enum RobotType {
       SIMBOT,
-      DEVBOT,
       COMPBOT
     }
 

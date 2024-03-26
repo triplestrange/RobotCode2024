@@ -28,6 +28,9 @@ import frc.robot.subsystems.intake.elevator.ElevatorIO;
 import frc.robot.subsystems.intake.elevator.ElevatorIOReal;
 import frc.robot.subsystems.intake.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.rollers.Intake;
+import frc.robot.subsystems.intake.rollers.IntakeIO;
+import frc.robot.subsystems.intake.rollers.IntakeIOReal;
+import frc.robot.subsystems.intake.rollers.IntakeIOSim;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Alert;
@@ -49,7 +52,7 @@ public class RobotContainer {
         public final Robot m_robot;
         public final SwerveDrive m_robotDrive;
         public Elevator m_elevator;
-        public final Intake m_intake;
+        public Intake m_intake;
         public final Shooter m_shooter;
         public final FlyWheel m_flywheel;
         public final Climb m_climb;
@@ -69,7 +72,6 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(this);
-                m_intake = new Intake();
                 m_shooter = new Shooter();
                 m_climb = new Climb();
                 m_indexer = new Indexer();
@@ -77,21 +79,28 @@ public class RobotContainer {
                 m_shoot = new Shoot(this);
 
                 m_elevator = null;
+                m_intake = null;
 
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
                                 case COMPBOT -> {
                                         m_elevator = new Elevator(new ElevatorIOReal());
+                                        m_intake = new Intake(new IntakeIOReal());
+
                                 }
                                 case SIMBOT -> {
                                         m_elevator = new Elevator(new ElevatorIOSim());
-
+                                        m_intake = new Intake(new IntakeIOSim());
                                 }
                         }
                 }
 
                 if (m_elevator == null) {
                         m_elevator = new Elevator(new ElevatorIO() {
+                        });
+                }
+                if (m_elevator == null) {
+                        m_intake = new Intake(new IntakeIO() {
                         });
                 }
                 m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);
