@@ -223,9 +223,10 @@ public final class Constants {
 
     public final static double maxRPM = 0;
     public final static double allowedErr = 0;
+    public final static double rollerDiameterMeters = Units.inchesToMeters(1);
+    public final static double rollerGearing = 5;
 
     public final static double intakeSpeed = 1;
-    public final static double indexerSpeed = 1;
   }
 
   public static final class VisionConstants {

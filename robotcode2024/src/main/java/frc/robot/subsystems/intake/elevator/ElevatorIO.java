@@ -53,7 +53,7 @@ public interface ElevatorIO {
     }
 
     /** Set brake mode enabled */
-    default void setIdleMode(IdleMode elevIdleMode, IdleMode itnakeIdleMode) {
+    default void setIdleMode(IdleMode elevIdleMode, IdleMode jointIdleMode) {
     }
 
     /** Sets position of internal encoder in inches */

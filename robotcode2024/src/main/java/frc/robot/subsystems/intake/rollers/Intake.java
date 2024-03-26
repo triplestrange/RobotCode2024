@@ -4,46 +4,37 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
-    private final CANSparkMax rollers;
+    private static Intake instance;
 
-    private final DigitalInput intakeInput;
+    private IntakeIO io;
+    private IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+
+    public static Intake getInstance() {
+        return instance;
+    }
+
+    public static Intake initialize(IntakeIO io) {
+        if (instance == null) {
+            instance = new Intake(io);
+        }
+        return instance;
+    }
 
     /** Creates a new Intake. */
-    public Intake() {
+    public Intake(IntakeIO intakeIO) {
         super();
-        rollers = new CANSparkMax(Constants.CAN.ROLLERS, MotorType.kBrushless);
-        rollers.setSmartCurrentLimit(Constants.ELECTRICAL.rollerCurrentLimit);
-        rollers.setIdleMode(IdleMode.kBrake);
-        intakeInput = new DigitalInput(Constants.ELECTRICAL.intakeDigitalInput);
 
-        // encoder to determine offset angle
-    }
+        io = intakeIO;
+        io.updateInputs(inputs);
 
-    public void runIntake() {
-        rollers.set(Constants.IntakeConstants.intakeSpeed);
-    }
-
-    public void runOutake() {
-        rollers.set(-Constants.IntakeConstants.intakeSpeed);
-    }
-
-    public void intakeOff() {
-        rollers.set(0);
-    }
-
-    public boolean getIntakeSensor() {
-        return !intakeInput.get();
-    }
-
-    public Boolean getBlocked(DigitalInput proxInput) {
-        Boolean blocked = !proxInput.get();
-        return blocked;
+        io.setIdleMode(IdleMode.kBrake);
     }
 
     @Override
@@ -52,7 +43,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putBoolean("intake sensor", getIntakeSensor());
+        SmartDashboard.putBoolean("intake sensor", io.getIntakeSensor());
 
     }
 }
