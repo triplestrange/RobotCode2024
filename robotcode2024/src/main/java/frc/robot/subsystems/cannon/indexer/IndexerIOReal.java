@@ -82,6 +82,11 @@ public class IndexerIOReal implements IndexerIO {
   }
 
   @Override
+  public void runSpeed(double speed) {
+    Indexer.set(speed);
+    }
+
+  @Override
   public void setIdleMode(IdleMode IndexerIdleMode) {
     Indexer.setIdleMode(IndexerIdleMode);
   }

@@ -200,7 +200,7 @@ public class Shoot {
 
     public void shoot() {
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()
-                && rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) && velocityCheck()) {
 
             m_RobotContainer.m_indexer.runIn();
 
