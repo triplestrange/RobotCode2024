@@ -58,10 +58,6 @@ public final class Constants {
     public static final Pose2d amp = new Pose2d(new Translation2d(1.82, 7.68), new Rotation2d().fromDegrees(-90));
   }
 
-  public static final class Logger {
-    public static final Boolean tuningMode = false;
-  }
-
   public static final class SwerveConstants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kTheoreticalMaxSpeedMetersPerSecond = 4.7244;
