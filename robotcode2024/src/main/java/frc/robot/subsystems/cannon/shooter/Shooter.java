@@ -71,11 +71,12 @@ public class Shooter extends SubsystemBase {
         pivotController.setIZone(1);
         int smartMotionSlot = 0;
 
-         shootingData.put(1.0, 0.0);
+        shootingData.put(1.0, 0.0);
         shootingData.put(1.655738, -12.2);
         shootingData.put(2.2, -16.0);
         shootingData.put(3.120114, -23.5);
-        shootingData.put(4.991135, -31.55);
+        shootingData.put(4.9, -30.5);
+      //  shootingData.put(4.991135, -29.55);
         shootingData.put(5.3, -31.0);
         shootingData.put(6.38, -33.4);
         shootingData.put(7.39, -34.5);

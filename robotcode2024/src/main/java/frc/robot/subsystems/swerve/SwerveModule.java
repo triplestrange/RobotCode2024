@@ -3,6 +3,11 @@ package frc.robot.subsystems.swerve;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.configs.VoltageConfigs;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -29,6 +34,8 @@ public class SwerveModule {
 
   // final AbsoluteEncoder absoluteEncoder;
 
+  public DutyCycleOut output;
+
   // steering pid
   private SparkPIDController m_pidController;
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
@@ -46,10 +53,15 @@ public class SwerveModule {
   public SwerveModule(int driveMotorChannel, int turningMotorChannel, int absoluteEncoderChannel,
       boolean turningEncoderReversed, double angleOffset) {
 
+        output = new DutyCycleOut(0);
+
+        output.UpdateFreqHz = 0;
+
+        output.EnableFOC = true;
+
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
-    // m_driveMotor.getConfigurator().apply(new TalonFXConfiguration());
     m_turningMotor.restoreFactoryDefaults();
 
     m_turningEncoder = m_turningMotor.getEncoder();
@@ -100,11 +112,13 @@ public class SwerveModule {
     m_turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
     m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
     m_turningMotor.setIdleMode(IdleMode.kBrake);
-
     m_turningMotor.setInverted(true);
     m_driveMotor.setInverted(true);
+    m_driveMotor.setControl(output);
 
     m_turningMotor.burnFlash();
+
+
   }
 
   /**
@@ -133,7 +147,8 @@ public class SwerveModule {
     double desiredDrive = state.speedMetersPerSecond / Constants.SwerveConstants.kMaxSpeedMetersPerSecond;
 
     if (Math.abs(desiredDrive) < 0.01 && !forceAngle) {
-      m_driveMotor.set(0);
+      output.Output = 0;
+      m_driveMotor.setControl(output);
       return;
     }
     double desiredSteering = state.angle.getRadians();
@@ -154,7 +169,8 @@ public class SwerveModule {
     double steeringSetpoint = currentSteering + steeringError;
 
     // m_driveMotor.set(desiredDrive + Math.cos(steeringError));
-    m_driveMotor.set(desiredDrive);
+    output.Output = desiredDrive;
+    m_driveMotor.setControl(output);
     m_pidController.setReference(steeringSetpoint, com.revrobotics.CANSparkBase.ControlType.kPosition);
   }
 
@@ -171,7 +187,8 @@ public class SwerveModule {
    * Physically zeroes wheel. (i hope)
    */
   public void resetWheel() {
-    m_driveMotor.set(0);
+    output.Output = 0;
+    m_driveMotor.setControl(output);
     m_pidController.setReference(0, ControlType.kPosition);
 
   }
