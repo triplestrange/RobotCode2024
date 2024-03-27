@@ -119,35 +119,26 @@ public class Shoot {
             shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
                     flipTranslation3d(speakerTranslation3d).getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
-                    .plus(new Rotation2d().fromDegrees(180))
-                    .plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
-                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
-                            m_RobotContainer.m_robotDrive.getPose())
-                            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                                    .getDistance((speakerTranslation3d.toTranslation2d()))
-                            * -0.1));
+                    .plus(new Rotation2d().fromDegrees(180));
+            // .plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+            // m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+            // m_RobotContainer.m_robotDrive.getPose())
+            // * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+            // .getDistance((speakerTranslation3d.toTranslation2d()))
+            // * -0.1));
         } else {
             shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
-                    .plus(new Rotation2d().fromDegrees(180))
-                    .plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
-                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
-                            m_RobotContainer.m_robotDrive.getPose())
-                            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                                    .getDistance((speakerTranslation3d.toTranslation2d()))
-                            * -0.1));
+                    .plus(new Rotation2d().fromDegrees(180));
+            // .plus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+            // m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+            // m_RobotContainer.m_robotDrive.getPose())
+            // * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+            // .getDistance((speakerTranslation3d.toTranslation2d()))
+            // * -0.1));
         }
 
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
-
-        if (isAllianceRed()) {
-            shootingAngle = shootingData.get(m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()));
-        } else {
-            shootingAngle = shootingData.get(m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                    .getDistance((speakerTranslation3d.toTranslation2d())));
-            ;
-        }
         if (isAllianceRed()) {
             flywheelSetpoint = m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()) * 4850.0 / 3;
@@ -227,7 +218,7 @@ public class Shoot {
         prepare();
 
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
-            execute();
+            // execute();
             shoot();
         }
 
@@ -310,7 +301,7 @@ public class Shoot {
     }
 
     public Boolean pivotCheck() {
-        return Math.abs(m_RobotContainer.m_shooter.getAngle() - shootingAngle) < .5;
+        return Math.abs(m_RobotContainer.m_shooter.getAngle() - m_RobotContainer.m_shooter.shootingAngle) < .5;
     }
 
     public Boolean rotationCheck(Pose2d robotPose2d) {
@@ -318,7 +309,7 @@ public class Shoot {
     }
 
     public Boolean flyWheelCheck() {
-        return Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 100;
+        return Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 300;
     }
 
     public Pose2d flipPose(Pose2d pose) {
@@ -368,6 +359,7 @@ public class Shoot {
         SmartDashboard.putBoolean("roation check", rotationCheck(m_RobotContainer.m_robotDrive.getPose()));
         SmartDashboard.putBoolean("pivot check", pivotCheck());
         SmartDashboard.putBoolean("flywheel check", flyWheelCheck());
+        SmartDashboard.putBoolean("Velocity Check", velocityCheck());
         SmartDashboard.putBoolean("Red Alliance?", isAllianceRed());
 
         SmartDashboard.putNumber("target x", flipTranslation3d(speakerTranslation3d).getX());

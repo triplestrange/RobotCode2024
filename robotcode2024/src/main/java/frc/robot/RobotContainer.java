@@ -20,9 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
 import frc.robot.subsystems.cannon.climb.Climb;
-import frc.robot.subsystems.cannon.climb.ClimbIO;
-import frc.robot.subsystems.cannon.climb.ClimbIOReal;
-import frc.robot.subsystems.cannon.climb.ClimbIOSim;
 import frc.robot.subsystems.cannon.flywheel.FlyWheel;
 import frc.robot.subsystems.cannon.flywheel.FlyWheelIO;
 import frc.robot.subsystems.cannon.flywheel.FlyWheelIOReal;
@@ -66,7 +63,7 @@ public class RobotContainer {
         public Intake m_intake;
         public final Shooter m_shooter;
         public FlyWheel m_flywheel;
-        public Climb m_climb;
+        public final Climb m_climb;
         public Indexer m_indexer;
         public final Shoot m_shoot;
         public final Vision m_vision;
@@ -83,14 +80,14 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(this);
-                m_shooter = new Shooter();
+                m_shooter = new Shooter(m_robotDrive);
+                m_climb = new Climb();
                 m_shoot = new Shoot(this);
 
                 m_indexer = null;
                 m_elevator = null;
                 m_intake = null;
                 m_flywheel = null;
-                m_climb = null;
 
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
@@ -99,7 +96,6 @@ public class RobotContainer {
                                         m_elevator = new Elevator(new ElevatorIOReal());
                                         m_intake = new Intake(new IntakeIOReal());
                                         m_flywheel = new FlyWheel(new FlyWheelIOReal());
-                                        m_climb = new Climb(new ClimbIOReal());
 
                                 }
                                 case SIMBOT -> {
@@ -107,7 +103,7 @@ public class RobotContainer {
                                         m_intake = new Intake(new IntakeIOSim());
                                         m_indexer = new Indexer(new IndexerIOSim());
                                         m_flywheel = new FlyWheel(new FlyWheelIOSim());
-                                        m_climb = new Climb(new ClimbIOSim());
+
                                 }
                         }
                 }
@@ -126,10 +122,6 @@ public class RobotContainer {
                 }
                 if (m_flywheel == null) {
                         m_flywheel = new FlyWheel(new FlyWheelIO() {
-                        });
-                }
-                if (m_climb == null) {
-                        m_climb = new Climb(new ClimbIO() {
                         });
                 }
                 m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);
@@ -203,9 +195,9 @@ public class RobotContainer {
                                 0.25 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
                 // Intake and indexer Controls
 
-                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
-                // m_intake)
-                // .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
+                m_intake)
+                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
@@ -227,7 +219,7 @@ public class RobotContainer {
                                         * 4850.0 / 3;
                 } else {
                         flywheelSetpoint = m_robotDrive.getPose().getTranslation()
-                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 3;
+                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 6;
                 }
 
                 flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
@@ -239,17 +231,15 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer))
-                                .onFalse((new InstantCommand(() -> m_shooter.setShooterAngle(
-                                                Constants.MechPositions.climbPivotPos))));
+                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_indexer));
                 // Amp Automations
 
                 JoystickButtons.dB
                                 .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive));
 
                 // Note Pick Automation
-                JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive, m_elevator, m_intake,
-                                m_vision.getObjectToField(m_robotDrive.getPose())));
+                // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive, m_elevator, m_intake,
+                //                 m_vision.getObjectToField(m_robotDrive.getPose())));
         }
 
         /**

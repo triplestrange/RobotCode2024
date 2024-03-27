@@ -41,7 +41,7 @@ public final class Constants {
     public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
     public static final IntakePosition groundIntakePos = new IntakePosition(0, -132);
     public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
-    public static final IntakePosition ampIntakePos = new IntakePosition(33, -136);
+    public static final IntakePosition ampIntakePos = new IntakePosition(34.649467, -136);
     public static final IntakePosition trapIntakePos = new IntakePosition(33, -136);
 
     public static final double climbPivotPos = 0;
@@ -351,7 +351,7 @@ public final class Constants {
     public static final int intakeAbsInput = 3;
 
     public static final int shooterPivotCurrentLimit = 40;
-    public static final int flyWheelCurrentLimit = 0;
+    public static final int flyWheelCurrentLimit = 30;
   }
 
   public static final class CAN {

@@ -50,7 +50,7 @@ public class FlyWheel extends SubsystemBase {
     }
 
     public void setFWSpeed(double RPM) {
-        this.RPM = RPM;
+        io.runSpeed(RPM);
     }
 
     public void flyWheelOn() {
@@ -67,7 +67,6 @@ public class FlyWheel extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        io.runSpeed(RPM);
 
     }
 

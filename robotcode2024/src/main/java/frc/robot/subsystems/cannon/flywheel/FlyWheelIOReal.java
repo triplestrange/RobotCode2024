@@ -61,9 +61,6 @@ public class FlyWheelIOReal implements FlyWheelIO {
     rFWController = rFlyWheel.getPIDController();
     rFWEncoder = rFlyWheel.getEncoder();
 
-    lFlyWheel.setIdleMode(IdleMode.kCoast);
-    rFlyWheel.setIdleMode(IdleMode.kCoast);
-
     int smartMotionSlot = 0;
 
     // fly wheel
@@ -122,10 +119,10 @@ public class FlyWheelIOReal implements FlyWheelIO {
     rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
 
     if (lFlyWheelSetpoint == 0) {
-      lFlyWheel.set(0);
+      lFlyWheel.stopMotor();;
     }
     if (rFlyWheelSetpoint == 0) {
-      rFlyWheel.set(0);
+      rFlyWheel.stopMotor();
     }
     lFWController.setReference(lFlyWheelSetpoint, ControlType.kVelocity);
     rFWController.setReference(rFlyWheelSetpoint, ControlType.kVelocity);

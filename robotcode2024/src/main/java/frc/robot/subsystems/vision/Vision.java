@@ -106,7 +106,6 @@ public class Vision extends SubsystemBase {
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
                         getRobotToField(target, cam, m_SwerveDrive.getPose()));
-                System.out.println("added target");
             }
         }
 
@@ -161,12 +160,8 @@ public class Vision extends SubsystemBase {
 
         for (TargetCorner corner : target.getDetectedCorners()) {
 
-            System.out.println(corner.x);
-            System.out.println(corner.y);
             desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
         }
-
-        System.out.println(desiredTargetPixel.get(0));
 
         if (aprilTagFieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
             tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get();

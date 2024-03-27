@@ -8,10 +8,14 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends SubsystemBase {
@@ -29,12 +33,22 @@ public class Shooter extends SubsystemBase {
 
     private double pivotPower;
 
+    public double shootingAngle = 0;
+
+            public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
+                public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
+    private SwerveDrive m_swerve;
+
+
+
     /**
      * Creates a new Shooter.
      */
 
-    public Shooter() {
+    public Shooter(SwerveDrive m_swerve) {
         super();
+
+        this.m_swerve = m_swerve;
 
         lPivot = new CANSparkMax(Constants.CAN.PIVOTL, MotorType.kBrushless);
         rPivot = new CANSparkMax(Constants.CAN.PIVOTR, MotorType.kBrushless);
@@ -56,6 +70,28 @@ public class Shooter extends SubsystemBase {
         lPivot.setInverted(true);
         pivotController.setIZone(1);
         int smartMotionSlot = 0;
+
+        shootingData.put(1.0, 0.0);
+        shootingData.put(1.5, -3.2);
+        shootingData.put(2.0, -9.5);
+        shootingData.put(2.5, -15.5 );
+        shootingData.put(3.0, -19.7 );
+        shootingData.put(3.5, -23.85);
+        shootingData.put(4.0, -25.6);
+
+    //     shootingData.put(1.655738, -12.2);
+    //     shootingData.put(2.2, -16.0);
+    //     shootingData.put(3.120114, -23.5);
+        shootingData.put(4.9, -30.5);
+    //   //  shootingData.put(4.991135, -29.55);
+        shootingData.put(5.3, -31.0);
+        shootingData.put(6.38, -33.4);
+        shootingData.put(7.39, -34.5);
+
+        
+
+        
+
     }
 
     public double getAngle() {
@@ -101,14 +137,43 @@ public class Shooter extends SubsystemBase {
 
     }
 
+     public boolean isAllianceRed() {
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+    }
+
+    public void enablePID(boolean enable)   {
+        pivotSetpoint = shootingAngle;
+        shooterPIDEnabled = enable;
+    }
+
+    public Translation3d flipTranslation3d(Translation3d translation) {
+        return new Translation3d(16.54 - translation.getX(), translation.getY(), translation.getZ());
+
+    }
+
     @Override
     public void periodic() {
+          if (isAllianceRed()) {
+            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
+                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()));
+        } else {
+            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
+                    .getDistance((speakerTranslation3d.toTranslation2d())));
+        }
         if (shooterPIDEnabled) {
-            pivotPower = pivotController.calculate(getAngle(), pivotSetpoint);
+            pivotPower = pivotController.calculate(getAngle(), shootingAngle);
+
+            //change between pivotSetpoint to shootingAngle for manual & autoshoot respectively
         }
         if (!pivotEncoder.isConnected()) {
             pivotPower = 0;
         }
+
+
         lPivot.set(pivotPower);
         rPivot.set(pivotPower);
     }
