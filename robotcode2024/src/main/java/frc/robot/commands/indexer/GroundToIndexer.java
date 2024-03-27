@@ -23,7 +23,7 @@ public class GroundToIndexer extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_indexer.runConvIn();
+        m_indexer.runIn();
         m_Intake.runIntake();
     }
 
@@ -42,6 +42,6 @@ public class GroundToIndexer extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return m_indexer.getindexerSensor();
+        return m_indexer.getIndexerSensor();
     }
 }

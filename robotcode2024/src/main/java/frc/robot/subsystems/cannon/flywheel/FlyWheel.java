@@ -108,11 +108,11 @@ public class FlyWheel extends SubsystemBase {
     @Override
     public void periodic() {
         lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
-        if (lFlyWheelSetpoint == 0)  {
+        if (lFlyWheelSetpoint == 0) {
             lFlyWheel.set(0);
         }
         rFWController.setReference(rFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
-        if (rFlyWheelSetpoint == 0)  {
+        if (rFlyWheelSetpoint == 0) {
             rFlyWheel.set(0);
         }
     }

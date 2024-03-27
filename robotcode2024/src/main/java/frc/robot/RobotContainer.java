@@ -22,21 +22,29 @@ import frc.robot.commands.AutoMain;
 import frc.robot.subsystems.cannon.climb.Climb;
 import frc.robot.subsystems.cannon.flywheel.FlyWheel;
 import frc.robot.subsystems.cannon.indexer.Indexer;
+import frc.robot.subsystems.cannon.indexer.IndexerIO;
+import frc.robot.subsystems.cannon.indexer.IndexerIOReal;
+import frc.robot.subsystems.cannon.indexer.IndexerIOSim;
 import frc.robot.subsystems.cannon.shooter.Shooter;
 import frc.robot.subsystems.intake.elevator.Elevator;
 import frc.robot.subsystems.intake.elevator.ElevatorIO;
 import frc.robot.subsystems.intake.elevator.ElevatorIOReal;
 import frc.robot.subsystems.intake.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.rollers.Intake;
+import frc.robot.subsystems.intake.rollers.IntakeIO;
+import frc.robot.subsystems.intake.rollers.IntakeIOReal;
+import frc.robot.subsystems.intake.rollers.IntakeIOSim;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 import frc.robot.commands.DefaultDrive;
+import frc.robot.commands.automations.AutoPickupFieldRelative;
 import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
 import frc.robot.commands.indexer.GroundToIndexer;
 import frc.robot.commands.indexer.GroundToIntake;
+import frc.robot.commands.indexer.IntakeToIndexer;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -49,11 +57,11 @@ public class RobotContainer {
         public final Robot m_robot;
         public final SwerveDrive m_robotDrive;
         public Elevator m_elevator;
-        public final Intake m_intake;
+        public Intake m_intake;
         public final Shooter m_shooter;
         public final FlyWheel m_flywheel;
         public final Climb m_climb;
-        public final Indexer m_indexer;
+        public Indexer m_indexer;
         public final Shoot m_shoot;
         public final Vision m_vision;
 
@@ -69,29 +77,42 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(this);
-                m_intake = new Intake();
                 m_shooter = new Shooter();
                 m_climb = new Climb();
-                m_indexer = new Indexer();
                 m_flywheel = new FlyWheel();
                 m_shoot = new Shoot(this);
 
+                m_indexer = null;
                 m_elevator = null;
+                m_intake = null;
 
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
                                 case COMPBOT -> {
+                                        m_indexer = new Indexer(new IndexerIOReal());
                                         m_elevator = new Elevator(new ElevatorIOReal());
+                                        m_intake = new Intake(new IntakeIOReal());
+
                                 }
                                 case SIMBOT -> {
                                         m_elevator = new Elevator(new ElevatorIOSim());
-
+                                        m_intake = new Intake(new IntakeIOSim());
+                                        m_indexer = new Indexer(new IndexerIOSim());
                                 }
                         }
                 }
 
                 if (m_elevator == null) {
                         m_elevator = new Elevator(new ElevatorIO() {
+                        });
+                }
+                if (m_intake == null) {
+                        m_intake = new Intake(new IntakeIO() {
+                        });
+                }
+                if (m_indexer == null) {
+                        m_indexer = new Indexer(new IndexerIO() {
+
                         });
                 }
                 m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);
@@ -139,7 +160,7 @@ public class RobotContainer {
 
                 m_elevator.setDefaultCommand(new RunCommand(
                                 () -> m_elevator.moveElev(
-                                                1 * JoystickButtons.m_operatorController.getRightY(),
+                                                -1 * JoystickButtons.m_operatorController.getRightY(),
                                                 0.3 * JoystickButtons.m_operatorController.getRightX()),
                                 m_elevator));
 
@@ -165,22 +186,17 @@ public class RobotContainer {
                                 0.25 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
                 // Intake and indexer Controls
 
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runConvIn(), m_indexer)));
-
-                // JoystickButtons.oprBump.whileTrue(new InstantCommand(() ->
-                // m_intake.runIntake()).andThen(new InstantCommand(() ->
-                // m_intake.intakeOff())));
+                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
+                // m_intake)
+                // .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new GroundToIndexer(m_indexer, m_intake))
-                                                .andThen(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)
-                                                                .until(() -> !m_indexer.getindexerSensor())));
+                                (new IntakeToIndexer(m_indexer)));
 
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runConvOut(), m_indexer)));
+                                .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer)));
 
                 m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
 
@@ -207,13 +223,16 @@ public class RobotContainer {
 
                 JoystickButtons.dX.whileTrue(
                                 new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer))
-                                .onFalse(new InstantCommand(() -> m_shoot.driveTo.cancel())
-                                                .alongWith(new InstantCommand(() -> m_shooter.setShooterAngle(
-                                                                Constants.MechPositions.climbPivotPos))));
+                                .onFalse((new InstantCommand(() -> m_shooter.setShooterAngle(
+                                                Constants.MechPositions.climbPivotPos))));
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot));
+                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive));
+
+                // Note Pick Automation
+                JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive, m_elevator, m_intake,
+                                m_vision.getObjectToField(m_robotDrive.getPose())));
         }
 
         /**

@@ -63,7 +63,7 @@ public class Robot extends LoggedRobot {
     switch (Constants.LoggerConstants.getMode()) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        Logger.addDataReceiver(new WPILOGWriter());
+        // Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         break;
 
@@ -118,6 +118,22 @@ public class Robot extends LoggedRobot {
     m_robotContainer.m_robotDrive.zeroHeading();
   }
 
+  @Override
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+    i++;
+    if (i % 10 == 0) {
+      m_robotContainer.m_climb.updateSmartDashBoard();
+      m_robotContainer.m_elevator.updateSmartDashBoard();
+      m_robotContainer.m_flywheel.updateSmartDashBoard();
+      m_robotContainer.m_indexer.updateSmartDashBoard();
+      m_robotContainer.m_intake.updateSmartDashBoard();
+      m_robotContainer.m_robotDrive.updateSmartDashBoard();
+      m_robotContainer.m_shooter.updateSmartDashBoard();
+      m_robotContainer.m_vision.updateSmartDashBoard();
+    }
+  }
+
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
@@ -127,13 +143,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
 
-    // if (DriverStation.isFMSAttached() && DriverStation.getMatchType() ==
-    // MatchType.Elimination) {
-    // w++;
-    // if (w % 100 == 0) {
-    // SmartDashboard.putBoolean("Will Win?", true);
-    // }
-    // }
     m_robotContainer.m_shooter.resetPIDs();
     m_robotContainer.m_elevator.resetPIDs();
 

@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +21,7 @@ public class DefaultDrive extends Command {
   private double rotationSpeed;
   private Timer timer = new Timer();
   private double deadzone;
-  private PIDController rotation_controller;
+  private ProfiledPIDController rotation_controller;
 
   /**
    * Creates a new Drive.
@@ -35,7 +37,7 @@ public class DefaultDrive extends Command {
     speed = MathUtil.clamp(speed, -Constants.SwerveConstants.kMaxSpeedMetersPerSecond,
         Constants.SwerveConstants.kMaxSpeedMetersPerSecond);
     deadzone = 0.2;
-    rotation_controller = new PIDController(0.2, 0.17, 0.015);
+    rotation_controller = new ProfiledPIDController(0.2, 0.17, 0.015, new Constraints(720, 200));
     rotation_controller.enableContinuousInput(0, 360);
     rotation_controller.setIZone(10);
   }
@@ -55,14 +57,16 @@ public class DefaultDrive extends Command {
       m_swerve.setPresetEnabled(false);
     }
 
-    double rot = rotation_controller.calculate(m_swerve.getPose().getRotation().getDegrees(), m_swerve.getRotationPreset());
+    double rot = rotation_controller.calculate(m_swerve.getPose().getRotation().getDegrees(),
+        m_swerve.getRotationPreset());
     rot = MathUtil.clamp(rot, -2 * Math.PI, 2 * Math.PI);
     // System.out.println("rotation PID: " + rot);
 
     // System.out.println("gyro: " + m_swerve.getAngle().getDegrees());
     // System.out.println("desiredHeading: " + m_swerve.getRotationPreset());
-    double norm = Math.hypot(JoystickButtons.m_driverController.getLeftX(), JoystickButtons.m_driverController.getLeftY());
-    
+    double norm = Math.hypot(JoystickButtons.m_driverController.getLeftX(),
+        JoystickButtons.m_driverController.getLeftY());
+
     double speedY = JoystickButtons.m_driverController.getLeftY() * speed;
     double speedX = JoystickButtons.m_driverController.getLeftX() * speed;
 
@@ -75,7 +79,7 @@ public class DefaultDrive extends Command {
       }
       // rotation was reversed
       else {
-        speedR = Math.pow(JoystickButtons.m_driverController.getRightX(),3) * -4 * rotationSpeed;
+        speedR = Math.pow(JoystickButtons.m_driverController.getRightX(), 3) * -4 * rotationSpeed;
       }
     }
 
