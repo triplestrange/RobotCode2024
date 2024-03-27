@@ -29,7 +29,8 @@ public class AutoPickupFieldRelative extends SequentialCommandGroup {
         addCommands(
                 new InstantCommand(() -> m_elevator.setElev(Constants.MechPositions.groundIntakePos), m_elevator),
                 new GroundToIntake(m_intake),
-                new DriveTo(notePose2d, 0, 0, m_swerve)
+                new DriveTo(notePose2d, 0, 0, m_swerve),
+                new InstantCommand(() -> m_elevator.setElev(Constants.MechPositions.stowIntakePos))
 
         );
     }
