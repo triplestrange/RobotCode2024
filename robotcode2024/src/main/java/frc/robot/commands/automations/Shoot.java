@@ -67,7 +67,7 @@ public class Shoot {
     double m;
     double y;
 
-    double flywheelSetpoint = -5000;
+    double flywheelSetpoint = -4850;
 
     Boolean canShoot;
 
@@ -115,7 +115,7 @@ public class Shoot {
                             m_RobotContainer.m_robotDrive.getPose())
                             * m_RobotContainer.m_robotDrive.getPose().getTranslation()
                                     .getDistance((speakerTranslation3d.toTranslation2d()))
-                            * -0.1));
+                            * 0.1));
         } else {
             shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
@@ -125,7 +125,7 @@ public class Shoot {
                             m_RobotContainer.m_robotDrive.getPose())
                             * m_RobotContainer.m_robotDrive.getPose().getTranslation()
                                     .getDistance((speakerTranslation3d.toTranslation2d()))
-                            * -0.1));
+                            * 0.1));
         }
 
         m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());

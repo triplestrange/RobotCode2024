@@ -351,7 +351,7 @@ public final class Constants {
     public static final int intakeAbsInput = 3;
 
     public static final int shooterPivotCurrentLimit = 40;
-    public static final int flyWheelCurrentLimit = 0;
+    public static final int flyWheelCurrentLimit = 30;
   }
 
   public static final class CAN {

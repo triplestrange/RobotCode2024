@@ -219,14 +219,14 @@ public class RobotContainer {
                                         * 4850.0 / 3;
                 } else {
                         flywheelSetpoint = m_robotDrive.getPose().getTranslation()
-                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 3;
+                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 6;
                 }
 
                 flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint)));
 
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(), m_flywheel));
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
 
                 // Shooting Automations
 
