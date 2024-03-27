@@ -80,7 +80,7 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(this);
-                m_shooter = new Shooter();
+                m_shooter = new Shooter(m_robotDrive);
                 m_climb = new Climb();
                 m_shoot = new Shoot(this);
 
@@ -195,9 +195,9 @@ public class RobotContainer {
                                 0.25 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
                 // Intake and indexer Controls
 
-                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
-                // m_intake)
-                // .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
+                m_intake)
+                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
@@ -226,22 +226,20 @@ public class RobotContainer {
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint)));
 
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(), m_flywheel));
 
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer))
-                                .onFalse((new InstantCommand(() -> m_shooter.setShooterAngle(
-                                                Constants.MechPositions.climbPivotPos))));
+                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_indexer));
                 // Amp Automations
 
                 JoystickButtons.dB
                                 .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive));
 
                 // Note Pick Automation
-                JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive, m_elevator, m_intake,
-                                m_vision.getObjectToField(m_robotDrive.getPose())));
+                // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive, m_elevator, m_intake,
+                //                 m_vision.getObjectToField(m_robotDrive.getPose())));
         }
 
         /**
