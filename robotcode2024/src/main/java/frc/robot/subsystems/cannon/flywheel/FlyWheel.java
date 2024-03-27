@@ -11,118 +11,72 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FlyWheel extends SubsystemBase {
+    private static FlyWheel instance;
 
-    private CANSparkMax lFlyWheel;
-    private CANSparkMax rFlyWheel;
+    private FlyWheelIO io;
+    private FlyWheelIOInputsAutoLogged inputs = new FlyWheelIOInputsAutoLogged();
 
-    private SparkPIDController lFWController;
-    private SparkPIDController rFWController;
+    private double RPM;
 
-    private RelativeEncoder lFWEncoder;
-    private RelativeEncoder rFWEncoder;
+    public static FlyWheel getInstance() {
+        return instance;
+    }
 
-    private double lFlyWheelSetpoint;
-    private double rFlyWheelSetpoint;
+    public static FlyWheel initialize(FlyWheelIO io) {
+        if (instance == null) {
+            instance = new FlyWheel(io);
+        }
+        return instance;
+    }
 
     /**
      * Creates a new Shooter.
      */
 
-    public FlyWheel() {
+    public FlyWheel(FlyWheelIO flyWheelIO) {
         super();
+        io = flyWheelIO;
+        io.updateInputs(inputs);
 
-        lFlyWheel = new CANSparkMax(Constants.CAN.FLYWHEELL, MotorType.kBrushless);
-        rFlyWheel = new CANSparkMax(Constants.CAN.FLYWHEELR, MotorType.kBrushless);
-
-        lFlyWheel.restoreFactoryDefaults();
-        rFlyWheel.restoreFactoryDefaults();
-
-        lFlyWheel.setSmartCurrentLimit(Constants.ELECTRICAL.flyWheelCurrentLimit);
-        rFlyWheel.setSmartCurrentLimit(Constants.ELECTRICAL.flyWheelCurrentLimit);
-
-        lFWController = lFlyWheel.getPIDController();
-        lFWEncoder = lFlyWheel.getEncoder();
-
-        rFWController = rFlyWheel.getPIDController();
-        rFWEncoder = rFlyWheel.getEncoder();
-
-        lFlyWheel.setIdleMode(IdleMode.kCoast);
-        rFlyWheel.setIdleMode(IdleMode.kCoast);
-
-        int smartMotionSlot = 0;
-
-        // fly wheel
-        lFWController.setP(Constants.ShooterConstants.flyWheelkP);
-        lFWController.setI(Constants.ShooterConstants.flyWheelkI);
-        lFWController.setD(Constants.ShooterConstants.flyWheelkD);
-        lFWController.setIZone(Constants.ShooterConstants.flyWheelkIz);
-        lFWController.setFF(Constants.ShooterConstants.flyWheelkFF);
-        lFWController.setOutputRange(Constants.ShooterConstants.flyWheelkMinOutput,
-                Constants.ShooterConstants.flyWheelkMaxOutput);
-
-        lFWController.setSmartMotionMaxVelocity(Constants.ShooterConstants.flyWheelmaxVel, smartMotionSlot);
-        lFWController.setSmartMotionMinOutputVelocity(Constants.ShooterConstants.flyWheelminVel, smartMotionSlot);
-        lFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
-        lFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
-                smartMotionSlot);
-
-        rFWController.setP(Constants.ShooterConstants.flyWheelkP);
-        rFWController.setI(Constants.ShooterConstants.flyWheelkI);
-        rFWController.setD(Constants.ShooterConstants.flyWheelkD);
-        rFWController.setIZone(Constants.ShooterConstants.flyWheelkIz);
-        rFWController.setFF(Constants.ShooterConstants.flyWheelkFF);
-        rFWController.setOutputRange(Constants.ShooterConstants.flyWheelkMinOutput,
-                Constants.ShooterConstants.flyWheelkMaxOutput);
-
-        rFWController.setSmartMotionMaxVelocity(Constants.ShooterConstants.flyWheelmaxVel, smartMotionSlot);
-        rFWController.setSmartMotionMinOutputVelocity(Constants.ShooterConstants.flyWheelminVel, smartMotionSlot);
-        rFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
-        rFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
-                smartMotionSlot);
+        io.setIdleMode(IdleMode.kCoast);
     }
 
     public double getLeftSpeed() {
-        return lFWEncoder.getVelocity();
+        return inputs.leftVel;
     }
 
     public double getRightSpeed() {
-        return rFWEncoder.getVelocity();
+        return inputs.rightVel;
     }
 
     public void setFWSpeed(double RPM) {
-        lFlyWheelSetpoint = RPM;
-        rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
+        this.RPM = RPM;
     }
 
     public void flyWheelOn() {
-        lFlyWheelSetpoint = -900;
-        rFlyWheelSetpoint = 900;
+        io.setLeftSpeed(-900);
+        io.setRightSpeed(900);
     }
 
     public void flyWheelOff() {
-        lFlyWheelSetpoint = 0;
-        rFlyWheelSetpoint = 0;
+        io.setLeftSpeed(0);
+        io.setRightSpeed(0);
 
     }
 
     @Override
     public void periodic() {
-        lFWController.setReference(lFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
-        if (lFlyWheelSetpoint == 0) {
-            lFlyWheel.set(0);
-        }
-        rFWController.setReference(rFlyWheelSetpoint, CANSparkMax.ControlType.kVelocity);
-        if (rFlyWheelSetpoint == 0) {
-            rFlyWheel.set(0);
-        }
+        io.updateInputs(inputs);
+        io.runSpeed(RPM);
+
     }
 
     public void updateSmartDashBoard() {
 
-        SmartDashboard.putNumber("left rpm", lFlyWheel.getEncoder().getVelocity());
-        SmartDashboard.putNumber("right rpm", rFlyWheel.getEncoder().getVelocity());
-        SmartDashboard.putNumber("left setpoint", lFlyWheelSetpoint);
-        SmartDashboard.putNumber("right setpoint", rFlyWheelSetpoint);
+        SmartDashboard.putNumber("left rpm", inputs.leftVel);
+        SmartDashboard.putNumber("right rpm", inputs.rightVel);
+        SmartDashboard.putNumber("left setpoint", inputs.leftSetpoint);
+        SmartDashboard.putNumber("right setpoint", inputs.rightSetpoint);
 
     }
 
