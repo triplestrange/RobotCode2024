@@ -10,7 +10,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class DriveTo extends Command {
@@ -20,30 +19,26 @@ public class DriveTo extends Command {
   public double endVelocity;
   public double rotDelayDistance;
   private SwerveDrive m_SwerveDrive;
-  private Robot m_Robot;
   private Command pathfindingCommand;
 
   /**
    * Creates a new Approach.
    * Robot will drive to specified point (parameter)
    **/
-  public DriveTo(Pose2d targetPose2d, double endVelocity, double rotDelayDistance, SwerveDrive m_SwerveDrive,
-      Robot m_Robot) {
+  public DriveTo(Pose2d targetPose2d, double endVelocity, double rotDelayDistance, SwerveDrive m_SwerveDrive) {
 
     // Use addRequirements() here to declare subsystem dependencies.
 
     addRequirements(m_SwerveDrive);
 
     this.m_SwerveDrive = m_SwerveDrive;
-    this.m_Robot = m_Robot;
     this.targetPose2d = targetPose2d;
   }
 
-  public DriveTo(PathPlannerPath goalPath, double rotDelayDistance, SwerveDrive m_SwerveDrive, Robot m_Robot) {
+  public DriveTo(PathPlannerPath goalPath, double rotDelayDistance, SwerveDrive m_SwerveDrive) {
     addRequirements(m_SwerveDrive);
 
     this.m_SwerveDrive = m_SwerveDrive;
-    this.m_Robot = m_Robot;
     this.goalPath = goalPath;
 
   }

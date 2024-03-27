@@ -103,21 +103,6 @@ public class Vision extends SubsystemBase {
                 continue;
             }
 
-            // if (!(target.().getTranslation().getX() <
-            // aprilTagFieldLayout.getFieldLength())
-            // || !(target.getBestCameraToTarget().getTranslation().getX() > 0)
-            // || !(target.getBestCameraToTarget().getTranslation().getY() <
-            // aprilTagFieldLayout.getFieldWidth())
-            // || !(target.getBestCameraToTarget().getTranslation().getY() > 0)) {
-            // System.out.println("pose not in field");
-
-            // continue;
-            // }
-
-            // if (target.getArea() > 99 || target.getArea() < 1) {
-            // System.out.println("target too big or too small");
-            // continue;
-            // }
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
                         getRobotToField(target, cam, m_SwerveDrive.getPose()));
@@ -134,6 +119,13 @@ public class Vision extends SubsystemBase {
         averageEstimatedPose2d = new Pose2d(totalEstimatedTranslation2d.div(i), m_SwerveDrive.getPose().getRotation());
 
         return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
+    }
+
+    public Pose2d getBestObject(PhotonCamera camera, Pose2d robotPose) {
+        PhotonCamera cam = camera;
+        PhotonTrackedTarget target = cam.getLatestResult().getBestTarget();
+
+        return getObjectToField(getObjectToRobot(target, cam, robotPose));
     }
 
     public Pose2d getRobotToField(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
@@ -289,6 +281,13 @@ public class Vision extends SubsystemBase {
 
         return robotToTargetPose2d;
 
+    }
+
+    public Pose2d getObjectToField(Pose2d objectToRobot) {
+        return new Pose2d(
+                objectToRobot.getTranslation()
+                        .minus(m_SwerveDrive.getPose().getTranslation()),
+                m_SwerveDrive.getPose().getRotation());
     }
 
     public Translation2d undistortFromOpenCV(Translation2d point, PhotonCamera cam) {

@@ -39,6 +39,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 import frc.robot.commands.DefaultDrive;
+import frc.robot.commands.automations.AutoPickupFieldRelative;
 import frc.robot.commands.automations.DriveTo;
 import frc.robot.commands.automations.Shoot;
 import frc.robot.commands.indexer.GroundToIndexer;
@@ -185,12 +186,9 @@ public class RobotContainer {
                                 0.25 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
                 // Intake and indexer Controls
 
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
-
-                // JoystickButtons.oprBump.whileTrue(new InstantCommand(() ->
-                // m_intake.runIntake()).andThen(new InstantCommand(() ->
-                // m_intake.intakeOff())));
+                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
+                // m_intake)
+                // .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
@@ -230,7 +228,11 @@ public class RobotContainer {
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive, m_robot));
+                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive));
+
+                // Note Pick Automation
+                JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive, m_elevator, m_intake,
+                                m_vision.getObjectToField(m_robotDrive.getPose())));
         }
 
         /**
