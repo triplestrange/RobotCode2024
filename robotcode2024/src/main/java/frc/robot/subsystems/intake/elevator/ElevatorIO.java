@@ -1,16 +1,7 @@
 package frc.robot.subsystems.intake.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
-
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import frc.robot.Constants;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
 public interface ElevatorIO {
 

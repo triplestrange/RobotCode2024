@@ -70,10 +70,6 @@ public class IndexerIOReal implements IndexerIO {
     inputs.tempCelcius = Indexer.getMotorTemperature();
     inputs.inputVolts = IndexerInput;
 
-    /*
-     * inputs.joinVelDegPerSecond =
-     */
-
   }
 
   @Override

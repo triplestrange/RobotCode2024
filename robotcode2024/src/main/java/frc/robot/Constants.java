@@ -154,6 +154,8 @@ public final class Constants {
     public final static double flyWheelmaxAcc = 5000;
 
     public final static double rotationalSpeed = 3000;
+
+    public final static double flywheelVelocityConv = 2 * Units.inchesToMeters(3);
   }
 
   public static final class ClimbConstants {

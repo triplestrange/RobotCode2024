@@ -1,12 +1,5 @@
 package frc.robot.subsystems.intake.elevator;
 
-import org.littletonrobotics.junction.Logger;
-
-import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
-import com.revrobotics.CANSparkBase.FaultID;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -15,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
 public class ElevatorIOSim implements ElevatorIO {
     private final ElevatorSim elevatorSim = new ElevatorSim(DCMotor.getNEO(1),
@@ -119,7 +111,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void setElevPosition(double height) {
-        elevPositionOffset = height - elevatorSim.getPositionMeters();
+        this.elevPositionOffset = height - elevatorSim.getPositionMeters();
     }
 
     @Override
