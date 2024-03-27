@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
 import frc.robot.subsystems.cannon.climb.Climb;
+import frc.robot.subsystems.cannon.climb.ClimbIO;
+import frc.robot.subsystems.cannon.climb.ClimbIOReal;
+import frc.robot.subsystems.cannon.climb.ClimbIOSim;
 import frc.robot.subsystems.cannon.flywheel.FlyWheel;
 import frc.robot.subsystems.cannon.flywheel.FlyWheelIO;
 import frc.robot.subsystems.cannon.flywheel.FlyWheelIOReal;
@@ -63,7 +66,7 @@ public class RobotContainer {
         public Intake m_intake;
         public final Shooter m_shooter;
         public FlyWheel m_flywheel;
-        public final Climb m_climb;
+        public Climb m_climb;
         public Indexer m_indexer;
         public final Shoot m_shoot;
         public final Vision m_vision;
@@ -81,13 +84,13 @@ public class RobotContainer {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(this);
                 m_shooter = new Shooter();
-                m_climb = new Climb();
                 m_shoot = new Shoot(this);
 
                 m_indexer = null;
                 m_elevator = null;
                 m_intake = null;
                 m_flywheel = null;
+                m_climb = null;
 
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
@@ -96,6 +99,7 @@ public class RobotContainer {
                                         m_elevator = new Elevator(new ElevatorIOReal());
                                         m_intake = new Intake(new IntakeIOReal());
                                         m_flywheel = new FlyWheel(new FlyWheelIOReal());
+                                        m_climb = new Climb(new ClimbIOReal());
 
                                 }
                                 case SIMBOT -> {
@@ -103,7 +107,7 @@ public class RobotContainer {
                                         m_intake = new Intake(new IntakeIOSim());
                                         m_indexer = new Indexer(new IndexerIOSim());
                                         m_flywheel = new FlyWheel(new FlyWheelIOSim());
-
+                                        m_climb = new Climb(new ClimbIOSim());
                                 }
                         }
                 }
@@ -122,6 +126,10 @@ public class RobotContainer {
                 }
                 if (m_flywheel == null) {
                         m_flywheel = new FlyWheel(new FlyWheelIO() {
+                        });
+                }
+                if (m_climb == null) {
+                        m_climb = new Climb(new ClimbIO() {
                         });
                 }
                 m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);

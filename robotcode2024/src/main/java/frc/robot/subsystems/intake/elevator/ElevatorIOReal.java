@@ -1,34 +1,14 @@
 package frc.robot.subsystems.intake.elevator;
 
-import java.util.List;
-
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.SparkRelativeEncoder;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
 
 public class ElevatorIOReal implements ElevatorIO {
   public CANSparkMax elev = new CANSparkMax(Constants.CAN.ELEVATOR, MotorType.kBrushless);
@@ -73,22 +53,6 @@ public class ElevatorIOReal implements ElevatorIO {
     elevRelativeEncoder.setVelocityConversionFactor(
         Constants.ElevatorConstants.elevDrumRadiusMeters * Constants.ElevatorConstants.elevSimPosConv / 60);
     elevRelativeEncoder.setPosition(0);
-
-    double winchMotorCurrent = elev.getOutputCurrent();
-    double winchAppliedVolts = elev.getAppliedOutput() * elev.getBusVoltage();
-
-    double elevatorPosMeters = Units.inchesToMeters(elevRelativeEncoder.getPosition());
-    double elevatorVelMetersPerSecond = elevRelativeEncoder.getVelocity();
-
-    double jointMotorCurrent = intake.getOutputCurrent();
-    double jointAppliedVolts = intake.getAppliedOutput() * elev.getBusVoltage();
-
-    double jointPosDeg = MathUtil.inputModulus(
-        -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset - offset, -160, 20);
-    double joinVelDeg = intake.getEncoder().getVelocity();
-
-    double elevTempCelcius = elev.getMotorTemperature();
-    double jointTempCelcius = intake.getMotorTemperature();
   }
 
   @Override
