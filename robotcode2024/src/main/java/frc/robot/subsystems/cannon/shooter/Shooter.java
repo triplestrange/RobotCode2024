@@ -72,14 +72,23 @@ public class Shooter extends SubsystemBase {
         int smartMotionSlot = 0;
 
         shootingData.put(1.0, 0.0);
-        shootingData.put(1.655738, -12.2);
-        shootingData.put(2.2, -16.0);
-        shootingData.put(3.120114, -23.5);
+        shootingData.put(1.5, -3.2);
+        shootingData.put(2.0, -9.5);
+        shootingData.put(2.5, -15.5 );
+        shootingData.put(3.0, -19.7 );
+        shootingData.put(3.5, -23.85);
+        shootingData.put(4.0, -25.6);
+
+    //     shootingData.put(1.655738, -12.2);
+    //     shootingData.put(2.2, -16.0);
+    //     shootingData.put(3.120114, -23.5);
         shootingData.put(4.9, -30.5);
-      //  shootingData.put(4.991135, -29.55);
+    //   //  shootingData.put(4.991135, -29.55);
         shootingData.put(5.3, -31.0);
         shootingData.put(6.38, -33.4);
         shootingData.put(7.39, -34.5);
+
+        
 
         
 
@@ -157,6 +166,8 @@ public class Shooter extends SubsystemBase {
         }
         if (shooterPIDEnabled) {
             pivotPower = pivotController.calculate(getAngle(), shootingAngle);
+
+            //change between pivotSetpoint to shootingAngle for manual & autoshoot respectively
         }
         if (!pivotEncoder.isConnected()) {
             pivotPower = 0;
