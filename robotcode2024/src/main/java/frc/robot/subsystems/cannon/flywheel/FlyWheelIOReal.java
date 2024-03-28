@@ -119,7 +119,7 @@ public class FlyWheelIOReal implements FlyWheelIO {
     rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
 
     if (lFlyWheelSetpoint == 0) {
-      lFlyWheel.stopMotor();;
+      lFlyWheel.stopMotor();
     }
     if (rFlyWheelSetpoint == 0) {
       rFlyWheel.stopMotor();
