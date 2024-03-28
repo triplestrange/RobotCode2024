@@ -3,7 +3,8 @@ package com.team254.lib.geometry;
 import com.team254.lib.util.Util;
 
 /**
- * Represents a 2d pose (rigid transform) containing translational and rotational elements.
+ * Represents a 2d pose (rigid transform) containing translational and
+ * rotational elements.
  * <p>
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
@@ -115,7 +116,8 @@ public class Pose2d implements IPose2d<Pose2d> {
     }
 
     /**
-     * Transforming this RigidTransform2d means first translating by other.translation and then rotating by
+     * Transforming this RigidTransform2d means first translating by
+     * other.translation and then rotating by
      * other.rotation
      *
      * @param other The other transform.
@@ -143,9 +145,9 @@ public class Pose2d implements IPose2d<Pose2d> {
         return new Pose2d(transform.getTranslation(), transform.getRotation());
     }
 
-
     /**
-     * The inverse of this transform "undoes" the effect of translating by this transform.
+     * The inverse of this transform "undoes" the effect of translating by this
+     * transform.
      *
      * @return The opposite of this transform.
      */
@@ -159,7 +161,8 @@ public class Pose2d implements IPose2d<Pose2d> {
     }
 
     /**
-     * Finds the point where the heading of this pose intersects the heading of another. Returns (+INF, +INF) if
+     * Finds the point where the heading of this pose intersects the heading of
+     * another. Returns (+INF, +INF) if
      * parallel.
      */
     public Translation2d intersection(final Pose2d other) {

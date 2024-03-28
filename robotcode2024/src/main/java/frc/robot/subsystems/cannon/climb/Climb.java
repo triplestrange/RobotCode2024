@@ -2,7 +2,7 @@ package frc.robot.subsystems.cannon.climb;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climb extends SubsystemBase {
+public class Climb {
 
     public double leftPower;
     public double rightPower;
@@ -75,7 +75,6 @@ public class Climb extends SubsystemBase {
         }
     }
 
-    @Override
     public void periodic() {
     }
 

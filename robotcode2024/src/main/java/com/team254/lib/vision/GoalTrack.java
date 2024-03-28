@@ -8,10 +8,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * A class that is used to keep track of all goals detected by the vision system. As goals are detected/not detected
- * anymore by the vision system, function calls will be made to create, destroy, or update a goal track.
+ * A class that is used to keep track of all goals detected by the vision
+ * system. As goals are detected/not detected
+ * anymore by the vision system, function calls will be made to create, destroy,
+ * or update a goal track.
  * <p>
- * This helps in the goal ranking process that determines which goal to fire into, and helps to smooth measurements of
+ * This helps in the goal ranking process that determines which goal to fire
+ * into, and helps to smooth measurements of
  * the goal's location over time.
  *
  * @see GoalTracker
@@ -39,7 +42,15 @@ public class GoalTrack {
         if (!isAlive()) {
             return false;
         }
-        double distance = mSmoothedPosition.inverse().transformBy(new_observation).getTranslation().norm(); //Distance between new observation and average position of Goal Tracker
+        double distance = mSmoothedPosition.inverse().transformBy(new_observation).getTranslation().norm(); // Distance
+                                                                                                            // between
+                                                                                                            // new
+                                                                                                            // observation
+                                                                                                            // and
+                                                                                                            // average
+                                                                                                            // position
+                                                                                                            // of Goal
+                                                                                                            // Tracker
         if (distance < mConfiguration.kMaxTrackerDistance) {
             mObservedPositions.put(timestamp, new_observation);
             pruneByTime();
@@ -55,7 +66,8 @@ public class GoalTrack {
     }
 
     /**
-     * Removes the track if it is older than the set "age" described in the Constants file.
+     * Removes the track if it is older than the set "age" described in the
+     * Constants file.
      *
      * @see Constants
      */
@@ -70,9 +82,11 @@ public class GoalTrack {
     }
 
     /**
-     * Makes a new track based on the timestamp and the goal's coordinates (from vision)
+     * Makes a new track based on the timestamp and the goal's coordinates (from
+     * vision)
      */
-    public static GoalTrack makeNewTrack(GoalTracker.Configuration config, double timestamp, Pose2d first_observation, int id) {
+    public static GoalTrack makeNewTrack(GoalTracker.Configuration config, double timestamp, Pose2d first_observation,
+            int id) {
         GoalTrack rv = new GoalTrack(config);
         rv.mObservedPositions.put(timestamp, first_observation);
         rv.mSmoothedPosition = first_observation;
@@ -87,8 +101,8 @@ public class GoalTrack {
         if (isAlive()) {
             double x = 0;
             double y = 0;
-            double s = 0;  // sin of angle
-            double c = 0;  // cos of angle
+            double s = 0; // sin of angle
+            double c = 0; // cos of angle
             double t_now = Timer.getFPGATimestamp();
             int num_samples = 0;
             for (Map.Entry<Double, Pose2d> entry : mObservedPositions.entrySet()) {
@@ -128,7 +142,8 @@ public class GoalTrack {
     }
 
     public synchronized double getStability() {
-        return Math.min(1.0, mObservedPositions.size() / (mConfiguration.kCameraFrameRate * mConfiguration.kMaxGoalTrackAge));
+        return Math.min(1.0,
+                mObservedPositions.size() / (mConfiguration.kCameraFrameRate * mConfiguration.kMaxGoalTrackAge));
     }
 
     public synchronized int getId() {

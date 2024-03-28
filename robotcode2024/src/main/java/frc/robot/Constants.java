@@ -62,6 +62,9 @@ public final class Constants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kTheoreticalMaxSpeedMetersPerSecond = 4.7244;
     public static final double kMaxSpeedMetersPerSecond = 3.77;
+    public static final double kMaxAngularVelocityRadiansPerSecond = 2 * Math.PI;
+
+    public static final double kScaleTranslationInputs = 1;
 
     public static final double autoAlignMaxSpeedMetersPerSecond = 1;
     public static final double autoAlignRotationalMaxSpeedMetersPerSecond = 1;
@@ -85,6 +88,20 @@ public final class Constants {
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2), new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2), new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+
+    public static final class RotationConfigs {
+
+      public static final double kSwerveHeadingControllerErrorTolerance = 0.1;
+
+      public static final double kSnapSwerveHeadingKp = 0.2;
+      public static final double kSnapSwerveHeadingKi = 0.17;
+      public static final double kSnapSwerveHeadingKd = 0.015;
+
+      public static final double kMaintainSwerveHeadingKpHighVelocity = 0;
+      public static final double kMaintainSwerveHeadingKiHighVelocity = 0;
+      public static final double kMaintainSwerveHeadingKdHighVelocity = 0;
+
+    }
   }
 
   public static final class ModuleConstants {

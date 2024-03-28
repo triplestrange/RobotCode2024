@@ -31,7 +31,8 @@ public class DriveInput {
         engagePolarDrive = false;
     }
 
-    public void setDriveInput(double x, double y, double omega, double cardinalHeading, boolean shouldSnapToOrigin, boolean shouldEngagePolarDrive) {
+    public void setDriveInput(double x, double y, double omega, double cardinalHeading, boolean shouldSnapToOrigin,
+            boolean shouldEngagePolarDrive) {
         throttle = x;
         strafe = y;
         rotation = omega;

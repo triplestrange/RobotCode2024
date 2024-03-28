@@ -18,7 +18,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Shooter extends SubsystemBase {
+public class Shooter {
 
     private CANSparkMax lPivot;
     private CANSparkMax rPivot;
@@ -35,11 +35,9 @@ public class Shooter extends SubsystemBase {
 
     public double shootingAngle = 0;
 
-            public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
-                public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
+    public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
+    public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
     private SwerveDrive m_swerve;
-
-
 
     /**
      * Creates a new Shooter.
@@ -74,23 +72,19 @@ public class Shooter extends SubsystemBase {
         shootingData.put(1.0, 0.0);
         shootingData.put(1.5, -3.2);
         shootingData.put(2.0, -9.5);
-        shootingData.put(2.5, -15.5 );
-        shootingData.put(3.0, -19.7 );
+        shootingData.put(2.5, -15.5);
+        shootingData.put(3.0, -19.7);
         shootingData.put(3.5, -23.85);
         shootingData.put(4.0, -25.6);
 
-    //     shootingData.put(1.655738, -12.2);
-    //     shootingData.put(2.2, -16.0);
-    //     shootingData.put(3.120114, -23.5);
+        // shootingData.put(1.655738, -12.2);
+        // shootingData.put(2.2, -16.0);
+        // shootingData.put(3.120114, -23.5);
         shootingData.put(4.9, -30.5);
-    //   //  shootingData.put(4.991135, -29.55);
+        // // shootingData.put(4.991135, -29.55);
         shootingData.put(5.3, -31.0);
         shootingData.put(6.38, -33.4);
         shootingData.put(7.39, -34.5);
-
-        
-
-        
 
     }
 
@@ -137,7 +131,7 @@ public class Shooter extends SubsystemBase {
 
     }
 
-     public boolean isAllianceRed() {
+    public boolean isAllianceRed() {
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
             return alliance.get() == DriverStation.Alliance.Red;
@@ -145,7 +139,7 @@ public class Shooter extends SubsystemBase {
         return false;
     }
 
-    public void enablePID(boolean enable)   {
+    public void enablePID(boolean enable) {
         pivotSetpoint = shootingAngle;
         shooterPIDEnabled = enable;
     }
@@ -155,9 +149,8 @@ public class Shooter extends SubsystemBase {
 
     }
 
-    @Override
     public void periodic() {
-          if (isAllianceRed()) {
+        if (isAllianceRed()) {
             shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
                     .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()));
         } else {
@@ -167,12 +160,12 @@ public class Shooter extends SubsystemBase {
         if (shooterPIDEnabled) {
             pivotPower = pivotController.calculate(getAngle(), shootingAngle);
 
-            //change between pivotSetpoint to shootingAngle for manual & autoshoot respectively
+            // change between pivotSetpoint to shootingAngle for manual & autoshoot
+            // respectively
         }
         if (!pivotEncoder.isConnected()) {
             pivotPower = 0;
         }
-
 
         lPivot.set(pivotPower);
         rPivot.set(pivotPower);

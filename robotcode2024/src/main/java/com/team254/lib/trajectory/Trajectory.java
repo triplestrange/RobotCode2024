@@ -69,7 +69,8 @@ public class Trajectory<S extends State<S>> implements CSVWritable {
         } else if (frac >= 1.0 - Double.MIN_VALUE) {
             return new TrajectorySamplePoint<>(getPoint(i + 1));
         } else {
-            return new TrajectorySamplePoint<>(getPoint(i).state().interpolate(getPoint(i + 1).state(), frac), i, i + 1);
+            return new TrajectorySamplePoint<>(getPoint(i).state().interpolate(getPoint(i + 1).state(), frac), i,
+                    i + 1);
         }
     }
 

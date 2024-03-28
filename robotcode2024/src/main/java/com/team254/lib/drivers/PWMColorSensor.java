@@ -8,7 +8,7 @@ public class PWMColorSensor {
     public static final double kPWMBound = 300.0 / 4095.0;
     public static final double kBlueThreshold = 0.41;
     public static final double kRedThreshold = 0.60;
-    
+
     private final SynchronousInterrupt mInterrupt;
     private double mPrevRatio = 0.5;
 

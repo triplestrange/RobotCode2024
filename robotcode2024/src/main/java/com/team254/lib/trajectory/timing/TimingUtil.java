@@ -37,11 +37,16 @@ public class TimingUtil {
         List<ConstrainedState<S>> constraint_states = new ArrayList<>(states.size());
         final double kEpsilon = 1e-6;
 
-        // Forward pass. We look at pairs of consecutive states, where the start state has already been velocity
-        // parameterized (though we may adjust the velocity downwards during the backwards pass). We wish to find an
-        // acceleration that is admissible at both the start and end state, as well as an admissible end velocity. If
-        // there is no admissible end velocity or acceleration, we set the end velocity to the state's maximum allowed
-        // velocity and will repair the acceleration during the backward pass (by slowing down the predecessor).
+        // Forward pass. We look at pairs of consecutive states, where the start state
+        // has already been velocity
+        // parameterized (though we may adjust the velocity downwards during the
+        // backwards pass). We wish to find an
+        // acceleration that is admissible at both the start and end state, as well as
+        // an admissible end velocity. If
+        // there is no admissible end velocity or acceleration, we set the end velocity
+        // to the state's maximum allowed
+        // velocity and will repair the acceleration during the backward pass (by
+        // slowing down the predecessor).
         ConstrainedState<S> predecessor = new ConstrainedState<>();
         predecessor.state = states.get(0);
         predecessor.distance = 0.0;
@@ -56,10 +61,12 @@ public class TimingUtil {
             final double ds = constraint_state.state.distance(predecessor.state);
             constraint_state.distance = ds + predecessor.distance;
 
-            // We may need to iterate to find the maximum end velocity and common acceleration, since acceleration
+            // We may need to iterate to find the maximum end velocity and common
+            // acceleration, since acceleration
             // limits may be a function of velocity.
             while (true) {
-                // Enforce global max velocity and max reachable velocity by global acceleration limit.
+                // Enforce global max velocity and max reachable velocity by global acceleration
+                // limit.
                 // vf = sqrt(vi^2 + 2*a*d)
                 constraint_state.max_velocity = Math.min(max_velocity,
                         Math.sqrt(predecessor.max_velocity * predecessor.max_velocity
@@ -71,7 +78,8 @@ public class TimingUtil {
                 constraint_state.min_acceleration = -max_abs_acceleration;
                 constraint_state.max_acceleration = max_abs_acceleration;
 
-                // At this point, the state is full constructed, but no constraints have been applied aside from
+                // At this point, the state is full constructed, but no constraints have been
+                // applied aside from
                 // predecessor state max accel.
 
                 // Enforce all velocity constraints.
@@ -106,7 +114,8 @@ public class TimingUtil {
                 if (ds < kEpsilon) {
                     break;
                 }
-                // If the max acceleration for this constraint state is more conservative than what we had applied, we
+                // If the max acceleration for this constraint state is more conservative than
+                // what we had applied, we
                 // need to reduce the max accel at the predecessor state and try again.
                 // Doing a search would be better.
                 final double actual_acceleration = (constraint_state.max_velocity * constraint_state.max_velocity
@@ -117,11 +126,13 @@ public class TimingUtil {
                     if (actual_acceleration > predecessor.min_acceleration + kEpsilon) {
                         predecessor.max_acceleration = actual_acceleration;
                     }
-                    // If actual acceleration is less than predecessor min accel, we will repair during the backward
+                    // If actual acceleration is less than predecessor min accel, we will repair
+                    // during the backward
                     // pass.
                     break;
                 }
-                // System.out.println("(intermediate) i: " + i + ", " + constraint_state.toString());
+                // System.out.println("(intermediate) i: " + i + ", " +
+                // constraint_state.toString());
             }
             // System.out.println("i: " + i + ", " + constraint_state.toString());
             predecessor = constraint_state;
@@ -172,7 +183,8 @@ public class TimingUtil {
                 if (ds > kEpsilon) {
                     break;
                 }
-                // If the min acceleration for this constraint state is more conservative than what we have applied, we
+                // If the min acceleration for this constraint state is more conservative than
+                // what we have applied, we
                 // need to reduce the min accel and try again.
                 // Doing a search would be better.
                 final double actual_acceleration = (constraint_state.max_velocity * constraint_state.max_velocity

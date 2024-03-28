@@ -17,7 +17,6 @@ public class CircularBufferGeneric<E> {
         mSum = 0.0;
     }
 
-
     public void clear() {
         mSamples.clear();
         mSum = 0.0;
@@ -42,9 +41,11 @@ public class CircularBufferGeneric<E> {
         /*
          * NOTE: To get an Array of the specific class type which the instance is using,
          * you have to use this specific code:
-         * specificCircularBufferGeneric.getLinkedList().toArray(new ClassThatIWant[specificCircularBufferGeneric
+         * specificCircularBufferGeneric.getLinkedList().toArray(new
+         * ClassThatIWant[specificCircularBufferGeneric
          * .getLinkedList().size()]);
-         * The reason is that for some reason an array of a generic class(i.e. E[]) cannot be created because
+         * The reason is that for some reason an array of a generic class(i.e. E[])
+         * cannot be created because
          * of some archaic data flow ambiguities
          */
 

@@ -41,8 +41,8 @@ public abstract class MotorChecker<T> {
     protected abstract double getMotorCurrent(T motor);
 
     protected boolean checkMotorsImpl(Subsystem subsystem,
-                                      ArrayList<MotorConfig<T>> motorsToCheck,
-                                      CheckerConfig checkerConfig) {
+            ArrayList<MotorConfig<T>> motorsToCheck,
+            CheckerConfig checkerConfig) {
         boolean failure = false;
         System.out.println("////////////////////////////////////////////////");
         System.out.println("Checking subsystem " + subsystem.getClass()
@@ -122,4 +122,3 @@ public abstract class MotorChecker<T> {
         return !failure;
     }
 }
-

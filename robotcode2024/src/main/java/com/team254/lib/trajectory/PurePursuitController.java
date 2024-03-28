@@ -11,7 +11,7 @@ public class PurePursuitController<S extends IPose2d<S>> implements IPathFollowe
     protected boolean done_ = false;
 
     public PurePursuitController(final DistanceView<S> path, double sampling_dist, double lookahead,
-                                 double goal_tolerance) {
+            double goal_tolerance) {
         sampling_dist_ = sampling_dist;
         lookahead_ = lookahead;
         goal_tolerance_ = goal_tolerance;
@@ -27,13 +27,15 @@ public class PurePursuitController<S extends IPose2d<S>> implements IPathFollowe
 
         final double remaining_progress = iterator_.getRemainingProgress();
         double goal_progress = 0.0;
-        // Find the first point > lookahead distance away from current_pose, or the last point otherwise.
+        // Find the first point > lookahead distance away from current_pose, or the last
+        // point otherwise.
         for (double progress = 0.0; progress <= remaining_progress; progress = Math.min(remaining_progress,
                 progress + sampling_dist_)) {
             double dist = current_pose.getTranslation().distance(iterator_.preview(progress).state().getTranslation());
             if (dist > lookahead_) {
                 if (goal_progress == 0.0 && !iterator_.isDone()) {
-                    // Make sure we don't get stuck due to numerical issues when sampling dist is large relative to
+                    // Make sure we don't get stuck due to numerical issues when sampling dist is
+                    // large relative to
                     // lookahead.
                     goal_progress = progress;
                 }
@@ -45,7 +47,7 @@ public class PurePursuitController<S extends IPose2d<S>> implements IPathFollowe
             }
         }
         iterator_.advance(goal_progress);
-//        final Arc<S> arc = new Arc<S>(current_pose, iterator_.getState());
+        // final Arc<S> arc = new Arc<S>(current_pose, iterator_.getState());
         final Twist2d twist = Pose2d.log(current_pose.inverse().transformBy(iterator_.getState().getPose()));
         if (twist.norm() < Util.kEpsilon) {
             return new Twist2d(0.0, 0.0, 0.0);
@@ -95,8 +97,10 @@ public class PurePursuitController<S extends IPose2d<S>> implements IPathFollowe
             if (radius < Double.MAX_VALUE) {
                 final Translation2d centerToPoint = new Translation2d(center, point.getTranslation());
                 final Translation2d centerToPose = new Translation2d(center, pose.getTranslation());
-                // If the point is behind pose, we want the opposite of this angle. To determine if the point is behind,
-                // check the sign of the cross-product between the normal vector and the vector from pose to point.
+                // If the point is behind pose, we want the opposite of this angle. To determine
+                // if the point is behind,
+                // check the sign of the cross-product between the normal vector and the vector
+                // from pose to point.
                 final boolean behind = Math.signum(
                         Translation2d.cross(pose.getRotation().normal().toTranslation(),
                                 new Translation2d(pose.getTranslation(), point.getTranslation()))) > 0.0;

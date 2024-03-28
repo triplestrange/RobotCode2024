@@ -7,15 +7,19 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * This is used in the event that multiple goals are detected to judge all goals based on timestamp, stability, and
- * continuation of previous goals (i.e. if a goal was detected earlier and has changed locations). This allows the robot
- * to make consistent decisions about which goal to aim at and to smooth out jitter from vibration of the camera.
+ * This is used in the event that multiple goals are detected to judge all goals
+ * based on timestamp, stability, and
+ * continuation of previous goals (i.e. if a goal was detected earlier and has
+ * changed locations). This allows the robot
+ * to make consistent decisions about which goal to aim at and to smooth out
+ * jitter from vibration of the camera.
  *
  * @see GoalTrack
  */
 public class GoalTracker {
     /**
-     * Track reports contain all of the relevant information about a given goal track.
+     * Track reports contain all of the relevant information about a given goal
+     * track.
      */
     public static class TrackReport {
         // Transform from the field frame to the vision target.
@@ -40,8 +44,10 @@ public class GoalTracker {
     }
 
     /**
-     * TrackReportComparators are used in the case that multiple tracks are active (e.g. we see or have recently seen
-     * multiple goals). They contain heuristics used to pick which track we should aim at by calculating a score for
+     * TrackReportComparators are used in the case that multiple tracks are active
+     * (e.g. we see or have recently seen
+     * multiple goals). They contain heuristics used to pick which track we should
+     * aim at by calculating a score for
      * each track (highest score wins).
      */
     public static class TrackReportComparator implements Comparator<TrackReport> {
@@ -50,7 +56,7 @@ public class GoalTracker {
         int mLastTrackId;
 
         protected TrackReportComparator(Configuration config,
-                                     int last_track_id, double current_timestamp) {
+                int last_track_id, double current_timestamp) {
             this.mConfiguration = config;
             this.mLastTrackId = last_track_id;
             this.mCurrentTimestamp = current_timestamp;
@@ -60,7 +66,7 @@ public class GoalTracker {
             double stability_score = mConfiguration.kStabilityWeight * report.stability;
             double age_score = mConfiguration.kAgeWeight
                     * Math.max(0, (mConfiguration.kMaxGoalTrackAge - (mCurrentTimestamp - report.latest_timestamp))
-                    / mConfiguration.kMaxGoalTrackAge);
+                            / mConfiguration.kMaxGoalTrackAge);
             double switching_score = (report.id == mLastTrackId ? mConfiguration.kSwitchingWeight : 0);
             return stability_score + age_score + switching_score;
         }

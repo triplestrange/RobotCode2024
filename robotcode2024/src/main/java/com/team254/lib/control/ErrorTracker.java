@@ -28,7 +28,8 @@ public class ErrorTracker {
     }
 
     public Translation2d getMaxTranslationError() {
-        if (tracking_error_over_time_.isEmpty()) return Translation2d.identity();
+        if (tracking_error_over_time_.isEmpty())
+            return Translation2d.identity();
         double max_norm = Double.NEGATIVE_INFINITY;
         Translation2d max = null;
         for (var error : tracking_error_over_time_) {
@@ -42,7 +43,8 @@ public class ErrorTracker {
     }
 
     public Rotation2d getMaxRotationError() {
-        if (tracking_error_over_time_.isEmpty()) return Rotation2d.identity();
+        if (tracking_error_over_time_.isEmpty())
+            return Rotation2d.identity();
         double max_norm = Double.NEGATIVE_INFINITY;
         Rotation2d max = null;
         for (var error : tracking_error_over_time_) {
@@ -60,7 +62,7 @@ public class ErrorTracker {
         for (var error : tracking_error_over_time_) {
             error_sum += error.getTranslation().norm2();
         }
-        error_sum /= (double)tracking_error_over_time_.size();
+        error_sum /= (double) tracking_error_over_time_.size();
         return Math.sqrt(error_sum);
     }
 
@@ -69,12 +71,13 @@ public class ErrorTracker {
         for (var error : tracking_error_over_time_) {
             error_sum += error.getRotation().getRadians() * error.getRotation().getRadians();
         }
-        error_sum /= (double)tracking_error_over_time_.size();
+        error_sum /= (double) tracking_error_over_time_.size();
         return Math.sqrt(error_sum);
     }
 
     public void printSummary() {
-        if (tracking_error_over_time_.isEmpty()) return;
+        if (tracking_error_over_time_.isEmpty())
+            return;
         System.out.println("Error Summary---");
         System.out.println("Translation: RMSE " + getTranslationRMSE() + ", Max: " + getMaxTranslationError());
         System.out.println("Rotation: RMSE " + getRotationRMSE() + ", Max: " + getMaxRotationError());

@@ -14,14 +14,17 @@ public abstract class PoseSpline {
 
     public abstract Rotation2d getHeading(double t);
 
-    // Course i.e. motion direction. May be different from heading for holonomic motions.
+    // Course i.e. motion direction. May be different from heading for holonomic
+    // motions.
     public abstract Optional<Rotation2d> getCourse(double t);
 
-    // dtheta/dt (radians per t) - if you want radians per meter, use getDHeading / getVelocity.
+    // dtheta/dt (radians per t) - if you want radians per meter, use getDHeading /
+    // getVelocity.
     public abstract double getDHeading(double t);
 
     // inverse meters.
-    // Curvature tells us how the motion direction is changing, whereas DHeading tells us how facing direction is changing.
+    // Curvature tells us how the motion direction is changing, whereas DHeading
+    // tells us how facing direction is changing.
     public abstract double getCurvature(double t);
 
     // dk/dt (inverse meters per t)

@@ -1,7 +1,8 @@
 package com.team254.lib.util;
 
 /**
- * This boolean enforces a minimum time for the value to be true.  It captures a rising edge and enforces
+ * This boolean enforces a minimum time for the value to be true. It captures a
+ * rising edge and enforces
  * based on timestamp.
  */
 public class MinTimeBoolean {

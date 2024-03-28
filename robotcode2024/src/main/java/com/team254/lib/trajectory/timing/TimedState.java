@@ -73,9 +73,10 @@ public class TimedState<S extends State<S>> implements State<TimedState<S>> {
         }
         boolean reversing = velocity() < 0.0 || (Util.epsilonEquals(velocity(), 0.0) && acceleration() < 0.0);
         final double new_v = velocity() + acceleration() * delta_t;
-        final double new_s = (reversing ? -1.0 : 1.0) * (velocity() * delta_t + .5 * acceleration() * delta_t * delta_t);
+        final double new_s = (reversing ? -1.0 : 1.0)
+                * (velocity() * delta_t + .5 * acceleration() * delta_t * delta_t);
         double interpolant = new_s / state().distance(other.state());
-        if(Double.isNaN(interpolant)) {
+        if (Double.isNaN(interpolant)) {
             interpolant = 1.0;
         }
         return new TimedState<S>(state().interpolate(other.state(), interpolant),
@@ -96,7 +97,8 @@ public class TimedState<S extends State<S>> implements State<TimedState<S>> {
 
     @Override
     public boolean equals(final Object other) {
-        if (other == null || !(other instanceof TimedState<?>)) return false;
+        if (other == null || !(other instanceof TimedState<?>))
+            return false;
         TimedState<?> ts = (TimedState<?>) other;
         return state().equals(ts.state()) && Util.epsilonEquals(t(), ts.t());
     }

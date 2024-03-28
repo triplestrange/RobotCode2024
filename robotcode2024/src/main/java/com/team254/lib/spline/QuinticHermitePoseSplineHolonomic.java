@@ -6,7 +6,6 @@ import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.util.Util;
 
-
 public class QuinticHermitePoseSplineHolonomic extends QuinticHermitePoseSplineNonholonomic {
     final QuinticHermiteSpline1d theta;
     final Rotation2d r0;
@@ -24,20 +23,23 @@ public class QuinticHermitePoseSplineHolonomic extends QuinticHermitePoseSplineN
         theta = new QuinticHermiteSpline1d(0.0, delta, 0, 0, 0, 0);
     }
 
-    private QuinticHermitePoseSplineHolonomic(QuinticHermiteSpline1d x, QuinticHermiteSpline1d y, QuinticHermiteSpline1d theta, Rotation2d r0) {
+    private QuinticHermitePoseSplineHolonomic(QuinticHermiteSpline1d x, QuinticHermiteSpline1d y,
+            QuinticHermiteSpline1d theta, Rotation2d r0) {
         super(x, y);
         this.theta = theta;
         this.r0 = r0;
     }
 
-    // Return a new spline that is a copy of this one, but with adjustments to second derivatives.
+    // Return a new spline that is a copy of this one, but with adjustments to
+    // second derivatives.
     @Override
-    protected QuinticHermitePoseSplineHolonomic adjustSecondDerivatives(double ddx0_adjustment, double ddx1_adjustment, double ddy0_adjustment, double ddy1_adjustment) {
+    protected QuinticHermitePoseSplineHolonomic adjustSecondDerivatives(double ddx0_adjustment, double ddx1_adjustment,
+            double ddy0_adjustment, double ddy1_adjustment) {
         return new QuinticHermitePoseSplineHolonomic(
-            x.addCoefs(new QuinticHermiteSpline1d(0, 0, 0, 0, ddx0_adjustment, ddx1_adjustment)),
-            y.addCoefs(new QuinticHermiteSpline1d(0, 0, 0, 0, ddy0_adjustment, ddy1_adjustment)),
-            theta,
-            r0);
+                x.addCoefs(new QuinticHermiteSpline1d(0, 0, 0, 0, ddx0_adjustment, ddx1_adjustment)),
+                y.addCoefs(new QuinticHermiteSpline1d(0, 0, 0, 0, ddy0_adjustment, ddy1_adjustment)),
+                theta,
+                r0);
     }
 
     @Override

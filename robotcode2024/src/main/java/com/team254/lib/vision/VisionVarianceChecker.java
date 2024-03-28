@@ -14,7 +14,6 @@ public class VisionVarianceChecker {
     private double sumTheta;
     private int maxSize;
 
-
     public VisionVarianceChecker(int maxSize) {
         this.maxSize = maxSize;
         sumX = 0;
@@ -30,8 +29,6 @@ public class VisionVarianceChecker {
         double meanY = sumY / yMeasurements.size();
         double meanTheta = sumTheta / thetaMeasurements.size();
 
-
-
         double diffMeanX = Math.abs(meanX - offset.x());
         double diffMeanY = Math.abs(meanY - offset.y());
         double diffMeanTheta = Math.abs(meanTheta - rotationOffset);
@@ -41,7 +38,7 @@ public class VisionVarianceChecker {
         }
 
         return false;
- 
+
     }
 
     public void add(Translation2d offset, double rotationOffset) {
@@ -63,7 +60,6 @@ public class VisionVarianceChecker {
         }
     }
 
-
     public int getSize() {
         return xMeasurements.size();
     }
@@ -77,5 +73,5 @@ public class VisionVarianceChecker {
         yMeasurements.clear();
         thetaMeasurements.clear();
     }
-    
+
 }

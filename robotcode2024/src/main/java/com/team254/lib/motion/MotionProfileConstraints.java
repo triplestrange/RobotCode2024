@@ -41,7 +41,8 @@ public class MotionProfileConstraints {
             return false;
         }
         final MotionProfileConstraints other = (MotionProfileConstraints) obj;
-        return (other.max_abs_acc() == max_abs_acc()) && (other.max_vel() == max_vel()) && (other.min_vel() == min_vel());
+        return (other.max_abs_acc() == max_abs_acc()) && (other.max_vel() == max_vel())
+                && (other.min_vel() == min_vel());
     }
 
     public String toString() {

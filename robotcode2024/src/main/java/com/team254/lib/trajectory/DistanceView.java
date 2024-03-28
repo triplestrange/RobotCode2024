@@ -12,7 +12,8 @@ public class DistanceView<S extends State<S>> implements TrajectoryView<S> {
         distances_ = new double[trajectory_.length()];
         distances_[0] = 0.0;
         for (int i = 1; i < trajectory_.length(); ++i) {
-            distances_[i] = distances_[i - 1] + trajectory_.getPoint(i - 1).state().distance(trajectory_.getPoint(i).state());
+            distances_[i] = distances_[i - 1]
+                    + trajectory_.getPoint(i - 1).state().distance(trajectory_.getPoint(i).state());
         }
     }
 
@@ -31,7 +32,8 @@ public class DistanceView<S extends State<S>> implements TrajectoryView<S> {
                 } else {
                     return new TrajectorySamplePoint<>(
                             prev_s.state().interpolate(s.state(),
-                                    (distance - distances_[i - 1]) / (distances_[i] - distances_[i - 1])), i - 1, i);
+                                    (distance - distances_[i - 1]) / (distances_[i] - distances_[i - 1])),
+                            i - 1, i);
                 }
             }
         }

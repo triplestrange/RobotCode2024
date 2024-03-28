@@ -46,23 +46,27 @@ public class MotionState {
     }
 
     /**
-     * Extrapolates this MotionState to the specified time by applying this MotionState's acceleration.
+     * Extrapolates this MotionState to the specified time by applying this
+     * MotionState's acceleration.
      *
      * @param t The time of the new MotionState.
-     * @return A MotionState that is a valid predecessor (if t<=0) or successor (if t>=0) of this state.
+     * @return A MotionState that is a valid predecessor (if t<=0) or successor (if
+     *         t>=0) of this state.
      */
     public MotionState extrapolate(double t) {
         return extrapolate(t, acc);
     }
 
     /**
-     * Extrapolates this MotionState to the specified time by applying a given acceleration to the (t, pos, vel) portion
+     * Extrapolates this MotionState to the specified time by applying a given
+     * acceleration to the (t, pos, vel) portion
      * of this MotionState.
      *
      * @param t   The time of the new MotionState.
      * @param acc The acceleration to apply.
-     * @return A MotionState that is a valid predecessor (if t<=0) or successor (if t>=0) of this state (with the
-     * specified accel).
+     * @return A MotionState that is a valid predecessor (if t<=0) or successor (if
+     *         t>=0) of this state (with the
+     *         specified accel).
      */
     public MotionState extrapolate(double t, double acc) {
         final double dt = t - this.t;
@@ -70,11 +74,13 @@ public class MotionState {
     }
 
     /**
-     * Find the next time (first time > MotionState.t()) that this MotionState will be at pos. This is an inverse of the
+     * Find the next time (first time > MotionState.t()) that this MotionState will
+     * be at pos. This is an inverse of the
      * extrapolate() method.
      *
      * @param pos The position to query.
-     * @return The time when we are next at pos() if we are extrapolating with a positive dt. NaN if we never reach pos.
+     * @return The time when we are next at pos() if we are extrapolating with a
+     *         positive dt. NaN if we never reach pos.
      */
     public double nextTimeAtPos(double pos) {
         if (epsilonEquals(pos, this.pos, kEpsilon)) {
@@ -121,7 +127,8 @@ public class MotionState {
     }
 
     /**
-     * Checks if two MotionStates are epsilon-equals (all fields are equal within a nominal tolerance).
+     * Checks if two MotionStates are epsilon-equals (all fields are equal within a
+     * nominal tolerance).
      */
     @Override
     public boolean equals(Object other) {
@@ -129,14 +136,16 @@ public class MotionState {
     }
 
     /**
-     * Checks if two MotionStates are epsilon-equals (all fields are equal within a specified tolerance).
+     * Checks if two MotionStates are epsilon-equals (all fields are equal within a
+     * specified tolerance).
      */
     public boolean equals(MotionState other, double epsilon) {
         return coincident(other, epsilon) && epsilonEquals(acc, other.acc, epsilon);
     }
 
     /**
-     * Checks if two MotionStates are coincident (t, pos, and vel are equal within a nominal tolerance, but acceleration
+     * Checks if two MotionStates are coincident (t, pos, and vel are equal within a
+     * nominal tolerance, but acceleration
      * may be different).
      */
     public boolean coincident(MotionState other) {
@@ -144,7 +153,8 @@ public class MotionState {
     }
 
     /**
-     * Checks if two MotionStates are coincident (t, pos, and vel are equal within a specified tolerance, but
+     * Checks if two MotionStates are coincident (t, pos, and vel are equal within a
+     * specified tolerance, but
      * acceleration may be different).
      */
     public boolean coincident(MotionState other, double epsilon) {
@@ -153,7 +163,8 @@ public class MotionState {
     }
 
     /**
-     * Returns a MotionState that is the mirror image of this one. Pos, vel, and acc are all negated, but time is not.
+     * Returns a MotionState that is the mirror image of this one. Pos, vel, and acc
+     * are all negated, but time is not.
      */
     public MotionState flipped() {
         return new MotionState(t, -pos, -vel, -acc);

@@ -17,7 +17,8 @@ public class TuningLogger {
 
     public void logData(String mapName, double range, double value) {
         if (mWriter != null) {
-            String line = mapName + ".put(new InterpolatingDouble(" + range + "), new InterpolatingDouble(" + value + "));\n";
+            String line = mapName + ".put(new InterpolatingDouble(" + range + "), new InterpolatingDouble(" + value
+                    + "));\n";
             mWriter.write(line);
             mWriter.flush();
             System.out.println("Wrote: " + line);

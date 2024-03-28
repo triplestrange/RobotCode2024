@@ -1,6 +1,5 @@
 package com.team254.lib.util;
 
-
 import java.util.List;
 
 /**
@@ -12,7 +11,8 @@ public class Util {
     /**
      * Prevent this class from being instantiated.
      */
-    private Util() {}
+    private Util() {
+    }
 
     /**
      * Limits the given input to the given magnitude.

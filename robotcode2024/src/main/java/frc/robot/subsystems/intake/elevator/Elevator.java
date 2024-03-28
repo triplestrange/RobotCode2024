@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Elevator extends SubsystemBase {
+public class Elevator {
 
     @AutoLogOutput
     public Mechanism2d intakeMech;
@@ -143,7 +143,6 @@ public class Elevator extends SubsystemBase {
         return new IntakePosition(inputs.elevatorPosMeters, inputs.jointPosDeg);
     }
 
-    @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);

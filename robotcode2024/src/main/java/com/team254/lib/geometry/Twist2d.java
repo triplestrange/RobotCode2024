@@ -7,10 +7,12 @@ import java.text.DecimalFormat;
 import java.util.Optional;
 
 /**
- * A movement along an arc at constant curvature and velocity. We can use ideas from "differential calculus" to create
+ * A movement along an arc at constant curvature and velocity. We can use ideas
+ * from "differential calculus" to create
  * new RigidTransform2d's from a Twist2d and visa versa.
  * <p>
- * A Twist can be used to represent a difference between two poses, a velocity, an acceleration, etc.
+ * A Twist can be used to represent a difference between two poses, a velocity,
+ * an acceleration, etc.
  */
 public class Twist2d implements Interpolable<Twist2d>, ICourse2d<Twist2d> {
     protected static final Twist2d kIdentity = new Twist2d(0.0, 0.0, 0.0);
@@ -62,17 +64,20 @@ public class Twist2d implements Interpolable<Twist2d>, ICourse2d<Twist2d> {
         }
     }
 
-    // Commented out to avoid confusion since we use Twists to refer to various things, some of which have meaningful curvatures and others don't.
-    /*public double curvature() {
-        if (Math.abs(dtheta) < Util.kEpsilon && norm() < Util.kEpsilon)
-            return 0.0;
-        return dtheta / norm();
-    }*/
+    // Commented out to avoid confusion since we use Twists to refer to various
+    // things, some of which have meaningful curvatures and others don't.
+    /*
+     * public double curvature() {
+     * if (Math.abs(dtheta) < Util.kEpsilon && norm() < Util.kEpsilon)
+     * return 0.0;
+     * return dtheta / norm();
+     * }
+     */
 
     public boolean epsilonEquals(final Twist2d other, double epsilon) {
         return Util.epsilonEquals(dx, other.dx, epsilon) &&
-               Util.epsilonEquals(dy, other.dy, epsilon) &&
-               Util.epsilonEquals(dtheta, other.dtheta, epsilon);
+                Util.epsilonEquals(dy, other.dy, epsilon) &&
+                Util.epsilonEquals(dtheta, other.dtheta, epsilon);
     }
 
     @Override
@@ -84,7 +89,7 @@ public class Twist2d implements Interpolable<Twist2d>, ICourse2d<Twist2d> {
     @Override
     public Twist2d interpolate(Twist2d other, double x) {
         return new Twist2d(Util.interpolate(dx, other.dx, x),
-                           Util.interpolate(dy, other.dy, x),
-                           Util.interpolate(dtheta, other.dtheta, x));
+                Util.interpolate(dy, other.dy, x),
+                Util.interpolate(dtheta, other.dtheta, x));
     }
 }

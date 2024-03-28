@@ -7,7 +7,8 @@ import java.util.List;
 /**
  * Finds the stats (mean, standard deviation, etc.) of a list
  * <p>
- * Example use case: finding out how long a planner takes from the average of 100 tries
+ * Example use case: finding out how long a planner takes from the average of
+ * 100 tries
  */
 public class StatFinder {
     private final List<Double> numbers = new ArrayList<>();
@@ -19,7 +20,8 @@ public class StatFinder {
     /**
      * Creates a new StatFinder
      *
-     * @param numberToIgnore the number of entries to ignore before logging (like burning the top card of a deck before dealing)
+     * @param numberToIgnore the number of entries to ignore before logging (like
+     *                       burning the top card of a deck before dealing)
      */
     public StatFinder(int numberToIgnore) {
         this.numberToIgnore = numberToIgnore;

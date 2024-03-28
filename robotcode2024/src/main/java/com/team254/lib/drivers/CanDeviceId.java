@@ -14,9 +14,13 @@ public class CanDeviceId {
         this(deviceNumber, "");
     }
 
-    public int getDeviceNumber() { return mDeviceNumber; }
+    public int getDeviceNumber() {
+        return mDeviceNumber;
+    }
 
-    public String getBus() { return mBus; }
+    public String getBus() {
+        return mBus;
+    }
 
     public boolean equals(CanDeviceId other) {
         return other.mDeviceNumber == mDeviceNumber && other.mBus == mBus;

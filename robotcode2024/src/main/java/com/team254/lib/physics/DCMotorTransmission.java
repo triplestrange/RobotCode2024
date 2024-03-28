@@ -3,19 +3,20 @@ package com.team254.lib.physics;
 import com.team254.lib.util.Util;
 
 /**
- * Model of a DC motor rotating a shaft.  All parameters refer to the output (e.g. should already consider gearing
- * and efficiency losses).  The motor is assumed to be symmetric forward/reverse.
+ * Model of a DC motor rotating a shaft. All parameters refer to the output
+ * (e.g. should already consider gearing
+ * and efficiency losses). The motor is assumed to be symmetric forward/reverse.
  */
 public class DCMotorTransmission {
 
     // All units must be SI!
-    protected final double speed_per_volt_;  // rad/s per V (no load)
-    protected final double torque_per_volt_;  // N m per V (stall)
-    protected final double friction_voltage_;  // V
+    protected final double speed_per_volt_; // rad/s per V (no load)
+    protected final double torque_per_volt_; // N m per V (stall)
+    protected final double friction_voltage_; // V
 
     public DCMotorTransmission(final double speed_per_volt,
-                               final double torque_per_volt,
-                               final double friction_voltage) {
+            final double torque_per_volt,
+            final double friction_voltage) {
         speed_per_volt_ = speed_per_volt;
         torque_per_volt_ = torque_per_volt;
         friction_voltage_ = friction_voltage;

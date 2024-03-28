@@ -5,7 +5,8 @@ import com.team254.lib.geometry.Twist2d;
 import java.util.ArrayList;
 
 /**
- * Helper class for storing and calculating a moving average of the Twist2d class
+ * Helper class for storing and calculating a moving average of the Twist2d
+ * class
  */
 public class MovingAverageTwist2d {
     ArrayList<Twist2d> twists = new ArrayList<Twist2d>();

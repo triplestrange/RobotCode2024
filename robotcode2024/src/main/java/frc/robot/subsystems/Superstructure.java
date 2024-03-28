@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -7,6 +11,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.cannon.climb.Climb;
 import frc.robot.subsystems.cannon.shooter.Shooter;
 import frc.robot.subsystems.intake.elevator.Elevator;
+import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class Superstructure extends SubsystemBase {
 
@@ -14,16 +19,18 @@ public class Superstructure extends SubsystemBase {
   private GoalState desiredGoal = GoalState.STOW;
   private GoalState lastGoal = GoalState.STOW;
 
-  private final Elevator elevator;
-  private final Climb climb;
-  private final Shooter shooter;
+  private final Elevator m_Elevator;
+  private final Climb m_Climb;
+  private final Shooter m_Shooter;
 
   private Timer goalTimer = new Timer();
 
-  public Superstructure(RobotContainer m_robotcontainer) {
-    this.
+  public Superstructure(Elevator m_Elevator, Climb m_Climb, Shooter m_Shooter) {
+    this.m_Elevator = m_Elevator;
+    this.m_Climb = m_Climb;
+    this.m_Shooter = m_Shooter;
 
-        setDefaultCommand(setGoalCommand(GoalState.STOW));
+    setDefaultCommand(setGoalCommand(GoalState.STOW));
     goalTimer.start();
   }
 
@@ -39,16 +46,28 @@ public class Superstructure extends SubsystemBase {
   }
 
   @Override
-    public void periodic() {
-        switch () {
-            case value:
-                
-                break;
-        
-            default:
-                break;
-        }
+  public void periodic() {
+    if (DriverStation.isDisabled()) {
+      setDefaultCommand(setGoalCommand(GoalState.STOW));
     }
+
+    // Reset timer
+    if (currentGoal != lastGoal) {
+      goalTimer.reset();
+    }
+    lastGoal = currentGoal;
+
+    switch (currentGoal) {
+
+    }
+
+    m_Shooter.periodic();
+    m_Climb.periodic();
+    m_Elevator.periodic();
+
+    Logger.recordOutput("Superstructure/GoalState", desiredGoal);
+    Logger.recordOutput("Superstructure/CurrentState", currentGoal);
+  }
 
   private void setGoal(GoalState goal) {
     if (desiredGoal == goal)
@@ -62,16 +81,9 @@ public class Superstructure extends SubsystemBase {
         .withName("Superstructure " + goal);
   }
 
-  /** Command to aim the superstructure with a compensation value in degrees */
-  public Command aimWithCompensation(double compensation) {
-    return setGoalCommand(Goal.AIM)
-        .beforeStarting(() -> arm.setCurrentCompensation(compensation))
-        .finallyDo(() -> arm.setCurrentCompensation(0.0));
-  }
-
   @AutoLogOutput(key = "Superstructure/CompletedGoal")
   public boolean atGoal() {
-    return currentGoal == desiredGoal && arm.atGoal() && climber.atGoal();
+    return currentGoal == desiredGoal && arm.atGoal() && m_Climb.atGoal();
   }
 
   @AutoLogOutput(key = "Superstructure/AtArmGoal")

@@ -12,7 +12,7 @@ public class AimingParameters {
     private final boolean is_latest;
 
     public AimingParameters(Pose2d field_to_vehicle,
-                            Pose2d field_to_goal, int track_id, boolean is_latest) {
+            Pose2d field_to_goal, int track_id, boolean is_latest) {
         this.field_to_vehicle = field_to_vehicle;
         this.field_to_goal = field_to_goal;
         final Pose2d vehicle_to_goal = field_to_vehicle.inverse().transformBy(field_to_goal);

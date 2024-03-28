@@ -3,8 +3,10 @@ package com.team254.lib.motion;
 import static com.team254.lib.util.Util.epsilonEquals;
 
 /**
- * A MotionProfileGoal defines a desired position and maximum velocity (at this position), along with the behavior that
- * should be used to determine if we are at the goal and what to do if it is infeasible to reach the goal within the
+ * A MotionProfileGoal defines a desired position and maximum velocity (at this
+ * position), along with the behavior that
+ * should be used to determine if we are at the goal and what to do if it is
+ * infeasible to reach the goal within the
  * desired velocity bounds.
  */
 public class MotionProfileGoal implements IMotionProfileGoal {
@@ -14,7 +16,8 @@ public class MotionProfileGoal implements IMotionProfileGoal {
     protected double pos_tolerance = 1E-3;
     protected double vel_tolerance = 1E-2;
 
-    public MotionProfileGoal() {}
+    public MotionProfileGoal() {
+    }
 
     public MotionProfileGoal(double pos) {
         this.pos = pos;
@@ -35,7 +38,7 @@ public class MotionProfileGoal implements IMotionProfileGoal {
     }
 
     public MotionProfileGoal(double pos, double max_abs_vel, CompletionBehavior completion_behavior,
-                             double pos_tolerance, double vel_tolerance) {
+            double pos_tolerance, double vel_tolerance) {
         this.pos = pos;
         this.max_vel = max_abs_vel;
         this.completion_behavior = completion_behavior;
@@ -49,7 +52,8 @@ public class MotionProfileGoal implements IMotionProfileGoal {
     }
 
     /**
-     * @return A flipped MotionProfileGoal (where the position is negated, but all other attributes remain the same).
+     * @return A flipped MotionProfileGoal (where the position is negated, but all
+     *         other attributes remain the same).
      */
     @Override
     public MotionProfileGoal flipped() {
@@ -98,7 +102,8 @@ public class MotionProfileGoal implements IMotionProfileGoal {
     }
 
     /**
-     * This method makes sure that the completion behavior is compatible with the max goal velocity.
+     * This method makes sure that the completion behavior is compatible with the
+     * max goal velocity.
      */
     protected void sanityCheck() {
         if (max_vel > vel_tolerance && completion_behavior == CompletionBehavior.OVERSHOOT) {
@@ -119,7 +124,8 @@ public class MotionProfileGoal implements IMotionProfileGoal {
         }
         final MotionProfileGoal other = (MotionProfileGoal) obj;
         return (other.completion_behavior() == completion_behavior()) && (other.pos() == pos())
-                && (other.max_vel() == max_vel()) && (other.min_vel() == min_vel()) && (other.pos_tolerance() == pos_tolerance())
+                && (other.max_vel() == max_vel()) && (other.min_vel() == min_vel())
+                && (other.pos_tolerance() == pos_tolerance())
                 && (other.vel_tolerance() == vel_tolerance());
     }
 }

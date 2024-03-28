@@ -9,8 +9,10 @@ import static com.team254.lib.motion.MotionUtil.kEpsilon;
 import static com.team254.lib.util.Util.epsilonEquals;
 
 /**
- * A motion profile specifies a 1D time-parameterized trajectory. The trajectory is composed of successively coincident
- * MotionSegments from which the desired state of motion at any given distance or time can be calculated.
+ * A motion profile specifies a 1D time-parameterized trajectory. The trajectory
+ * is composed of successively coincident
+ * MotionSegments from which the desired state of motion at any given distance
+ * or time can be calculated.
  */
 public class MotionProfile {
     protected List<MotionSegment> mSegments;
@@ -23,7 +25,8 @@ public class MotionProfile {
     }
 
     /**
-     * Create a MotionProfile from an existing list of segments (note that validity is not checked).
+     * Create a MotionProfile from an existing list of segments (note that validity
+     * is not checked).
      *
      * @param segments The new segments of the profile.
      */
@@ -36,7 +39,8 @@ public class MotionProfile {
      * <p>
      * 1. All segments are valid.
      * <p>
-     * 2. Successive segments are C1 continuous in position and C0 continuous in velocity.
+     * 2. Successive segments are C1 continuous in position and C0 continuous in
+     * velocity.
      *
      * @return True if the MotionProfile is valid.
      */
@@ -69,7 +73,8 @@ public class MotionProfile {
      * Get the interpolated MotionState at any given time.
      *
      * @param t The time to query.
-     * @return Empty if the time is outside the time bounds of the profile, or the resulting MotionState otherwise.
+     * @return Empty if the time is outside the time bounds of the profile, or the
+     *         resulting MotionState otherwise.
      */
     public Optional<MotionState> stateByTime(double t) {
         if (t < startTime() && t + kEpsilon >= startTime()) {
@@ -87,10 +92,12 @@ public class MotionProfile {
     }
 
     /**
-     * Get the interpolated MotionState at any given time, clamping to the endpoints if time is out of bounds.
+     * Get the interpolated MotionState at any given time, clamping to the endpoints
+     * if time is out of bounds.
      *
      * @param t The time to query.
-     * @return The MotionState at time t, or closest to it if t is outside the profile.
+     * @return The MotionState at time t, or closest to it if t is outside the
+     *         profile.
      */
     public MotionState stateByTimeClamped(double t) {
         if (t < startTime()) {
@@ -108,12 +115,14 @@ public class MotionProfile {
     }
 
     /**
-     * Get the interpolated MotionState by distance (the "pos()" field of MotionState). Note that since a profile may
+     * Get the interpolated MotionState by distance (the "pos()" field of
+     * MotionState). Note that since a profile may
      * reverse, this method only returns the *first* instance of this position.
      *
      * @param pos The position to query.
-     * @return Empty if the profile never crosses pos or if the profile is invalid, or the resulting MotionState
-     * otherwise.
+     * @return Empty if the profile never crosses pos or if the profile is invalid,
+     *         or the resulting MotionState
+     *         otherwise.
      */
     public Optional<MotionState> firstStateByPos(double pos) {
         for (MotionSegment s : mSegments) {
@@ -134,13 +143,14 @@ public class MotionProfile {
     }
 
     /**
-     * Remove all parts of the profile prior to the query time. This eliminates whole segments and also shortens any
+     * Remove all parts of the profile prior to the query time. This eliminates
+     * whole segments and also shortens any
      * segments containing t.
      *
      * @param t The query time.
      */
     public void trimBeforeTime(double t) {
-        for (Iterator<MotionSegment> iterator = mSegments.iterator(); iterator.hasNext(); ) {
+        for (Iterator<MotionSegment> iterator = mSegments.iterator(); iterator.hasNext();) {
             MotionSegment s = iterator.next();
             if (s.end().t() <= t) {
                 // Segment is fully before t.
@@ -163,7 +173,8 @@ public class MotionProfile {
     }
 
     /**
-     * Remove all segments and initialize to the desired state (actually a segment of length 0 that starts and ends at
+     * Remove all segments and initialize to the desired state (actually a segment
+     * of length 0 that starts and ends at
      * initial_state).
      *
      * @param initial_state The MotionState to initialize to.
@@ -174,10 +185,11 @@ public class MotionProfile {
     }
 
     /**
-     * Remove redundant segments (segments whose start and end states are coincident).
+     * Remove redundant segments (segments whose start and end states are
+     * coincident).
      */
     public void consolidate() {
-        for (Iterator<MotionSegment> iterator = mSegments.iterator(); iterator.hasNext() && mSegments.size() > 1; ) {
+        for (Iterator<MotionSegment> iterator = mSegments.iterator(); iterator.hasNext() && mSegments.size() > 1;) {
             MotionSegment s = iterator.next();
             if (s.start().coincident(s.end())) {
                 iterator.remove();
@@ -186,7 +198,8 @@ public class MotionProfile {
     }
 
     /**
-     * Add to the profile by applying an acceleration control for a given time. This is appended to the previous last
+     * Add to the profile by applying an acceleration control for a given time. This
+     * is appended to the previous last
      * state.
      *
      * @param acc The acceleration to apply.
@@ -213,7 +226,8 @@ public class MotionProfile {
     }
 
     /**
-     * Add to the profile by inserting a new profile after the final state. No validity checking is done.
+     * Add to the profile by inserting a new profile after the final state. No
+     * validity checking is done.
      *
      * @param profile The profile to add.
      */
@@ -293,8 +307,10 @@ public class MotionProfile {
     }
 
     /**
-     * @return The total distance covered by the profile. Note that distance is the sum of absolute distances of all
-     * segments, so a reversing profile will count the distance covered in each direction.
+     * @return The total distance covered by the profile. Note that distance is the
+     *         sum of absolute distances of all
+     *         segments, so a reversing profile will count the distance covered in
+     *         each direction.
      */
     public double length() {
         double length = 0.0;

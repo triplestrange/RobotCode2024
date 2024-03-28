@@ -11,9 +11,9 @@ public class DriveOutput {
     public double[] drive_vels; // m/s
 
     public DriveOutput() {
-        this(new Rotation2d[]{
-                        Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity()},
-                new double[]{0, 0, 0, 0});
+        this(new Rotation2d[] {
+                Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity() },
+                new double[] { 0, 0, 0, 0 });
     }
 
     public DriveOutput(Rotation2d[] azi_positions, double[] drive_vels) {

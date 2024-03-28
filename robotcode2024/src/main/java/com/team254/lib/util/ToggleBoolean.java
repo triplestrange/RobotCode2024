@@ -5,11 +5,11 @@ public class ToggleBoolean {
     private boolean retVal = false;
 
     public boolean update(boolean newValue) {
-        if(newValue && released) {
+        if (newValue && released) {
             released = false;
             retVal = !retVal;
         }
-        if(!newValue) {
+        if (!newValue) {
             released = true;
         }
         return retVal;

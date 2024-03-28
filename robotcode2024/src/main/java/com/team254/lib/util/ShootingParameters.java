@@ -19,13 +19,13 @@ public class ShootingParameters {
     }
 
     public ShootingParameters(InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> oldBallHoodMap,
-                              InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mediumBallHoodMap,
-                              InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> newBallHoodMap,
-                              InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shooterRPMMap,
-                              Pose2d visionTargetToGoalOffset,
-                              double shooterAllowableErrorRPM,
-                              double turretAllowableErrorMeters,
-                              double hoodAllowableErrorDegrees) {
+            InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mediumBallHoodMap,
+            InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> newBallHoodMap,
+            InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shooterRPMMap,
+            Pose2d visionTargetToGoalOffset,
+            double shooterAllowableErrorRPM,
+            double turretAllowableErrorMeters,
+            double hoodAllowableErrorDegrees) {
         this.mOldBallHoodMap = oldBallHoodMap;
         this.mMediumBallHoodMap = mediumBallHoodMap;
         this.mNewBallHoodMap = newBallHoodMap;
@@ -60,8 +60,10 @@ public class ShootingParameters {
         return Util.epsilonEquals(current_shooter_rpm, shooter_setpoint, mShooterAllowableErrorRPM);
     }
 
-    public synchronized boolean isTurretAtSetpoint(double current_turret_angle, double turret_setpoint, double range_meters) {
-        // This angle subtraction is okay because the turret is bounded to less than +/- 180 rotation.
+    public synchronized boolean isTurretAtSetpoint(double current_turret_angle, double turret_setpoint,
+            double range_meters) {
+        // This angle subtraction is okay because the turret is bounded to less than +/-
+        // 180 rotation.
         final double angle_diff_degrees = turret_setpoint - current_turret_angle;
         final double meters_error = Math.tan(Units.degrees_to_radians(angle_diff_degrees)) * range_meters;
         return Util.epsilonEquals(meters_error, 0.0, mTurretAllowableErrorMeters);

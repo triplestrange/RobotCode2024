@@ -4,7 +4,8 @@ import static com.team254.lib.motion.MotionUtil.kEpsilon;
 import static com.team254.lib.util.Util.epsilonEquals;
 
 /**
- * A MotionSegment is a movement from a start MotionState to an end MotionState with a constant acceleration.
+ * A MotionSegment is a movement from a start MotionState to an end MotionState
+ * with a constant acceleration.
  */
 public class MotionSegment {
     protected MotionState mStart;
@@ -22,7 +23,8 @@ public class MotionSegment {
      * <p>
      * 2. All segments have monotonic position (sign of velocity doesn't change).
      * <p>
-     * 3. The time, position, velocity, and acceleration of the profile are consistent.
+     * 3. The time, position, velocity, and acceleration of the profile are
+     * consistent.
      */
     public boolean isValid() {
         if (!epsilonEquals(start().acc(), end().acc(), kEpsilon)) {

@@ -3,8 +3,10 @@ package com.team254.lib.motion;
 import com.team254.lib.util.Util;
 
 /**
- * A controller for tracking a profile generated to attain a MotionProfileGoal. The controller uses feedforward on
- * acceleration, velocity, and position; proportional feedback on velocity and position; and integral feedback on
+ * A controller for tracking a profile generated to attain a MotionProfileGoal.
+ * The controller uses feedforward on
+ * acceleration, velocity, and position; proportional feedback on velocity and
+ * position; and integral feedback on
  * position.
  */
 public class ProfileFollower {
@@ -33,14 +35,16 @@ public class ProfileFollower {
      *
      * @param kp   The proportional gain on position error.
      * @param ki   The integral gain on position error.
-     * @param kv   The proportional gain on velocity error (or derivative gain on position error).
-     * @param kffv The feedforward gain on velocity. Should be 1.0 if the units of the profile match the units of the
+     * @param kv   The proportional gain on velocity error (or derivative gain on
+     *             position error).
+     * @param kffv The feedforward gain on velocity. Should be 1.0 if the units of
+     *             the profile match the units of the
      *             output.
      * @param kffa The feedforward gain on acceleration.
      * @param ks   The throttle required to break static friction.
      */
     public ProfileFollower(double kp, double ki, double kv, double kffv, double kffa,
-                           double ks) {
+            double ks) {
         resetProfile();
         setGains(kp, ki, kv, kffv, kffa, ks);
     }
@@ -55,7 +59,8 @@ public class ProfileFollower {
     }
 
     /**
-     * Completely clear all state related to the current profile (min and max outputs are maintained).
+     * Completely clear all state related to the current profile (min and max
+     * outputs are maintained).
      */
     public void resetProfile() {
         mTotalError = 0.0;
@@ -86,7 +91,8 @@ public class ProfileFollower {
     }
 
     /**
-     * @return The current goal (null if no goal has been set since the latest call to reset()).
+     * @return The current goal (null if no goal has been set since the latest call
+     *         to reset()).
      */
     public MotionProfileGoal getGoal() {
         return mGoal;
@@ -101,8 +107,10 @@ public class ProfileFollower {
     }
 
     /**
-     * Reset just the setpoint. This means that the latest_state provided to update() will be used rather than feeding
-     * forward the previous setpoint the next time update() is called. This almost always forces a MotionProfile update,
+     * Reset just the setpoint. This means that the latest_state provided to
+     * update() will be used rather than feeding
+     * forward the previous setpoint the next time update() is called. This almost
+     * always forces a MotionProfile update,
      * and may be warranted if tracking error gets very large.
      */
     public void resetSetpoint() {
@@ -116,10 +124,13 @@ public class ProfileFollower {
     /**
      * Update the setpoint and apply the control gains to generate a control output.
      *
-     * @param latest_state The latest *actual* state, used only for feedback purposes (unless this is the first iteration or
-     *                     reset()/resetSetpoint() was just called, in which case this is the new start state for the profile).
+     * @param latest_state The latest *actual* state, used only for feedback
+     *                     purposes (unless this is the first iteration or
+     *                     reset()/resetSetpoint() was just called, in which case
+     *                     this is the new start state for the profile).
      * @param t            The timestamp for which the setpoint is desired.
-     * @return An output that reflects the control output to apply to achieve the new setpoint.
+     * @return An output that reflects the control output to apply to achieve the
+     *         new setpoint.
      */
     public synchronized double update(MotionState latest_state, double t) {
         mLatestActualState = latest_state;
@@ -175,7 +186,8 @@ public class ProfileFollower {
     }
 
     /**
-     * We are finished the profile when the final setpoint has been generated. Note that this does not check whether we
+     * We are finished the profile when the final setpoint has been generated. Note
+     * that this does not check whether we
      * are anywhere close to the final setpoint, however.
      *
      * @return True if the final setpoint has been generated for the current goal.
@@ -185,7 +197,8 @@ public class ProfileFollower {
     }
 
     /**
-     * We are on target if our actual state achieves the goal (where the definition of achievement depends on the goal's
+     * We are on target if our actual state achieves the goal (where the definition
+     * of achievement depends on the goal's
      * completion behavior).
      *
      * @return True if we have actually achieved the current goal.
