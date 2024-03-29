@@ -9,8 +9,7 @@ import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.Robot;
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.Constants.CAN;
-import com.team1533.frc.robot.Constants.ModuleConstants;
-import com.team1533.frc.robot.Constants.SwerveConstants;
+import com.team1533.frc.robot.subsystems.vision.VisionConstants;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -36,27 +35,27 @@ public class SwerveDrive extends SubsystemBase {
   // Robot swerve modules
   private final SwerveModule m_frontLeft = new SwerveModule(CAN.FL_DRIVE,
       CAN.FL_STEER,
-      ModuleConstants.FL_ENCODER,
+      SwerveModuleConstants.FL_ENCODER,
       SwerveConstants.frontLeftSteerEncoderReversed,
-      ModuleConstants.FL_ENC_OFFSET);
+      SwerveModuleConstants.FL_ENC_OFFSET);
 
   private final SwerveModule m_rearLeft = new SwerveModule(CAN.BL_DRIVE,
       CAN.BL_STEER,
-      ModuleConstants.BL_ENCODER,
+      SwerveModuleConstants.BL_ENCODER,
       SwerveConstants.backLeftSteerEncoderReversed,
-      ModuleConstants.BL_ENC_OFFSET);
+      SwerveModuleConstants.BL_ENC_OFFSET);
 
   private final SwerveModule m_frontRight = new SwerveModule(CAN.FR_DRIVE,
       CAN.FR_STEER,
-      ModuleConstants.FR_ENCODER,
+      SwerveModuleConstants.FR_ENCODER,
       SwerveConstants.frontRightSteerEncoderReversed,
-      ModuleConstants.FR_ENC_OFFSET);
+      SwerveModuleConstants.FR_ENC_OFFSET);
 
   private final SwerveModule m_rearRight = new SwerveModule(CAN.BR_DRIVE,
       CAN.BR_STEER,
-      ModuleConstants.BR_ENCODER,
+      SwerveModuleConstants.BR_ENCODER,
       SwerveConstants.backRightSteerEncoderReversed,
-      ModuleConstants.BR_ENC_OFFSET);
+      SwerveModuleConstants.BR_ENC_OFFSET);
 
   private SwerveModuleState[] swerveModuleStates;
   public ChassisSpeeds currentMovement;
@@ -85,8 +84,8 @@ public class SwerveDrive extends SubsystemBase {
           m_rearRight.getPosition()
       },
       new Pose2d(0, 0, new Rotation2d(0)),
-      Constants.VisionConstants.STATE_STD_DEVS,
-      Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+      VisionConstants.STATE_STD_DEVS,
+      VisionConstants.VISION_MEASUREMENT_STD_DEVS);
 
   /**
    * Creates a new DriveSubsystem.
@@ -265,7 +264,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public void updateChassisSpeeds() {
-    currentMovement = Constants.SwerveConstants.kDriveKinematics.toChassisSpeeds(
+    currentMovement = SwerveConstants.kDriveKinematics.toChassisSpeeds(
         m_frontLeft.getState(),
         m_frontRight.getState(),
         m_rearLeft.getState(),
@@ -287,7 +286,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-    setModuleStates(Constants.SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
+    setModuleStates(SwerveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   /**

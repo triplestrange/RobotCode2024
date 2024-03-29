@@ -1,22 +1,13 @@
 package com.team1533.frc.robot.subsystems.superstructure.climb;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
-
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.subsystems.superstructure.climb.Climb.ClimbPosition;
-import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.team1533.frc.robot.subsystems.superstructure.climb.Climber.ClimbPosition;
 
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
-public interface ClimbIO {
+public interface ClimberIO {
 
     @AutoLog
-    public static class ClimbIOInputs {
+    public static class ClimberIOInputs {
         public boolean leftMotorConnected = true;
         public boolean rightMotorConnected = true;
 
@@ -41,7 +32,7 @@ public interface ClimbIO {
         public double rightSpeed = 0.0;
     }
 
-    default void updateInputs(ClimbIOInputs inputs) {
+    default void updateInputs(ClimberIOInputs inputs) {
     }
 
     /** Run to setpoint IntakePosition in meters and degrees */

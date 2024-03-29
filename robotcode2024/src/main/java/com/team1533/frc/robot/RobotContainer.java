@@ -4,16 +4,11 @@
 
 package com.team1533.frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.team1533.frc.robot.Constants.JoystickButtons;
 import com.team1533.frc.robot.commands.AutoMain;
 import com.team1533.frc.robot.commands.DefaultDrive;
-import com.team1533.frc.robot.commands.automations.AutoPickupFieldRelative;
 import com.team1533.frc.robot.commands.automations.DriveTo;
 import com.team1533.frc.robot.commands.automations.Shoot;
-import com.team1533.frc.robot.commands.indexer.GroundToIndexer;
 import com.team1533.frc.robot.commands.indexer.GroundToIntake;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheel;
@@ -34,10 +29,10 @@ import com.team1533.frc.robot.subsystems.superstructure.arm.Arm;
 import com.team1533.frc.robot.subsystems.superstructure.arm.ArmIO;
 import com.team1533.frc.robot.subsystems.superstructure.arm.ArmIOReal;
 import com.team1533.frc.robot.subsystems.superstructure.arm.ArmIOSim;
-import com.team1533.frc.robot.subsystems.superstructure.climb.Climb;
-import com.team1533.frc.robot.subsystems.superstructure.climb.ClimbIO;
-import com.team1533.frc.robot.subsystems.superstructure.climb.ClimbIOReal;
-import com.team1533.frc.robot.subsystems.superstructure.climb.ClimbIOSim;
+import com.team1533.frc.robot.subsystems.superstructure.climb.Climber;
+import com.team1533.frc.robot.subsystems.superstructure.climb.ClimberIO;
+import com.team1533.frc.robot.subsystems.superstructure.climb.ClimberIOReal;
+import com.team1533.frc.robot.subsystems.superstructure.climb.ClimberIOSim;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIOReal;
@@ -48,14 +43,8 @@ import com.team1533.frc.robot.util.Alert;
 import com.team1533.frc.robot.util.Alert.AlertType;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -73,7 +62,7 @@ public class RobotContainer {
         public Intake m_intake;
         public Arm m_Arm;
         public FlyWheel m_flywheel;
-        public Climb m_climb;
+        public Climber m_climb;
         public Indexer m_indexer;
         public final Shoot m_shoot;
         public final Vision m_vision;
@@ -104,7 +93,7 @@ public class RobotContainer {
                                         m_elevator = new Elevator(new ElevatorIOReal());
                                         m_intake = new Intake(new IntakeIOReal());
                                         m_flywheel = new FlyWheel(new FlyWheelIOReal());
-                                        m_climb = new Climb(new ClimbIOReal());
+                                        m_climb = new Climber(new ClimberIOReal());
                                         m_Arm = new Arm(new ArmIOReal(), m_robotDrive);
                                 }
                                 case SIMBOT -> {
@@ -112,7 +101,7 @@ public class RobotContainer {
                                         m_intake = new Intake(new IntakeIOSim());
                                         m_indexer = new Indexer(new IndexerIOSim());
                                         m_flywheel = new FlyWheel(new FlyWheelIOSim());
-                                        m_climb = new Climb(new ClimbIOSim());
+                                        m_climb = new Climber(new ClimberIOSim());
                                         m_Arm = new Arm(new ArmIOSim(), m_robotDrive);
                                 }
                         }
@@ -135,7 +124,7 @@ public class RobotContainer {
                         });
                 }
                 if (m_climb == null) {
-                        m_climb = new Climb(new ClimbIO() {
+                        m_climb = new Climber(new ClimberIO() {
 
                         });
                 }
@@ -248,7 +237,7 @@ public class RobotContainer {
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive));
+                                .whileTrue(new DriveTo(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
 
                 // Note Pick Automation
                 // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,

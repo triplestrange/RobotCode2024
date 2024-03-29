@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class IndexerIOSim implements IndexerIO {
-    private final FlywheelSim IndexerSim = new FlywheelSim(DCMotor.getNEO(1), Constants.IndexerConstants.rollerGearing,
+    private final FlywheelSim IndexerSim = new FlywheelSim(DCMotor.getNEO(1), IndexerConstants.rollerGearing,
             1);
 
     double IndexerMotorCurrent = 0.0;
@@ -44,8 +44,8 @@ public class IndexerIOSim implements IndexerIO {
 
         IndexerSim.update(Constants.LoggerConstants.kDt);
 
-        inputs.linearVel = IndexerSim.getAngularVelocityRPM() * Constants.IndexerConstants.rollerDiameterMeters
-                * Math.PI / Constants.IndexerConstants.rollerGearing / 60;
+        inputs.linearVel = IndexerSim.getAngularVelocityRPM() * IndexerConstants.rollerDiameterMeters
+                * Math.PI / IndexerConstants.rollerGearing / 60;
         inputs.appliedVolts = IndexerAppliedVolts;
         inputs.motorCurrent = IndexerSim.getCurrentDrawAmps();
         inputs.tempCelcius = 0.0;

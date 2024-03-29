@@ -97,10 +97,10 @@ public class Arm {
 
         disableSupplier = DriverStation::isDisabled;
 
-        pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
-                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD,
-                new Constraints(Constants.ShooterConstants.kMaxAngularPivotSpeedDegreesPerSecond,
-                        Constants.ShooterConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
+        pivotController = new ProfiledPIDController(ArmConstants.pivotkP,
+                ArmConstants.pivotkI, ArmConstants.pivotkD,
+                new Constraints(ArmConstants.kMaxAngularPivotSpeedDegreesPerSecond,
+                        ArmConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
 
         pivotController.setIZone(1);
 

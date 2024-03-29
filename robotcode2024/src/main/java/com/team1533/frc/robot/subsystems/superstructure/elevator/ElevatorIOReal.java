@@ -36,22 +36,22 @@ public class ElevatorIOReal implements ElevatorIO {
     intake.setIdleMode(IdleMode.kBrake);
     intake.setSmartCurrentLimit(Constants.ELECTRICAL.intakeCurrentLimit);
 
-    elevController.setP(Constants.ElevatorConstants.kP);
-    elevController.setI(Constants.ElevatorConstants.kI);
-    elevController.setD(Constants.ElevatorConstants.kD);
-    elevController.setOutputRange(Constants.ElevatorConstants.kMinOutput, Constants.ElevatorConstants.kMaxOutput);
+    elevController.setP(ElevatorConstants.kP);
+    elevController.setI(ElevatorConstants.kI);
+    elevController.setD(ElevatorConstants.kD);
+    elevController.setOutputRange(ElevatorConstants.kMinOutput, ElevatorConstants.kMaxOutput);
 
-    elevController.setSmartMotionMaxVelocity(Constants.ElevatorConstants.maxVel, 0);
-    elevController.setSmartMotionMinOutputVelocity(Constants.ElevatorConstants.minVel, 0);
-    elevController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, 0);
-    elevController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, 0);
+    elevController.setSmartMotionMaxVelocity(ElevatorConstants.maxVel, 0);
+    elevController.setSmartMotionMinOutputVelocity(ElevatorConstants.minVel, 0);
+    elevController.setSmartMotionMaxAccel(ElevatorConstants.maxAcc, 0);
+    elevController.setSmartMotionAllowedClosedLoopError(ElevatorConstants.allowedErr, 0);
 
     elev.burnFlash();
     intake.burnFlash();
 
-    elevRelativeEncoder.setPositionConversionFactor(Constants.ElevatorConstants.elevPosConv);
+    elevRelativeEncoder.setPositionConversionFactor(ElevatorConstants.elevPosConv);
     elevRelativeEncoder.setVelocityConversionFactor(
-        Constants.ElevatorConstants.elevDrumRadiusMeters * Constants.ElevatorConstants.elevSimPosConv / 60);
+        ElevatorConstants.elevDrumRadiusMeters * ElevatorConstants.elevSimPosConv / 60);
     elevRelativeEncoder.setPosition(0);
   }
 
@@ -70,7 +70,7 @@ public class ElevatorIOReal implements ElevatorIO {
     inputs.winchInputVolts = winchInput;
 
     inputs.jointPosDeg = MathUtil.inputModulus(
-        -intakeEncoder.getAbsolutePosition() * 180 - Constants.IntakeConstants.intakeAbsOffset - offset, -160, 20);
+        -intakeEncoder.getAbsolutePosition() * 180 - JointConstants.intakeAbsOffset - offset, -160, 20);
     inputs.jointAppliedVolts = intake.getAppliedOutput() * intake.getBusVoltage();
     inputs.jointMotorCurrent = intake.getOutputCurrent();
     inputs.jointTempCelcius = intake.getMotorTemperature();

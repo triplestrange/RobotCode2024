@@ -4,12 +4,11 @@
 
 package com.team1533.frc.robot.commands;
 
-import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.Constants.JoystickButtons;
+import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
@@ -35,8 +34,8 @@ public class DefaultDrive extends Command {
     this.m_swerve = m_swerve;
     this.speed = speed;
     this.rotationSpeed = rotationSpeed;
-    speed = MathUtil.clamp(speed, -Constants.SwerveConstants.kMaxSpeedMetersPerSecond,
-        Constants.SwerveConstants.kMaxSpeedMetersPerSecond);
+    speed = MathUtil.clamp(speed, -SwerveConstants.kMaxSpeedMetersPerSecond,
+        SwerveConstants.kMaxSpeedMetersPerSecond);
     deadzone = 0.2;
     rotation_controller = new ProfiledPIDController(0.2, 0.17, 0.015, new Constraints(720, 200));
     rotation_controller.enableContinuousInput(0, 360);

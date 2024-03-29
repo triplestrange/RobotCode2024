@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.subsystems.superstructure.arm.Arm;
-import com.team1533.frc.robot.subsystems.superstructure.climb.Climb;
+import com.team1533.frc.robot.subsystems.superstructure.climb.Climber;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 
@@ -21,12 +21,12 @@ public class Superstructure extends SubsystemBase {
   private Goal lastGoal = Goal.STOW;
 
   private final Elevator m_Elevator;
-  private final Climb m_Climb;
+  private final Climber m_Climb;
   private final Arm m_Arm;
 
   private Timer goalTimer = new Timer();
 
-  public Superstructure(Elevator m_Elevator, Climb m_Climb, Arm m_Arm) {
+  public Superstructure(Elevator m_Elevator, Climber m_Climb, Arm m_Arm) {
     this.m_Elevator = m_Elevator;
     this.m_Climb = m_Climb;
     this.m_Arm = m_Arm;

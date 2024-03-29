@@ -2,17 +2,7 @@ package com.team1533.frc.robot.commands.indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.Constants.JoystickButtons;
 import com.team1533.frc.robot.subsystems.cannon.indexer.Indexer;
-import com.team1533.frc.robot.subsystems.rollers.Intake;
-import com.team1533.frc.robot.subsystems.superstructure.arm.Arm;
-import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeToIndexer extends Command {
     private Indexer m_indexer;

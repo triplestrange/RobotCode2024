@@ -6,28 +6,11 @@ package com.team1533.frc.robot.commands.automations;
 
 import java.util.Optional;
 
-import javax.lang.model.util.ElementScanner14;
-import javax.swing.text.GlyphView.GlyphPainter;
-
-import org.opencv.core.Mat;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.Robot;
 import com.team1533.frc.robot.RobotContainer;
-import com.team1533.frc.robot.Constants.JoystickButtons;
-import com.team1533.frc.robot.Constants.SwerveConstants;
 import com.team1533.frc.robot.subsystems.superstructure.Superstructure.Goal;
-import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
-import com.team1533.lib.control.HeadingController;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -35,10 +18,8 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 
 public class Shoot {
 

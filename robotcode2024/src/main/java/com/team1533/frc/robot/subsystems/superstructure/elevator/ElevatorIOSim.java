@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class ElevatorIOSim implements ElevatorIO {
     private final ElevatorSim elevatorSim = new ElevatorSim(DCMotor.getNEO(1),
-            Constants.ElevatorConstants.elevSimPosConv,
-            Constants.ElevatorConstants.elevCarraigeKG, Constants.ElevatorConstants.elevDrumRadiusMeters,
-            Units.inchesToMeters(Constants.ElevatorConstants.minHeightInches),
-            Constants.ElevatorConstants.maxHeightInches, true, Constants.ElevatorConstants.minHeightInches);
+            ElevatorConstants.elevSimPosConv,
+            ElevatorConstants.elevCarraigeKG, ElevatorConstants.elevDrumRadiusMeters,
+            Units.inchesToMeters(ElevatorConstants.minHeightInches),
+            ElevatorConstants.maxHeightInches, true, ElevatorConstants.minHeightInches);
     private final SingleJointedArmSim jointSim = new SingleJointedArmSim(DCMotor.getNeo550(1),
             2, Units.lbsToKilograms(4.916),
             Units.inchesToMeters(11.822640),
-            Units.degreesToRadians(Constants.IntakeConstants.minAngle),
-            Units.degreesToRadians(Constants.IntakeConstants.maxAngle),
+            Units.degreesToRadians(JointConstants.minAngle),
+            Units.degreesToRadians(JointConstants.maxAngle),
             true,
             0);
 

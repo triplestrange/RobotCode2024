@@ -1,17 +1,15 @@
 package com.team1533.lib.control;
 
-import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.commands.automations.Shoot;
+import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 public class HeadingController {
 
-    private static HeadingController m_Instance;
     private Shoot shoot;
     private SwerveDrive m_swerve;
 
@@ -33,7 +31,7 @@ public class HeadingController {
         this.shoot = shoot;
         this.m_swerve = m_swerve;
         m_PIDController = new PIDController(0, 0, 0);
-        m_PIDController.setTolerance(Constants.SwerveConstants.RotationConfigs.kSwerveHeadingControllerErrorTolerance);
+        m_PIDController.setTolerance(SwerveConstants.RotationConfigs.kSwerveHeadingControllerErrorTolerance);
     }
 
     public HeadingControllerState getHeadingControllerState() {
@@ -84,25 +82,26 @@ public class HeadingController {
             case OFF:
                 return 0.0;
             case SNAP:
-                m_PIDController.setPID(Constants.SwerveConstants.RotationConfigs.kSnapSwerveHeadingKp,
-                        Constants.SwerveConstants.RotationConfigs.kSnapSwerveHeadingKi,
-                        Constants.SwerveConstants.RotationConfigs.kSnapSwerveHeadingKd);
+                m_PIDController.setPID(SwerveConstants.RotationConfigs.kSnapSwerveHeadingKp,
+                        SwerveConstants.RotationConfigs.kSnapSwerveHeadingKi,
+                        SwerveConstants.RotationConfigs.kSnapSwerveHeadingKd);
                 break;
             case MAINTAIN:
-                m_PIDController.setPID(Constants.SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKpHighVelocity,
-                        0, 0);
+                m_PIDController.setPID(SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKpHighVelocity,
+                        SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKiHighVelocity,
+                        SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKdHighVelocity);
                 maxOutput = 1.0;
                 break;
             case SPEAKER_MAINTAIN:
                 m_PIDController.setPID(
-                        Constants.SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKpHighVelocity,
-                        Constants.SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKiHighVelocity,
-                        Constants.SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKdHighVelocity);
+                        SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKpHighVelocity,
+                        SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKiHighVelocity,
+                        SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKdHighVelocity);
                 break;
             case SPEAKER_SNAP:
-                m_PIDController.setPID(Constants.SwerveConstants.RotationConfigs.kSnapSwerveHeadingKp,
-                        Constants.SwerveConstants.RotationConfigs.kSnapSwerveHeadingKi,
-                        Constants.SwerveConstants.RotationConfigs.kSnapSwerveHeadingKd);
+                m_PIDController.setPID(SwerveConstants.RotationConfigs.kSnapSwerveHeadingKp,
+                        SwerveConstants.RotationConfigs.kSnapSwerveHeadingKi,
+                        SwerveConstants.RotationConfigs.kSnapSwerveHeadingKd);
                 break;
         }
 

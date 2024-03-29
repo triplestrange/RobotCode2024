@@ -5,11 +5,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.subsystems.superstructure.arm.ArmIO;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class ArmIOReal implements ArmIO {
@@ -34,7 +30,7 @@ public class ArmIOReal implements ArmIO {
 
     pivotEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.pivotAbsInput);
 
-    pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
+    pivotEncoder.setPositionOffset(ArmConstants.pivotAbsOffset);
 
     lPivot.setInverted(true);
   }
@@ -50,7 +46,7 @@ public class ArmIOReal implements ArmIO {
     inputs.leftAppliedVolts = lPivot.getAppliedOutput() * lPivot.getBusVoltage();
 
     inputs.posDeg = MathUtil.inputModulus(
-        -pivotEncoder.getAbsolutePosition() * 360 - Constants.ShooterConstants.pivotAbsOffset, 30, -330);
+        -pivotEncoder.getAbsolutePosition() * 360 - ArmConstants.pivotAbsOffset, 30, -330);
 
     inputs.leftTempCelcius = lPivot.getMotorTemperature();
 

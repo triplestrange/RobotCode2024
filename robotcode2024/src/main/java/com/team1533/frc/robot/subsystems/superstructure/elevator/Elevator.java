@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.team1533.frc.robot.Constants;
 import com.team254.lib.util.Util;
 
 import edu.wpi.first.math.util.Units;
@@ -104,10 +103,11 @@ public class Elevator {
         intakeJoint = intakeStatic.append(
                 new MechanismLigament2d("intake joint", Units.inchesToMeters(12.227660), 90));
 
-        intakeController = new ProfiledPIDController(Constants.IntakeConstants.kP, Constants.IntakeConstants.kI,
-                Constants.IntakeConstants.kD,
-                new Constraints(Constants.IntakeConstants.kMaxAngularSpeedMetersPerSecond,
-                        Constants.IntakeConstants.kMaxAngularAccelerationMetersPerSecondSquared));
+        intakeController = new ProfiledPIDController(JointConstants.kP,
+                JointConstants.kI,
+                JointConstants.kD,
+                new Constraints(JointConstants.kMaxAngularSpeedMetersPerSecond,
+                        JointConstants.kMaxAngularAccelerationMetersPerSecondSquared));
 
         elevSetpoint = inputs.elevatorPosInches;
 

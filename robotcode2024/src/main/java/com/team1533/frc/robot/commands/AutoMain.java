@@ -1,12 +1,9 @@
 package com.team1533.frc.robot.commands;
 
-import java.time.Instant;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
 import com.team1533.frc.robot.subsystems.superstructure.Superstructure;
@@ -17,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;

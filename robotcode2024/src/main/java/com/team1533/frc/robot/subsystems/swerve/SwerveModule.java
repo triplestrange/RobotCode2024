@@ -2,16 +2,10 @@ package com.team1533.frc.robot.subsystems.swerve;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.Constants.ModuleConstants;
 import com.team1533.frc.robot.util.AbsoluteEncoder;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
-import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -80,10 +74,11 @@ public class SwerveModule {
     // divided by the encoder resolution.
 
     m_driveMotor.getConfigurator()
-        .apply(new FeedbackConfigs().withSensorToMechanismRatio(1.0 / ModuleConstants.kDriveEncoderDistancePerPulse));
+        .apply(new FeedbackConfigs()
+            .withSensorToMechanismRatio(1.0 / SwerveModuleConstants.kDriveEncoderDistancePerPulse));
 
-    m_turningEncoder.setPositionConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse);
-    m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse / 60.);
+    m_turningEncoder.setPositionConversionFactor(SwerveModuleConstants.kSteerEncoderDistancePerPulse);
+    m_turningEncoder.setVelocityConversionFactor(SwerveModuleConstants.kSteerEncoderDistancePerPulse / 60.);
     // m_absoluteEncoder.setPositionConversionFactor(encoderCPR);
 
     // Limit the PID Controller's input range between -pi and pi and set the input
@@ -129,7 +124,7 @@ public class SwerveModule {
   public SwerveModuleState getState() {
     return new SwerveModuleState(
         m_driveMotor.getVelocity().getValueAsDouble()
-            + m_turningEncoder.getVelocity() * ModuleConstants.kWheelDiameterMeters / 2,
+            + m_turningEncoder.getVelocity() * SwerveModuleConstants.kWheelDiameterMeters / 2,
         new Rotation2d(m_turningEncoder.getPosition()));
   }
 
@@ -144,7 +139,7 @@ public class SwerveModule {
 
   public void setDesiredState(SwerveModuleState state, boolean forceAngle) {
 
-    double desiredDrive = state.speedMetersPerSecond / Constants.SwerveConstants.kMaxSpeedMetersPerSecond;
+    double desiredDrive = state.speedMetersPerSecond / SwerveConstants.kMaxSpeedMetersPerSecond;
 
     if (Math.abs(desiredDrive) < 0.01 && !forceAngle) {
       output.Output = 0;
