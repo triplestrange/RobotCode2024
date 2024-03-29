@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
@@ -25,6 +26,8 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.superstructure.elevator.Elevator;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.util.LoggedTunableNumber;
 import lombok.Getter;
@@ -34,26 +37,45 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Arm {
 
-    private CANSparkMax lPivot;
-    private CANSparkMax rPivot;
-
     private ProfiledPIDController pivotController;
 
-    private DutyCycleEncoder pivotEncoder;
-
-    private boolean shooterPIDEnabled;
-
-    private double pivotSetpoint;
-
-    private double pivotPower;
-
+    @AutoLogOutput
     public BooleanSupplier disableSupplier;
 
+    @AutoLogOutput
     public static double shootingAngle = 0;
+
+    @AutoLogOutput
+    public static double shuttlingAngle = 0;
+
+    @AutoLogOutput
+    private boolean shooterPIDEnabled;
+
+    @AutoLogOutput
+    private double pivotSetpoint;
+
+    @AutoLogOutput
+    private double pivotPower;
 
     public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
-    private SwerveDrive m_swerve;
+    private static SwerveDrive m_swerve;
+
+    private static Arm instance;
+
+    private ArmIO io;
+    private ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
+
+    public static Arm getInstance() {
+        return instance;
+    }
+
+    public static Arm initialize(ArmIO io) {
+        if (instance == null) {
+            instance = new Arm(io, m_swerve);
+        }
+        return instance;
+    }
 
     @RequiredArgsConstructor
     public enum Goal {
@@ -61,13 +83,13 @@ public class Arm {
         AIM(() -> shootingAngle),
         STOW(() -> 0),
         MANUAL(() -> 0),
-        SUBWOOFER(() -> 0),
-        PODIUM(() -> 0),
-        PREPARE_CLIMB(() -> 0),
+        SUBWOOFER(() -> -5),
+        PODIUM(() -> -22),
+        PREPARE_CLIMB(() -> -15),
         CLIMB(() -> 0),
         UNTRAP(() -> 0),
-        SHUTTLE(() -> 0),
-        CUSTOM(() -> 20);
+        SHUTTLE(() -> shuttlingAngle),
+        CUSTOM(() -> -20);
 
         private final DoubleSupplier armSetpointSupplier;
 
@@ -85,31 +107,18 @@ public class Arm {
      * Creates a new Shooter.
      */
 
-    public Arm(SwerveDrive m_swerve) {
+    public Arm(ArmIO armIO, SwerveDrive m_swerve) {
         super();
 
         this.m_swerve = m_swerve;
 
         disableSupplier = DriverStation::isDisabled;
 
-        lPivot = new CANSparkMax(Constants.CAN.PIVOTL, MotorType.kBrushless);
-        rPivot = new CANSparkMax(Constants.CAN.PIVOTR, MotorType.kBrushless);
-
-        lPivot.restoreFactoryDefaults();
-        rPivot.restoreFactoryDefaults();
-
-        lPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
-        rPivot.setSmartCurrentLimit(Constants.ELECTRICAL.shooterPivotCurrentLimit);
-
         pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
                 Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD,
                 new Constraints(Constants.ShooterConstants.kMaxAngularPivotSpeedDegreesPerSecond,
                         Constants.ShooterConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
-        pivotEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.pivotAbsInput);
 
-        pivotEncoder.setPositionOffset(Constants.ShooterConstants.pivotAbsOffset);
-
-        lPivot.setInverted(true);
         pivotController.setIZone(1);
 
         pivotController.setTolerance(0.3);
@@ -130,35 +139,16 @@ public class Arm {
         shootingData.put(5.3, -31.0);
         shootingData.put(6.38, -33.4);
         shootingData.put(7.39, -34.5);
-
-    }
-
-    public double getAngle() {
-
-        return MathUtil.inputModulus(
-                -pivotEncoder.getAbsolutePosition() * 360 - Constants.ShooterConstants.pivotAbsOffset, 30, -330);
-
     }
 
     public void moveShooter(double motorPivotPower) {
-        // if ((getAngle() >= Constants.ShooterConstants.maxAngle -
-        // Constants.ShooterConstants.safeZone)
-        // && motorPivotPower > 0) {
-        // motorPivotPower = 0;
-        // }
-        // if ((getAngle() <= Constants.ShooterConstants.minAngle +
-        // Constants.ShooterConstants.safeZone)
-        // && motorPivotPower < 0) {
-        // motorPivotPower = 0;
-        // }
 
         if (Math.abs(motorPivotPower) < 0.05) {
             shooterPIDEnabled = true;
         } else {
             pivotPower = motorPivotPower;
-            lPivot.set(pivotPower);
-            rPivot.set(pivotPower);
-            pivotSetpoint = getAngle();
+            io.runPower(pivotPower);
+            pivotSetpoint = inputs.posDeg;
             pivotController.reset(pivotSetpoint);
             shooterPIDEnabled = false;
         }
@@ -169,8 +159,12 @@ public class Arm {
         shooterPIDEnabled = true;
     }
 
+    public double getAngle() {
+        return inputs.posDeg;
+    }
+
     public void resetPIDs() {
-        pivotSetpoint = getAngle();
+        pivotSetpoint = inputs.posDeg;
         pivotController.reset(pivotSetpoint);
         shooterPIDEnabled = true;
 
@@ -211,6 +205,9 @@ public class Arm {
     }
 
     public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Arm", inputs);
+
         setAutoShootAngleDeg();
 
         if (goal != Goal.MANUAL) {
@@ -221,22 +218,18 @@ public class Arm {
         }
         if (shooterPIDEnabled) {
 
-            pivotPower = pivotController.calculate(getAngle(), pivotSetpoint);
-
-            // change between pivotSetpoint to shootingAngle for manual & autoshoot
-            // respectively
+            pivotPower = pivotController.calculate(inputs.posDeg, pivotSetpoint);
         }
-        if (!pivotEncoder.isConnected()) {
+        if (!inputs.absoluteEncoderConnected) {
             pivotPower = 0;
         }
 
-        lPivot.set(pivotPower);
-        rPivot.set(pivotPower);
+        io.runPower(pivotPower);
     }
 
     public void updateSmartDashBoard() {
-        SmartDashboard.putNumber("cannon degree", getAngle());
-        SmartDashboard.putBoolean("Is Encoder Plugged", pivotEncoder.isConnected());
+        SmartDashboard.putNumber("cannon degree", inputs.posDeg);
+        SmartDashboard.putBoolean("Is Encoder Plugged", inputs.absoluteEncoderConnected);
         SmartDashboard.putNumber("cannon angle setpoint", pivotSetpoint);
         SmartDashboard.putNumber("Cannon Power", pivotPower);
     }

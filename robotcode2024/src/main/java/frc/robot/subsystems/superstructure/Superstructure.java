@@ -40,6 +40,7 @@ public class Superstructure extends SubsystemBase {
     TRAP,
     STOW,
     CLIMB,
+    PREPARE_CLIMB,
     GROUND,
     SOURCE,
     FEEDER,
@@ -87,6 +88,10 @@ public class Superstructure extends SubsystemBase {
       }
       case CLIMB -> {
         m_Arm.setGoal(Arm.Goal.CLIMB);
+        m_Elevator.setGoal(Elevator.Goal.STOW);
+      }
+      case PREPARE_CLIMB -> {
+        m_Arm.setGoal(Arm.Goal.PREPARE_CLIMB);
         m_Elevator.setGoal(Elevator.Goal.STOW);
       }
       case GROUND -> {

@@ -30,6 +30,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
+import frc.robot.RobotContainer;
 import frc.robot.commands.automations.Shoot;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -42,9 +43,7 @@ public class Vision extends SubsystemBase {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    private SwerveDrive m_SwerveDrive;
-    private Shoot m_Shoot;
-    private Elevator m_Elevator;
+    private RobotContainer m_RobotContainer;
 
     // Left and Right are on the center
     // Front and Back are close to swerve encoders
@@ -72,13 +71,11 @@ public class Vision extends SubsystemBase {
 
     private static Comparator<Translation2d> ySort;
 
-    public Vision(SwerveDrive m_SwerveDrive, Shoot m_shoot, Elevator m_Elevator) {
+    public Vision(RobotContainer m_RobotContainer) {
         camShooter = new PhotonCamera("camShooter");
         camIntake = new PhotonCamera("camIntake");
 
-        this.m_SwerveDrive = m_SwerveDrive;
-        this.m_Shoot = m_shoot;
-        this.m_Elevator = m_Elevator;
+        this.m_RobotContainer = m_RobotContainer;
 
         ySort = Comparator.comparingDouble(Translation2d::getY);
 
@@ -97,7 +94,8 @@ public class Vision extends SubsystemBase {
         averageEstimatedPose2d = new Pose2d();
 
         for (PhotonTrackedTarget target : result.getTargets()) {
-            boolean rotatingTooFast = Math.abs(m_SwerveDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
+            boolean rotatingTooFast = Math
+                    .abs(m_RobotContainer.m_robotDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
             if (rotatingTooFast) {
                 continue;
@@ -105,7 +103,7 @@ public class Vision extends SubsystemBase {
 
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
-                        getRobotToField(target, cam, m_SwerveDrive.getPose()));
+                        getRobotToField(target, cam, m_RobotContainer.m_robotDrive.getPose()));
             }
         }
 
@@ -115,7 +113,8 @@ public class Vision extends SubsystemBase {
                     totalEstimatedTranslation2d.getY() + filteredResults.get(i).getY());
         }
 
-        averageEstimatedPose2d = new Pose2d(totalEstimatedTranslation2d.div(i), m_SwerveDrive.getPose().getRotation());
+        averageEstimatedPose2d = new Pose2d(totalEstimatedTranslation2d.div(i),
+                m_RobotContainer.m_robotDrive.getPose().getRotation());
 
         return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
     }
@@ -281,8 +280,8 @@ public class Vision extends SubsystemBase {
     public Pose2d getObjectToField(Pose2d objectToRobot) {
         return new Pose2d(
                 objectToRobot.getTranslation()
-                        .minus(m_SwerveDrive.getPose().getTranslation()),
-                m_SwerveDrive.getPose().getRotation());
+                        .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()),
+                m_RobotContainer.m_robotDrive.getPose().getRotation());
     }
 
     public Translation2d undistortFromOpenCV(Translation2d point, PhotonCamera cam) {
@@ -326,21 +325,21 @@ public class Vision extends SubsystemBase {
         poseIntake = getEstimatedPoseInfo(camIntake);
 
         if (poseShooter.getNumOfTags() != 0) {
-            m_SwerveDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
+            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
                     poseShooter.getTimestampSeconds());
         }
         if (poseIntake.getNumOfTags() != 0) {
-            m_SwerveDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
+            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
                     poseIntake.getTimestampSeconds());
             m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
         }
-        m_field.setRobotPose(m_SwerveDrive.getPose());
+        m_field.setRobotPose(m_RobotContainer.m_robotDrive.getPose());
 
     }
 
     public double getIntakeVisionOffset() {
-        if (m_Elevator.getIntakePos().getHeight() > 14) {
-            return 0.66 + Units.inchesToMeters(m_Elevator.getIntakePos().getHeight() - 14);
+        if (m_RobotContainer.m_elevator.getIntakePos().getHeight() > 14) {
+            return 0.66 + Units.inchesToMeters(m_RobotContainer.m_elevator.getIntakePos().getHeight() - 14);
         }
         return 0.66;
     }

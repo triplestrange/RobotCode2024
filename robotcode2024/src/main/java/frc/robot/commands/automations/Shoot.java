@@ -37,6 +37,7 @@ import frc.robot.Constants.JoystickButtons;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.superstructure.Superstructure.Goal;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class Shoot {
@@ -189,7 +190,7 @@ public class Shoot {
 
     public void execute() {
 
-        m_RobotContainer.m_shooter.setShooterAngle(shootingAngle);
+        m_RobotContainer.m_superstructure.setGoalCommand(Goal.AIM);
     }
 
     public void shoot() {
@@ -302,7 +303,7 @@ public class Shoot {
     }
 
     public Boolean pivotCheck() {
-        return Math.abs(m_RobotContainer.m_shooter.getAngle() - m_RobotContainer.m_shooter.shootingAngle) < .5;
+        return Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < .5;
     }
 
     public Boolean rotationCheck(Pose2d robotPose2d) {

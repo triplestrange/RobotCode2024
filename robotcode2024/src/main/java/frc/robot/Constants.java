@@ -37,23 +37,6 @@ import frc.robot.util.Alert.AlertType;
 public final class Constants {
 
   public static final class MechPositions {
-    // use for all mechanism pre programmed positions
-    public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
-    public static final IntakePosition groundIntakePos = new IntakePosition(0, -132);
-    public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
-    public static final IntakePosition ampIntakePos = new IntakePosition(34.649467, -136);
-    public static final IntakePosition trapIntakePos = new IntakePosition(33, -136);
-
-    public static final double climbPivotPos = 0;
-
-    public static final double underChainPivotPos = -45;
-    public static final double clearancePivotPos = -15;
-    public static final double podiumPivotPos = -22.0;
-    public static final double lowPivotPos = -40.0;
-
-    public static final double topRailPos = 0;
-
-    public static final double bottomRailPos = 0;
 
     public static final Pose2d amp = new Pose2d(new Translation2d(1.82, 7.68), new Rotation2d().fromDegrees(-90));
   }

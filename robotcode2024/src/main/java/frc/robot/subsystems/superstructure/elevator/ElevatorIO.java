@@ -8,6 +8,7 @@ public interface ElevatorIO {
     @AutoLog
     public static class ElevatorIOInputs {
         public boolean elevMotorConnected = true;
+        public boolean jointMotorConnected = true;
         public boolean jointAbsoluteEncoderConnected = true;
 
         public double winchInputVolts = 0.0;
