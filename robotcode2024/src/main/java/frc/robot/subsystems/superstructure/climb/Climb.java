@@ -1,4 +1,4 @@
-package frc.robot.subsystems.cannon.climb;
+package frc.robot.subsystems.superstructure.climb;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 

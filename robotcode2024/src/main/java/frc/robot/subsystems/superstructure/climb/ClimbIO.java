@@ -1,4 +1,4 @@
-package frc.robot.subsystems.cannon.climb;
+package frc.robot.subsystems.superstructure.climb;
 
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -10,8 +10,8 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
-import frc.robot.subsystems.cannon.climb.Climb.ClimbPosition;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
+import frc.robot.subsystems.superstructure.climb.Climb.ClimbPosition;
+import frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
 
 public interface ClimbIO {
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -64,8 +64,8 @@ public class ElevatorIOSim implements ElevatorIO {
         elevatorSim.update(Constants.LoggerConstants.kDt);
         jointSim.update(Constants.LoggerConstants.kDt);
 
-        inputs.elevatorPosMeters = elevatorSim.getPositionMeters();
-        inputs.elevatorVelMetersPerSecond = elevatorSim.getVelocityMetersPerSecond();
+        inputs.elevatorPosInches = elevatorSim.getPositionMeters();
+        inputs.elevatorVelInchesPerSecond = elevatorSim.getVelocityMetersPerSecond();
         inputs.winchAppliedVolts = winchAppliedVolts;
         inputs.winchMotorCurrent = elevatorSim.getCurrentDrawAmps();
         inputs.winchTempCelcius = 0.0;

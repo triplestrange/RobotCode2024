@@ -1,4 +1,4 @@
-package frc.robot.subsystems.cannon.climb;
+package frc.robot.subsystems.superstructure.climb;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
+import frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
 
 public class ClimbIOSim implements ClimbIO {
     private final ElevatorSim leftSim = new ElevatorSim(DCMotor.getNEO(1),

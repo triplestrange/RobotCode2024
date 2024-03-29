@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -14,8 +14,8 @@ public interface ElevatorIO {
         public double winchMotorCurrent = 0.0;
         public double winchAppliedVolts = 0.0;
 
-        public double elevatorPosMeters = 0.0;
-        public double elevatorVelMetersPerSecond = 0.0;
+        public double elevatorPosInches = 0.0;
+        public double elevatorVelInchesPerSecond = 0.0;
 
         public double jointInputVolts = 0.0;
         public double jointInputSpeed = 0.0;

@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.commands.indexer.GroundToIntake;
-import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.intake.elevator.Elevator;
-import frc.robot.subsystems.intake.rollers.Intake;
+import frc.robot.subsystems.rollers.Intake;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class AutoPickupFieldRelative extends SequentialCommandGroup {

@@ -31,7 +31,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
 import frc.robot.commands.automations.Shoot;
-import frc.robot.subsystems.intake.elevator.Elevator;
+import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 import static org.opencv.core.CvType.CV_64FC1;

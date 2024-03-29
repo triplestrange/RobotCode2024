@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake.rollers;
+package frc.robot.subsystems.rollers;
 
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -11,7 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
+import frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
 
 public interface IntakeIO {
 

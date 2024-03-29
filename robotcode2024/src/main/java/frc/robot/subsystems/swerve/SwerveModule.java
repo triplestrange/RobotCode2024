@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.configs.VoltageConfigs;
@@ -53,11 +54,11 @@ public class SwerveModule {
   public SwerveModule(int driveMotorChannel, int turningMotorChannel, int absoluteEncoderChannel,
       boolean turningEncoderReversed, double angleOffset) {
 
-        output = new DutyCycleOut(0);
+    output = new DutyCycleOut(0);
 
-        output.UpdateFreqHz = 0;
+    output.UpdateFreqHz = 0;
 
-        output.EnableFOC = true;
+    output.EnableFOC = true;
 
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
@@ -117,7 +118,6 @@ public class SwerveModule {
     m_driveMotor.setControl(output);
 
     m_turningMotor.burnFlash();
-
 
   }
 

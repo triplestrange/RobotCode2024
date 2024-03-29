@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -61,8 +61,8 @@ public class ElevatorIOReal implements ElevatorIO {
 
     inputs.elevMotorConnected = elev.getFault(FaultID.kSensorFault);
 
-    inputs.elevatorPosMeters = elevRelativeEncoder.getPosition();
-    inputs.elevatorVelMetersPerSecond = elevRelativeEncoder.getVelocity();
+    inputs.elevatorPosInches = elevRelativeEncoder.getPosition();
+    inputs.elevatorVelInchesPerSecond = elevRelativeEncoder.getVelocity();
     inputs.winchAppliedVolts = elev.getAppliedOutput() * elev.getBusVoltage();
     inputs.winchMotorCurrent = elev.getOutputCurrent();
     inputs.winchTempCelcius = elev.getMotorTemperature();

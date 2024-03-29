@@ -91,6 +91,9 @@ public class FlyWheelIOReal implements FlyWheelIO {
     rFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
     rFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
         smartMotionSlot);
+
+    lFlyWheel.enableVoltageCompensation(12);
+    rFlyWheel.enableVoltageCompensation(12);
   }
 
   @Override

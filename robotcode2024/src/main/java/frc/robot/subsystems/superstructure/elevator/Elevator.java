@@ -1,18 +1,27 @@
-package frc.robot.subsystems.intake.elevator;
+package frc.robot.subsystems.superstructure.elevator;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import com.team254.lib.util.Util;
 
 import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 public class Elevator {
 
@@ -37,6 +46,8 @@ public class Elevator {
     public double elevPower;
     public double intakePower;
 
+    private BooleanSupplier disableSupplier = DriverStation::isDisabled;
+
     private static Elevator instance;
 
     private ElevatorIO io;
@@ -52,6 +63,29 @@ public class Elevator {
         }
         return instance;
     }
+
+    @RequiredArgsConstructor
+    public enum Goal {
+        STOP(new IntakePosition(0, 0)),
+        AMP(new IntakePosition(34.649467, -136)),
+        STOW(new IntakePosition(0, 0)),
+        GROUND(new IntakePosition(0, -132)),
+        TRAP(new IntakePosition(33, -136)),
+        FEEDER(new IntakePosition(10, -60)),
+        UNTRAP(new IntakePosition(0, 0)),
+        MANUAL(new IntakePosition(0, 0));
+
+        private final IntakePosition elevatorSetpoint;
+
+        private IntakePosition getPos() {
+            return elevatorSetpoint;
+        }
+    }
+
+    @AutoLogOutput
+    @Getter
+    @Setter
+    Goal goal = Goal.STOW;
 
     /**
      * Creates a new Elevator.
@@ -78,7 +112,7 @@ public class Elevator {
                 new Constraints(Constants.IntakeConstants.kMaxAngularSpeedMetersPerSecond,
                         Constants.IntakeConstants.kMaxAngularAccelerationMetersPerSecondSquared));
 
-        elevSetpoint = inputs.elevatorPosMeters;
+        elevSetpoint = inputs.elevatorPosInches;
 
     }
 
@@ -140,12 +174,25 @@ public class Elevator {
     }
 
     public IntakePosition getIntakePos() {
-        return new IntakePosition(inputs.elevatorPosMeters, inputs.jointPosDeg);
+        return new IntakePosition(inputs.elevatorPosInches, inputs.jointPosDeg);
+    }
+
+    @AutoLogOutput(key = "Superstructure/Elevator/AtGoal")
+    public boolean atGoal() {
+        return intakeController.atGoal() && Util.epsilonEquals(elevSetpoint, inputs.elevatorPosInches, 0.1);
     }
 
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
+
+        if (goal != Goal.MANUAL) {
+            elevSetpoint = goal.getPos().getHeight();
+            intakeSetpoint = goal.getPos().getAngle();
+        }
+        if (disableSupplier.getAsBoolean() || goal == goal.STOP) {
+            io.stop();
+        }
         if (elevPIDEnabled) {
             io.runHeightSetpoint(elevSetpoint);
         }

@@ -1,7 +1,14 @@
-package frc.robot.subsystems.cannon.shooter;
+package frc.robot.subsystems.superstructure.arm;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.team254.lib.geometry.Rotation2d;
+import com.team254.lib.util.Util;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -10,15 +17,22 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.util.LoggedTunableNumber;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Shooter {
+public class Arm {
 
     private CANSparkMax lPivot;
     private CANSparkMax rPivot;
@@ -33,20 +47,50 @@ public class Shooter {
 
     private double pivotPower;
 
-    public double shootingAngle = 0;
+    public BooleanSupplier disableSupplier;
+
+    public static double shootingAngle = 0;
 
     public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
     private SwerveDrive m_swerve;
 
+    @RequiredArgsConstructor
+    public enum Goal {
+        STOP(() -> 0),
+        AIM(() -> shootingAngle),
+        STOW(() -> 0),
+        MANUAL(() -> 0),
+        SUBWOOFER(() -> 0),
+        PODIUM(() -> 0),
+        PREPARE_CLIMB(() -> 0),
+        CLIMB(() -> 0),
+        UNTRAP(() -> 0),
+        SHUTTLE(() -> 0),
+        CUSTOM(() -> 20);
+
+        private final DoubleSupplier armSetpointSupplier;
+
+        private double getDeg() {
+            return armSetpointSupplier.getAsDouble();
+        }
+    }
+
+    @AutoLogOutput
+    @Getter
+    @Setter
+    private Goal goal = Goal.STOW;
+
     /**
      * Creates a new Shooter.
      */
 
-    public Shooter(SwerveDrive m_swerve) {
+    public Arm(SwerveDrive m_swerve) {
         super();
 
         this.m_swerve = m_swerve;
+
+        disableSupplier = DriverStation::isDisabled;
 
         lPivot = new CANSparkMax(Constants.CAN.PIVOTL, MotorType.kBrushless);
         rPivot = new CANSparkMax(Constants.CAN.PIVOTR, MotorType.kBrushless);
@@ -67,7 +111,8 @@ public class Shooter {
 
         lPivot.setInverted(true);
         pivotController.setIZone(1);
-        int smartMotionSlot = 0;
+
+        pivotController.setTolerance(0.3);
 
         shootingData.put(1.0, 0.0);
         shootingData.put(1.5, -3.2);
@@ -139,7 +184,18 @@ public class Shooter {
         return false;
     }
 
-    public void enablePID(boolean enable) {
+    public void setAutoShootAngleDeg() {
+        if (isAllianceRed()) {
+            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
+                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()));
+        } else {
+            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
+                    .getDistance((speakerTranslation3d.toTranslation2d())));
+
+        }
+    }
+
+    public void enableAutoShooting(boolean enable) {
         pivotSetpoint = shootingAngle;
         shooterPIDEnabled = enable;
     }
@@ -149,16 +205,23 @@ public class Shooter {
 
     }
 
+    @AutoLogOutput(key = "Superstructure/Arm/AtGoal")
+    public boolean atGoal() {
+        return pivotController.atGoal();
+    }
+
     public void periodic() {
-        if (isAllianceRed()) {
-            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
-                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()));
-        } else {
-            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
-                    .getDistance((speakerTranslation3d.toTranslation2d())));
+        setAutoShootAngleDeg();
+
+        if (goal != Goal.MANUAL) {
+            pivotSetpoint = goal.getDeg();
+        }
+        if (disableSupplier.getAsBoolean() || goal == goal.STOP) {
+            io.stop();
         }
         if (shooterPIDEnabled) {
-            pivotPower = pivotController.calculate(getAngle(), shootingAngle);
+
+            pivotPower = pivotController.calculate(getAngle(), pivotSetpoint);
 
             // change between pivotSetpoint to shootingAngle for manual & autoshoot
             // respectively
