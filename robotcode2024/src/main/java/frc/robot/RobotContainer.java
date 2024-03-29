@@ -19,21 +19,32 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.commands.AutoMain;
-import frc.robot.subsystems.cannon.climb.Climb;
 import frc.robot.subsystems.cannon.flywheel.FlyWheel;
+import frc.robot.subsystems.cannon.flywheel.FlyWheelIO;
+import frc.robot.subsystems.cannon.flywheel.FlyWheelIOReal;
+import frc.robot.subsystems.cannon.flywheel.FlyWheelIOSim;
 import frc.robot.subsystems.cannon.indexer.Indexer;
 import frc.robot.subsystems.cannon.indexer.IndexerIO;
 import frc.robot.subsystems.cannon.indexer.IndexerIOReal;
 import frc.robot.subsystems.cannon.indexer.IndexerIOSim;
-import frc.robot.subsystems.cannon.shooter.Shooter;
-import frc.robot.subsystems.intake.elevator.Elevator;
-import frc.robot.subsystems.intake.elevator.ElevatorIO;
-import frc.robot.subsystems.intake.elevator.ElevatorIOReal;
-import frc.robot.subsystems.intake.elevator.ElevatorIOSim;
-import frc.robot.subsystems.intake.rollers.Intake;
-import frc.robot.subsystems.intake.rollers.IntakeIO;
-import frc.robot.subsystems.intake.rollers.IntakeIOReal;
-import frc.robot.subsystems.intake.rollers.IntakeIOSim;
+import frc.robot.subsystems.rollers.Intake;
+import frc.robot.subsystems.rollers.IntakeIO;
+import frc.robot.subsystems.rollers.IntakeIOReal;
+import frc.robot.subsystems.rollers.IntakeIOSim;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.Superstructure.Goal;
+import frc.robot.subsystems.superstructure.arm.Arm;
+import frc.robot.subsystems.superstructure.arm.ArmIO;
+import frc.robot.subsystems.superstructure.arm.ArmIOReal;
+import frc.robot.subsystems.superstructure.arm.ArmIOSim;
+import frc.robot.subsystems.superstructure.climb.Climb;
+import frc.robot.subsystems.superstructure.climb.ClimbIO;
+import frc.robot.subsystems.superstructure.climb.ClimbIOReal;
+import frc.robot.subsystems.superstructure.climb.ClimbIOSim;
+import frc.robot.subsystems.superstructure.elevator.Elevator;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOReal;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Alert;
@@ -55,12 +66,14 @@ import frc.robot.commands.indexer.IntakeToIndexer;
 public class RobotContainer {
         // The robot's subsystems
         public final Robot m_robot;
+        public final Superstructure m_superstructure;
+
         public final SwerveDrive m_robotDrive;
         public Elevator m_elevator;
         public Intake m_intake;
-        public final Shooter m_shooter;
-        public final FlyWheel m_flywheel;
-        public final Climb m_climb;
+        public Arm m_Arm;
+        public FlyWheel m_flywheel;
+        public Climb m_climb;
         public Indexer m_indexer;
         public final Shoot m_shoot;
         public final Vision m_vision;
@@ -77,14 +90,12 @@ public class RobotContainer {
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
                 m_robotDrive = new SwerveDrive(this);
-                m_shooter = new Shooter();
-                m_climb = new Climb();
-                m_flywheel = new FlyWheel();
-                m_shoot = new Shoot(this);
 
+                m_Arm = null;
                 m_indexer = null;
                 m_elevator = null;
                 m_intake = null;
+                m_flywheel = null;
 
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
@@ -92,12 +103,17 @@ public class RobotContainer {
                                         m_indexer = new Indexer(new IndexerIOReal());
                                         m_elevator = new Elevator(new ElevatorIOReal());
                                         m_intake = new Intake(new IntakeIOReal());
-
+                                        m_flywheel = new FlyWheel(new FlyWheelIOReal());
+                                        m_climb = new Climb(new ClimbIOReal());
+                                        m_Arm = new Arm(new ArmIOReal(), m_robotDrive);
                                 }
                                 case SIMBOT -> {
                                         m_elevator = new Elevator(new ElevatorIOSim());
                                         m_intake = new Intake(new IntakeIOSim());
                                         m_indexer = new Indexer(new IndexerIOSim());
+                                        m_flywheel = new FlyWheel(new FlyWheelIOSim());
+                                        m_climb = new Climb(new ClimbIOSim());
+                                        m_Arm = new Arm(new ArmIOSim(), m_robotDrive);
                                 }
                         }
                 }
@@ -112,12 +128,28 @@ public class RobotContainer {
                 }
                 if (m_indexer == null) {
                         m_indexer = new Indexer(new IndexerIO() {
+                        });
+                }
+                if (m_flywheel == null) {
+                        m_flywheel = new FlyWheel(new FlyWheelIO() {
+                        });
+                }
+                if (m_climb == null) {
+                        m_climb = new Climb(new ClimbIO() {
 
                         });
                 }
-                m_vision = new Vision(this.m_robotDrive, this.m_shoot, this.m_elevator);
+                if (m_Arm == null) {
+                        m_Arm = new Arm(new ArmIO() {
 
+                        }, m_robotDrive);
+                }
+
+                m_shoot = new Shoot(this);
+                m_vision = new Vision(this);
                 m_Autos = new AutoMain(this);
+
+                m_superstructure = new Superstructure(m_elevator, m_climb, m_Arm);
 
                 configureButtonBindings();
 
@@ -152,17 +184,11 @@ public class RobotContainer {
                 // Elevator Controls
 
                 JoystickButtons.opA.onTrue(new InstantCommand(
-                                () -> m_elevator.setElev(Constants.MechPositions.stowIntakePos), m_elevator));
+                                () -> m_superstructure.setGoalCommand(Goal.STOW)));
                 JoystickButtons.opDpadU.onTrue(new InstantCommand(
-                                () -> m_elevator.setElev(Constants.MechPositions.ampIntakePos), m_elevator));
+                                () -> m_superstructure.setGoalCommand(Goal.AMP)));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(
-                                () -> m_elevator.setElev(Constants.MechPositions.groundIntakePos)));
-
-                m_elevator.setDefaultCommand(new RunCommand(
-                                () -> m_elevator.moveElev(
-                                                -1 * JoystickButtons.m_operatorController.getRightY(),
-                                                0.3 * JoystickButtons.m_operatorController.getRightX()),
-                                m_elevator));
+                                () -> m_superstructure.setGoalCommand(Goal.GROUND)));
 
                 // Climb Controls
 
@@ -175,20 +201,16 @@ public class RobotContainer {
                 // Pivot Controls
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
-                                () -> m_shooter.setShooterAngle(Constants.MechPositions.climbPivotPos)));
+                                () -> m_superstructure.setGoalCommand(Goal.CLIMB)));
 
                 JoystickButtons.opX.whileTrue(new InstantCommand(
-                                () -> m_shooter.setShooterAngle(Constants.MechPositions.clearancePivotPos)));
-                JoystickButtons.opY.whileTrue(new InstantCommand(
-                                () -> m_shooter.setShooterAngle(Constants.MechPositions.lowPivotPos)));
+                                () -> m_superstructure.setGoalCommand(Goal.PREPARE_CLIMB)));
 
-                m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.moveShooter(
-                                0.25 * JoystickButtons.m_operatorController.getLeftY()), m_shooter));
                 // Intake and indexer Controls
 
-                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
-                // m_intake)
-                // .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
+                                m_intake)
+                                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
 
@@ -210,7 +232,7 @@ public class RobotContainer {
                                         * 4850.0 / 3;
                 } else {
                         flywheelSetpoint = m_robotDrive.getPose().getTranslation()
-                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 3;
+                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 6;
                 }
 
                 flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
@@ -222,17 +244,16 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_shooter, m_flywheel, m_indexer))
-                                .onFalse((new InstantCommand(() -> m_shooter.setShooterAngle(
-                                                Constants.MechPositions.climbPivotPos))));
+                                new RunCommand(() -> m_shoot.autoShoot(), m_superstructure, m_indexer));
                 // Amp Automations
 
                 JoystickButtons.dB
                                 .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive));
 
                 // Note Pick Automation
-                JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive, m_elevator, m_intake,
-                                m_vision.getObjectToField(m_robotDrive.getPose())));
+                // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
+                // m_elevator, m_intake,
+                // m_vision.getObjectToField(m_robotDrive.getPose())));
         }
 
         /**

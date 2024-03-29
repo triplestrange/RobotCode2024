@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.JoystickButtons;
 import frc.robot.subsystems.cannon.indexer.Indexer;
-import frc.robot.subsystems.cannon.shooter.Shooter;
-import frc.robot.subsystems.intake.rollers.Intake;
+import frc.robot.subsystems.rollers.Intake;
+import frc.robot.subsystems.superstructure.arm.Arm;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class IntakeToIndexer extends Command {
@@ -46,6 +46,6 @@ public class IntakeToIndexer extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return m_indexer.getIndexerSensor();
+        return !m_indexer.getIndexerSensor();
     }
 }

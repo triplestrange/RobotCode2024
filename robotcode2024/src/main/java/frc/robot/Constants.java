@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.subsystems.intake.elevator.Elevator.IntakePosition;
+import frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 
@@ -37,23 +37,6 @@ import frc.robot.util.Alert.AlertType;
 public final class Constants {
 
   public static final class MechPositions {
-    // use for all mechanism pre programmed positions
-    public static final IntakePosition stowIntakePos = new IntakePosition(0, 0);
-    public static final IntakePosition groundIntakePos = new IntakePosition(0, -132);
-    public static final IntakePosition feederIntakePos = new IntakePosition(10, -60);
-    public static final IntakePosition ampIntakePos = new IntakePosition(33, -136);
-    public static final IntakePosition trapIntakePos = new IntakePosition(33, -136);
-
-    public static final double climbPivotPos = 0;
-
-    public static final double underChainPivotPos = -45;
-    public static final double clearancePivotPos = -15;
-    public static final double podiumPivotPos = -22.0;
-    public static final double lowPivotPos = -40.0;
-
-    public static final double topRailPos = 0;
-
-    public static final double bottomRailPos = 0;
 
     public static final Pose2d amp = new Pose2d(new Translation2d(1.82, 7.68), new Rotation2d().fromDegrees(-90));
   }
@@ -62,6 +45,9 @@ public final class Constants {
     // kraken = 5.21208, neo = 4.42, vortex = 5.88264
     public static final double kTheoreticalMaxSpeedMetersPerSecond = 4.7244;
     public static final double kMaxSpeedMetersPerSecond = 3.77;
+    public static final double kMaxAngularVelocityRadiansPerSecond = 2 * Math.PI;
+
+    public static final double kScaleTranslationInputs = 1;
 
     public static final double autoAlignMaxSpeedMetersPerSecond = 1;
     public static final double autoAlignRotationalMaxSpeedMetersPerSecond = 1;
@@ -85,6 +71,20 @@ public final class Constants {
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2), new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2), new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+
+    public static final class RotationConfigs {
+
+      public static final double kSwerveHeadingControllerErrorTolerance = 0.1;
+
+      public static final double kSnapSwerveHeadingKp = 0.2;
+      public static final double kSnapSwerveHeadingKi = 0.17;
+      public static final double kSnapSwerveHeadingKd = 0.015;
+
+      public static final double kMaintainSwerveHeadingKpHighVelocity = 0;
+      public static final double kMaintainSwerveHeadingKiHighVelocity = 0;
+      public static final double kMaintainSwerveHeadingKdHighVelocity = 0;
+
+    }
   }
 
   public static final class ModuleConstants {
@@ -154,6 +154,8 @@ public final class Constants {
     public final static double flyWheelmaxAcc = 5000;
 
     public final static double rotationalSpeed = 3000;
+
+    public final static double flywheelVelocityConv = 2 * Units.inchesToMeters(3);
   }
 
   public static final class ClimbConstants {
@@ -349,7 +351,7 @@ public final class Constants {
     public static final int intakeAbsInput = 3;
 
     public static final int shooterPivotCurrentLimit = 40;
-    public static final int flyWheelCurrentLimit = 0;
+    public static final int flyWheelCurrentLimit = 30;
   }
 
   public static final class CAN {

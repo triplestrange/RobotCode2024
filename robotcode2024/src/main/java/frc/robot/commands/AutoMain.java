@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.indexer.IntakeToIndexer;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.arm.Arm;
 
 public class AutoMain extends Command {
 
@@ -51,14 +53,18 @@ public class AutoMain extends Command {
 
         public void registerCommands() {
                 // Elev Commands
-                NamedCommands.registerCommand("amp", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setElev(Constants.MechPositions.ampIntakePos), m_robotContainer.m_elevator));
-                NamedCommands.registerCommand("ground", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setElev(Constants.MechPositions.groundIntakePos)));
+                NamedCommands.registerCommand("amp",
+                                new InstantCommand(() -> m_robotContainer.m_superstructure.setGoalCommand(
+                                                Superstructure.Goal.AMP),
+                                                m_robotContainer.m_superstructure));
+                NamedCommands.registerCommand("ground", new InstantCommand(
+                                () -> m_robotContainer.m_superstructure.setGoalCommand(Superstructure.Goal.GROUND),
+                                m_robotContainer.m_superstructure));
 
-                NamedCommands.registerCommand("stowElev", new InstantCommand(() -> m_robotContainer.m_elevator
-                                .setElev(Constants.MechPositions.stowIntakePos),
-                                m_robotContainer.m_elevator));
+                NamedCommands.registerCommand("stowElev",
+                                new InstantCommand(() -> m_robotContainer.m_superstructure.setGoalCommand(
+                                                Superstructure.Goal.STOW),
+                                                m_robotContainer.m_superstructure));
                 // Intake Commands
                 NamedCommands.registerCommand("intakeOut", new InstantCommand(() -> m_robotContainer.m_intake
                                 .runOutake(), m_robotContainer.m_intake));
@@ -95,11 +101,12 @@ public class AutoMain extends Command {
                 NamedCommands.registerCommand("shoot",
                                 (new RunCommand(() -> m_robotContainer.m_shoot.autonomous(),
                                                 m_robotContainer.m_robotDrive, m_robotContainer.m_indexer,
-                                                m_robotContainer.m_shooter, m_robotContainer.m_flywheel)
+                                                m_robotContainer.m_superstructure, m_robotContainer.m_flywheel)
                                                 .withTimeout(1.5)));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
-                                () -> m_robotContainer.m_shooter.setShooterAngle(0), m_robotContainer.m_shooter)
+                                () -> m_robotContainer.m_Arm.setGoal(Arm.Goal.SUBWOOFER),
+                                m_robotContainer.m_superstructure)
                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676),
                                                 m_robotContainer.m_flywheel))
                                 .andThen(new WaitCommand(1.5)).andThen(new InstantCommand(

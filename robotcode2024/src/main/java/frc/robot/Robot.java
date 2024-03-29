@@ -19,7 +19,10 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.RobotController.RadioLEDState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -110,7 +113,7 @@ public class Robot extends LoggedRobot {
             (Command command) -> {
               logCommandFunction.accept(command, false);
             });
-
+    RobotController.setBrownoutVoltage(6.0);
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
@@ -129,8 +132,9 @@ public class Robot extends LoggedRobot {
       m_robotContainer.m_indexer.updateSmartDashBoard();
       m_robotContainer.m_intake.updateSmartDashBoard();
       m_robotContainer.m_robotDrive.updateSmartDashBoard();
-      m_robotContainer.m_shooter.updateSmartDashBoard();
+      m_robotContainer.m_Arm.updateSmartDashBoard();
       m_robotContainer.m_vision.updateSmartDashBoard();
+      m_robotContainer.m_shoot.updateSmartDashBoard();
     }
   }
 
@@ -143,7 +147,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
 
-    m_robotContainer.m_shooter.resetPIDs();
+    m_robotContainer.m_Arm.resetPIDs();
     m_robotContainer.m_elevator.resetPIDs();
 
   }
