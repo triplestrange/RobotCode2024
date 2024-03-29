@@ -33,29 +33,29 @@ public class SwerveDrive extends SubsystemBase {
   public boolean presetEnabled = false;
 
   // Robot swerve modules
-  private final SwerveModule m_frontLeft = new SwerveModule(CAN.FL_DRIVE,
+  private final Module m_frontLeft = new Module(CAN.FL_DRIVE,
       CAN.FL_STEER,
-      SwerveModuleConstants.FL_ENCODER,
+      ModuleConstants.FL_ENCODER,
       SwerveConstants.frontLeftSteerEncoderReversed,
-      SwerveModuleConstants.FL_ENC_OFFSET);
+      ModuleConstants.FL_ENC_OFFSET);
 
-  private final SwerveModule m_rearLeft = new SwerveModule(CAN.BL_DRIVE,
+  private final Module m_rearLeft = new Module(CAN.BL_DRIVE,
       CAN.BL_STEER,
-      SwerveModuleConstants.BL_ENCODER,
+      ModuleConstants.BL_ENCODER,
       SwerveConstants.backLeftSteerEncoderReversed,
-      SwerveModuleConstants.BL_ENC_OFFSET);
+      ModuleConstants.BL_ENC_OFFSET);
 
-  private final SwerveModule m_frontRight = new SwerveModule(CAN.FR_DRIVE,
+  private final Module m_frontRight = new Module(CAN.FR_DRIVE,
       CAN.FR_STEER,
-      SwerveModuleConstants.FR_ENCODER,
+      ModuleConstants.FR_ENCODER,
       SwerveConstants.frontRightSteerEncoderReversed,
-      SwerveModuleConstants.FR_ENC_OFFSET);
+      ModuleConstants.FR_ENC_OFFSET);
 
-  private final SwerveModule m_rearRight = new SwerveModule(CAN.BR_DRIVE,
+  private final Module m_rearRight = new Module(CAN.BR_DRIVE,
       CAN.BR_STEER,
-      SwerveModuleConstants.BR_ENCODER,
+      ModuleConstants.BR_ENCODER,
       SwerveConstants.backRightSteerEncoderReversed,
-      SwerveModuleConstants.BR_ENC_OFFSET);
+      ModuleConstants.BR_ENC_OFFSET);
 
   private SwerveModuleState[] swerveModuleStates;
   public ChassisSpeeds currentMovement;
