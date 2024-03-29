@@ -1,10 +1,25 @@
 package com.team1533.frc.robot.subsystems.swerve;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.function.Supplier;
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -12,42 +27,60 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.util.AbsoluteEncoder;
+import com.team1533.lib.swerve.ModuleConfig;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
 
 public class ModuleIOReal implements ModuleIO {
     // motors
-    private final TalonFX m_driveMotor;
-    private final CANSparkMax m_turningMotor;
+    private final TalonFX driveMotor;
+    private final CANSparkMax turningMotor;
 
     // encoders
-    final RelativeEncoder m_turningEncoder;
-    final AbsoluteEncoder m_absoluteEncoder;
+    private RelativeEncoder turningEncoder;
+    private AbsoluteEncoder absoluteEncoder;
 
-    // final AbsoluteEncoder absoluteEncoder;
-
-    public DutyCycleOut output;
+    // Status Signals
+    private final StatusSignal<Double> driveVelocity;
+    private final StatusSignal<Double> driveAppliedVolts;
+    private final StatusSignal<Double> driveSupplyCurrent;
+    private final StatusSignal<Double> driveTorqueCurrent;
 
     // steering pid
-    private SparkPIDController m_pidController;
+    private SparkPIDController pidController;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
-    public ModuleIOReal(int driveMotorChannel, int turningMotorChannel, int absoluteEncoderChannel,
-            boolean turningEncoderReversed, double angleOffset) {
+    // Control
+    private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0);
+    private final TorqueCurrentFOC currentControl = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
+    private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0)
+            .withUpdateFreqHz(0);
+    private final PositionTorqueCurrentFOC positionControl = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
+    private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0);
 
-        output = new DutyCycleOut(0);
+    public ModuleIOReal(ModuleConfig config) {
 
-        output.UpdateFreqHz = 0;
+        // Init motor & encoder objects
+        driveMotor = new TalonFX(config.getDriveMotorChannel());
+        turningMotor = new CANSparkMax(config.getTurningMotorChannel(), MotorType.kBrushless);
+        absoluteEncoder = new AbsoluteEncoder(config.getAbsoluteEncoderChannel(), config.getAngleOffset());
+        turningEncoder = turningMotor.getEncoder();
 
-        output.EnableFOC = true;
+        turningMotor.restoreFactoryDefaults();
 
-        m_driveMotor = new TalonFX(driveMotorChannel);
-        m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
+        turningMotor.restoreFactoryDefaults();
+        turningMotor.setCANTimeout(250);
 
-        m_turningMotor.restoreFactoryDefaults();
+        // turningMotor.enableVoltageCompensation(12.0);
 
-        m_turningEncoder = m_turningMotor.getEncoder();
-        m_absoluteEncoder = new AbsoluteEncoder(absoluteEncoderChannel, angleOffset);
+        turningEncoder.setPosition(0.0);
+        turningEncoder.setMeasurementPeriod(10);
+        turningEncoder.setAverageDepth(2);
+
+        turningEncoder = turningMotor.getEncoder();
 
         // Set the distance per pulse for the drive encoder. We can simply use the
         // distance traveled for one rotation of the wheel divided by the encoder
@@ -60,13 +93,12 @@ public class ModuleIOReal implements ModuleIO {
         // This is the the angle through an entire rotation (2 * wpi::math::pi)
         // divided by the encoder resolution.
 
-        m_driveMotor.getConfigurator()
+        driveMotor.getConfigurator()
                 .apply(new FeedbackConfigs()
                         .withSensorToMechanismRatio(1.0 / ModuleConstants.kDriveEncoderDistancePerPulse));
 
-        m_turningEncoder.setPositionConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse);
-        m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse / 60.);
-        // m_absoluteEncoder.setPositionConversionFactor(encoderCPR);
+        turningEncoder.setPositionConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse);
+        turningEncoder.setVelocityConversionFactor(ModuleConstants.kSteerEncoderDistancePerPulse / 60.);
 
         // Limit the PID Controller's input range between -pi and pi and set the input
         // to be continuous.
@@ -81,53 +113,90 @@ public class ModuleIOReal implements ModuleIO {
         kMaxOutput = 1;
         kMinOutput = -1;
 
-        m_pidController = m_turningMotor.getPIDController();
+        pidController = turningMotor.getPIDController();
         // set PID coefficients
-        m_pidController.setP(kP);
-        m_pidController.setI(kI);
-        m_pidController.setD(kD);
-        m_pidController.setIZone(kIz);
-        m_pidController.setFF(kFF);
-        m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+        pidController.setP(kP);
+        pidController.setI(kI);
+        pidController.setD(kD);
+        pidController.setIZone(kIz);
+        pidController.setFF(kFF);
+        pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-        m_driveMotor.getConfigurator().apply(new CurrentLimitsConfigs()
+        driveMotor.getConfigurator().apply(new CurrentLimitsConfigs()
                 .withSupplyCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit)
                 .withSupplyCurrentLimitEnable(true));
-        m_turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
-        m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
-        m_turningMotor.setIdleMode(IdleMode.kBrake);
-        m_turningMotor.setInverted(true);
-        m_driveMotor.setInverted(true);
-        m_driveMotor.setControl(output);
+        turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
+        driveMotor.setNeutralMode(NeutralModeValue.Brake);
+        turningMotor.setIdleMode(IdleMode.kBrake);
+        turningMotor.setInverted(true);
+        driveMotor.setInverted(true);
+        driveMotor.setControl(velocityTorqueCurrentFOC);
 
-        m_turningMotor.burnFlash();
+        turningMotor.burnFlash();
+
+        // Get signals and set update rate
+        // 100hz signals
+        driveVelocity = driveMotor.getVelocity();
+        driveAppliedVolts = driveMotor.getMotorVoltage();
+        driveSupplyCurrent = driveMotor.getSupplyCurrent();
+        driveTorqueCurrent = driveMotor.getTorqueCurrent();
+
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                100.0,
+                driveVelocity,
+                driveAppliedVolts,
+                driveSupplyCurrent,
+                driveTorqueCurrent);
 
     }
 
     @Override
     public void updateInputs(ModuleIOInputs inputs) {
+        inputs.driveMotorConnected = BaseStatusSignal.refreshAll(
+                driveVelocity,
+                driveAppliedVolts,
+                driveSupplyCurrent,
+                driveTorqueCurrent)
+                .isOK();
+        inputs.turnMotorConnected = turningMotor.getFault(FaultID.kSensorFault);
+        inputs.absMotorConnected = absoluteEncoder.isConnected();
+        inputs.hasCurrentControl = true;
 
+        inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
+        inputs.driveSupplyCurrentAmps = driveSupplyCurrent.getValueAsDouble();
+        inputs.driveTorqueCurrentAmps = driveTorqueCurrent.getValueAsDouble();
+
+        inputs.turnAbsolutePosition = new Rotation2d(absoluteEncoder.getAngle());
+        inputs.turnPosition = new Rotation2d().fromRotations(turningEncoder.getPosition());
+        inputs.turnVelocityPerSec = new Rotation2d().fromRotations(turningEncoder.getVelocity());
+        inputs.turnAppliedVolts = turningMotor.getAppliedOutput() * turningMotor.getBusVoltage();
+        inputs.turnSupplyCurrentAmps = turningMotor.getOutputCurrent();
     }
 
     @Override
     public void runDriveVolts(double volts) {
+        driveMotor.setControl(voltageControl.withOutput(volts).withEnableFOC(true));
     }
 
     @Override
     public void runTurnVolts(double volts) {
+        turningMotor.setVoltage(volts);
     }
 
     @Override
     public void runCharacterization(double input) {
+        driveMotor.setControl(currentControl.withOutput(input));
     }
 
     @Override
     public void runDriveVelocitySetpoint(double velocityRadsPerSec, double feedForward) {
-
+        driveMotor.setControl(velocityTorqueCurrentFOC.withVelocity(Units.radiansToRotations(velocityRadsPerSec))
+                .withFeedForward(feedForward));
     }
 
     @Override
     public void runTurnPositionSetpoint(double angleRads) {
+        pidController.setReference(Units.radiansToRotations(angleRads), ControlType.kPosition);
     }
 
     /**
@@ -145,12 +214,12 @@ public class ModuleIOReal implements ModuleIO {
         double desiredDrive = state.speedMetersPerSecond / SwerveConstants.kMaxSpeedMetersPerSecond;
 
         if (Math.abs(desiredDrive) < 0.01 && !forceAngle) {
-            output.Output = 0;
-            m_driveMotor.setControl(output);
+            velocityTorqueCurrentFOC.Velocity = 0;
+            driveMotor.setControl(velocityTorqueCurrentFOC);
             return;
         }
         double desiredSteering = state.angle.getRadians();
-        double currentSteering = m_turningEncoder.getPosition();
+        double currentSteering = turningEncoder.getPosition();
 
         // calculate shortest path to angle with forward drive (error -pi to pi)
         double steeringError = Math.IEEEremainder(desiredSteering - currentSteering, 2 * Math.PI);
@@ -167,33 +236,41 @@ public class ModuleIOReal implements ModuleIO {
         double steeringSetpoint = currentSteering + steeringError;
 
         // m_driveMotor.set(desiredDrive + Math.cos(steeringError));
-        output.Output = desiredDrive;
-        m_driveMotor.setControl(output);
-        m_pidController.setReference(steeringSetpoint, com.revrobotics.CANSparkBase.ControlType.kPosition);
+        velocityTorqueCurrentFOC.Velocity = desiredDrive;
+        driveMotor.setControl(velocityTorqueCurrentFOC);
+        pidController.setReference(steeringSetpoint, com.revrobotics.CANSparkBase.ControlType.kPosition);
     }
 
     @Override
     public void setDrivePID(double kP, double kI, double kD) {
-
     }
 
     @Override
     public void setTurnPID(double kP, double kI, double kD) {
-
+        pidController.setP(kP);
+        pidController.setI(kI);
+        pidController.setD(kD);
     }
 
     @Override
-    public void setDriveBrakeMode(boolean enable) {
-
+    public void resetEncoders() {
+        driveMotor.setPosition(0);
+        turningEncoder.setPosition(absoluteEncoder.getAngle());
     }
 
     @Override
-    public void setTurnBrakeMode(boolean enable) {
+    public void setDriveBrakeMode(NeutralModeValue neutralModeValue) {
+        driveMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(neutralModeValue));
+    }
 
+    @Override
+    public void setTurnBrakeMode(IdleMode idleMode) {
+        turningMotor.setIdleMode(idleMode);
     }
 
     @Override
     public void stop() {
-
+        driveMotor.setControl(neutralControl);
+        turningMotor.stopMotor();
     }
 }

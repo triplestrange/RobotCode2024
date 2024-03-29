@@ -1,5 +1,6 @@
 package com.team1533.frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team1533.frc.robot.Constants;
 
 import edu.wpi.first.math.MathUtil;
@@ -55,7 +56,7 @@ public class ModuleIOSim implements ModuleIO {
 
         inputs.turnAbsolutePosition = new Rotation2d(turnSim.getAngularPositionRad()).plus(turnAbsoluteInitPosition);
         inputs.turnPosition = Rotation2d.fromRadians(turnSim.getAngularPositionRad());
-        inputs.turnVelocityRadsPerSec = turnSim.getAngularVelocityRadPerSec();
+        inputs.turnVelocityPerSec = new Rotation2d().fromRotations(turnSim.getAngularVelocityRadPerSec());
         inputs.turnAppliedVolts = turnAppliedVolts;
         inputs.turnSupplyCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
 
@@ -102,8 +103,12 @@ public class ModuleIOSim implements ModuleIO {
     }
 
     @Override
-    public void setDriveBrakeMode(boolean enable) {
-        driveCoast = !enable;
+    public void setDriveBrakeMode(NeutralModeValue neutralModeValue) {
+        if (neutralModeValue == NeutralModeValue.Brake) {
+            driveCoast = false;
+        } else {
+            driveCoast = true;
+        }
     }
 
     @Override

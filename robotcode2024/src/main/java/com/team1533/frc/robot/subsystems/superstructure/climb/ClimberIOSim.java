@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;

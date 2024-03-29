@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.team1533.lib.elevator.IntakePosition;
 import com.team254.lib.util.Util;
 
 import edu.wpi.first.math.util.Units;
@@ -111,25 +112,6 @@ public class Elevator {
 
         elevSetpoint = inputs.elevatorPosInches;
 
-    }
-
-    public static class IntakePosition {
-        private double elevPos;
-        private double intakeAng;
-
-        public IntakePosition(double elevPos, double intakeAng) {
-            this.elevPos = elevPos;
-            this.intakeAng = intakeAng;
-        }
-
-        // height from bottom of carriage
-        public double getHeight() {
-            return elevPos;
-        }
-
-        public double getAngle() {
-            return intakeAng;
-        }
     }
 
     public void resetPIDs() {
