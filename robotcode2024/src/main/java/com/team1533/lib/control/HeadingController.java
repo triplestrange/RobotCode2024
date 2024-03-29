@@ -1,12 +1,13 @@
 package com.team1533.lib.control;
 
+import com.team1533.frc.robot.Constants;
+import com.team1533.frc.robot.commands.automations.Shoot;
+import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants;
-import frc.robot.commands.automations.Shoot;
-import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class HeadingController {
 
@@ -93,8 +94,10 @@ public class HeadingController {
                 maxOutput = 1.0;
                 break;
             case SPEAKER_MAINTAIN:
-                // mPIDFController.setPID(Constants.kMaintainSwerveHeadingKp,
-                // Constants.kMaintainSwerveHeadingKi, Constants.kMaintainSwerveHeadingKd);
+                m_PIDController.setPID(
+                        Constants.SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKpHighVelocity,
+                        Constants.SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKiHighVelocity,
+                        Constants.SwerveConstants.RotationConfigs.kMaintainSwerveHeadingKdHighVelocity);
                 break;
             case SPEAKER_SNAP:
                 m_PIDController.setPID(Constants.SwerveConstants.RotationConfigs.kSnapSwerveHeadingKp,
