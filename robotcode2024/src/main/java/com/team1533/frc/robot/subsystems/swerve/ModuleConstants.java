@@ -1,5 +1,8 @@
 package com.team1533.frc.robot.subsystems.swerve;
 
+import com.team1533.frc.robot.Constants;
+import com.team1533.lib.swerve.ModuleConfig;
+
 import edu.wpi.first.math.util.Units;
 
 public class ModuleConstants {
@@ -18,17 +21,18 @@ public class ModuleConstants {
         public static final double kSteerEncoderDistancePerPulse =
                         // Assumes the encoders are on a 1:1 reduction with the module shaft.
                         (2 * Math.PI) / (double) kSteerEncoderCPR;
-        public static final int FL_ENCODER = 1;
-        public static final int FR_ENCODER = 0;
-        public static final int BL_ENCODER = 3;
-        public static final int BR_ENCODER = 2;
-        public final static double FL_ENC_OFFSET = 56 - 4; // 183
-        public final static double FR_ENC_OFFSET = 13 - 4; // 179 141
-        public final static double BL_ENC_OFFSET = Units.radiansToDegrees(2.642752) - 4; // 221
-        public final static double BR_ENC_OFFSET = 322 + 4 - 4; // 241
 
         public final static boolean driveEnableCurrentLimit = true;
         public final static int driveContinuousCurrentLimit = 35;
         public final static int drivePeakCurrentLimit = 40;
         public final static int drivePeakCurrentDuration = 1;
+
+        public final static ModuleConfig FL = new ModuleConfig(Constants.CAN.FL_DRIVE, Constants.CAN.FL_STEER, 1,
+                        false, 56 - 4);
+        public final static ModuleConfig FR = new ModuleConfig(Constants.CAN.FR_DRIVE, Constants.CAN.FR_STEER, 0,
+                        false, 13 - 4);
+        public final static ModuleConfig BL = new ModuleConfig(Constants.CAN.BL_DRIVE, Constants.CAN.BL_STEER, 3,
+                        false, Units.radiansToDegrees(2.642752) - 4);
+        public final static ModuleConfig BR = new ModuleConfig(Constants.CAN.BR_DRIVE, Constants.CAN.BR_STEER, 2,
+                        false, 326 - 4);
 }

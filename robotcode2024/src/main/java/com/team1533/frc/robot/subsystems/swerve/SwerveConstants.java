@@ -1,5 +1,6 @@
 package com.team1533.frc.robot.subsystems.swerve;
 
+import com.team1533.frc.robot.Constants;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -48,5 +49,12 @@ public class SwerveConstants {
         public static final double kMaintainSwerveHeadingKdHighVelocity = 0;
 
     }
+
+    // Odometry Constants
+    public static final double odometryFrequency = switch (Constants.LoggerConstants.getRobot()) {
+        case SIMBOT -> 50.0;
+        case DEVBOT -> 100.0;
+        case COMPBOT -> 250.0;
+    };
 
 }

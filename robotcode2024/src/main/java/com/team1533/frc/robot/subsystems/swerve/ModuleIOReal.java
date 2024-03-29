@@ -1,16 +1,10 @@
 package com.team1533.frc.robot.subsystems.swerve;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.function.Supplier;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -32,7 +26,6 @@ import com.team1533.lib.swerve.ModuleConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotController;
 
 public class ModuleIOReal implements ModuleIO {
     // motors
@@ -166,9 +159,9 @@ public class ModuleIOReal implements ModuleIO {
         inputs.driveSupplyCurrentAmps = driveSupplyCurrent.getValueAsDouble();
         inputs.driveTorqueCurrentAmps = driveTorqueCurrent.getValueAsDouble();
 
-        inputs.turnAbsolutePosition = new Rotation2d(absoluteEncoder.getAngle());
-        inputs.turnPosition = new Rotation2d().fromRotations(turningEncoder.getPosition());
-        inputs.turnVelocityPerSec = new Rotation2d().fromRotations(turningEncoder.getVelocity());
+        inputs.turnAbsolutePosition = Rotation2d.fromRadians(absoluteEncoder.getAngle());
+        inputs.turnPosition = Rotation2d.fromRotations(turningEncoder.getPosition());
+        inputs.turnVelocityPerSec = Rotation2d.fromRotations(turningEncoder.getVelocity());
         inputs.turnAppliedVolts = turningMotor.getAppliedOutput() * turningMotor.getBusVoltage();
         inputs.turnSupplyCurrentAmps = turningMotor.getOutputCurrent();
     }

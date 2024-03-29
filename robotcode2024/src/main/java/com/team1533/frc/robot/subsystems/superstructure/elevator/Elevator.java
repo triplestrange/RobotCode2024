@@ -169,7 +169,7 @@ public class Elevator {
             elevSetpoint = goal.getPos().getHeight();
             intakeSetpoint = goal.getPos().getAngle();
         }
-        if (disableSupplier.getAsBoolean() || goal == goal.STOP) {
+        if (disableSupplier.getAsBoolean() || goal == Goal.STOP) {
             io.stop();
         }
         if (elevPIDEnabled) {

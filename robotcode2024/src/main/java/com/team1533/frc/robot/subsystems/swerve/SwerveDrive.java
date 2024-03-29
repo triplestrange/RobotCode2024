@@ -1,6 +1,13 @@
 package com.team1533.frc.robot.subsystems.swerve;
 
 import java.util.Optional;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -25,6 +32,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import lombok.Setter;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SwerveDrive extends SubsystemBase {
@@ -32,67 +40,33 @@ public class SwerveDrive extends SubsystemBase {
   public double rotationPreset = 0;
   public boolean presetEnabled = false;
 
-  // Robot swerve modules
-  private final Module m_frontLeft = new Module(CAN.FL_DRIVE,
-      CAN.FL_STEER,
-      ModuleConstants.FL_ENCODER,
-      SwerveConstants.frontLeftSteerEncoderReversed,
-      ModuleConstants.FL_ENC_OFFSET);
+  @AutoLog
+  public static class OdometryTimestampInputs {
+    public double[] timestamps = new double[] {};
+  }
 
-  private final Module m_rearLeft = new Module(CAN.BL_DRIVE,
-      CAN.BL_STEER,
-      ModuleConstants.BL_ENCODER,
-      SwerveConstants.backLeftSteerEncoderReversed,
-      ModuleConstants.BL_ENC_OFFSET);
+  public static final Lock odometryLock = new ReentrantLock();
+  public static final Queue<Double> timestampQueue = new ArrayBlockingQueue<>(20);
 
-  private final Module m_frontRight = new Module(CAN.FR_DRIVE,
-      CAN.FR_STEER,
-      ModuleConstants.FR_ENCODER,
-      SwerveConstants.frontRightSteerEncoderReversed,
-      ModuleConstants.FR_ENC_OFFSET);
-
-  private final Module m_rearRight = new Module(CAN.BR_DRIVE,
-      CAN.BR_STEER,
-      ModuleConstants.BR_ENCODER,
-      SwerveConstants.backRightSteerEncoderReversed,
-      ModuleConstants.BR_ENC_OFFSET);
+  private final OdometryTimestampInputsAutoLogged odometryTimestampInputs = new OdometryTimestampInputsAutoLogged();
+  private final GyroIO gyroIO;
+  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final Module[] modules = new Module[4];
 
   private SwerveModuleState[] swerveModuleStates;
   public ChassisSpeeds currentMovement;
 
-  // The gyro sensor
-  public final double navXPitch() {
-    return navX.getPitch();
-
-  }
-
-  public final double navXRoll() {
-    return navX.getRoll();
-  }
-
-  private static final AHRS navX = new AHRS(SPI.Port.kMXP);
-  boolean gyroReset;
-
-  // Odometry class for tracking robot pose with vision
-  public SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
-      SwerveConstants.kDriveKinematics,
-      getAngle(),
-      new SwerveModulePosition[] {
-          m_frontLeft.getPosition(),
-          m_frontRight.getPosition(),
-          m_rearLeft.getPosition(),
-          m_rearRight.getPosition()
-      },
-      new Pose2d(0, 0, new Rotation2d(0)),
-      VisionConstants.STATE_STD_DEVS,
-      VisionConstants.VISION_MEASUREMENT_STD_DEVS);
-
   /**
    * Creates a new DriveSubsystem.
    */
-  public SwerveDrive(RobotContainer m_RobotContainer) {
+  public SwerveDrive(RobotContainer m_RobotContainer, ModuleIO FL, ModuleIO FR, ModuleIO BL, ModuleIO BR,
+      GyroIO gyroIO) {
     resetEncoders();
     this.m_RobotContainer = m_RobotContainer;
+    modules[0] = new Module(FL, 0);
+    modules[1] = new Module(FR, 1);
+    modules[2] = new Module(BL, 2);
+    modules[3] = new Module(BR, 3);
 
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
@@ -117,6 +91,32 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
+  // The gyro sensor
+  public final double navXPitch() {
+    return gyroInputs.pitchPosition.getDegrees();
+
+  }
+
+  public final double navXRoll() {
+    return gyroInputs.rollPosition.getDegrees();
+  }
+
+  boolean gyroReset;
+
+  // Odometry class for tracking robot pose with vision
+  public SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
+      SwerveConstants.kDriveKinematics,
+      getAngle(),
+      new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearRight.getPosition()
+      },
+      new Pose2d(0, 0, new Rotation2d(0)),
+      VisionConstants.STATE_STD_DEVS,
+      VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+
   public Boolean isRedAlliance() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
@@ -132,7 +132,7 @@ public class SwerveDrive extends SubsystemBase {
    */
   public Rotation2d getAngle() {
     // Negating the angle because WPILib gyros are CW positive.
-    return Rotation2d.fromDegrees((navX.getAngle()) * (SwerveConstants.kGyroReversed ? 1.0 : -1.0));
+    return gyroInputs.yawPosition.times(SwerveConstants.kGyroReversed ? 1.0 : -1.0);
   }
 
   public boolean getGyroReset() {
@@ -239,7 +239,7 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void zeroHeading() {
 
-    navX.reset();
+    gyroIO.reset();
 
     if (isRedAlliance()) {
       resetOdometry(new Pose2d(getPose().getX(), getPose().getY(), Rotation2d.fromDegrees(180)));
@@ -271,6 +271,7 @@ public class SwerveDrive extends SubsystemBase {
         m_rearRight.getState());
   }
 
+  @AutoLogOutput
   public ChassisSpeeds getChassisSpeeds() {
     return currentMovement;
   }
@@ -280,9 +281,8 @@ public class SwerveDrive extends SubsystemBase {
    *
    * @return the robot's heading in degrees, from -180 to 180
    */
-  public static double getHeading() {
-    double heading = Math.IEEEremainder(navX.getAngle(), 360) * (SwerveConstants.kGyroReversed ? -1.0 : 1.0);
-    return heading;
+  public double getHeadingDeg() {
+    return gyroInputs.yawPosition.getDegrees();
   }
 
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
@@ -295,7 +295,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return navX.getRate() * (SwerveConstants.kGyroReversed ? -1.0 : 1.0);
+    return gyroInputs.yawVelocityRadPerSec;
   }
 
   public void zeroWheels() {
