@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.team1533.frc.robot.util.Alert;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
@@ -14,6 +15,7 @@ public class Module {
   private final int index;
   private final ModuleIO io;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
+  private SimpleMotorFeedforward ff = new SimpleMotorFeedforward(ModuleConstants.dffkS, ModuleConstants.dffkV, 0.0);
 
   // Alerts
   private final Alert driveMotorDisconnected;
@@ -66,11 +68,11 @@ public class Module {
   }
 
   public void setDesiredState(SwerveModuleState state) {
-    io.setDesiredState(state);
+    io.setDesiredState(state, ff.calculate(state.speedMetersPerSecond));
   }
 
   public void setDesiredState(SwerveModuleState state, boolean forceAngle) {
-    io.setDesiredState(state, forceAngle);
+    io.setDesiredState(state, ff.calculate(state.speedMetersPerSecond), forceAngle);
   }
 
   public SwerveModulePosition getPosition() {

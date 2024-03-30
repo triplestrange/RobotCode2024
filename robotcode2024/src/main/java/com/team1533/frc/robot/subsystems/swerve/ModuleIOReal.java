@@ -5,10 +5,10 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -44,14 +44,12 @@ public class ModuleIOReal implements ModuleIO {
 
     // steering pid
     private SparkPIDController pidController;
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
     // Control
     private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0);
     private final TorqueCurrentFOC currentControl = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
-    private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0)
+    private final VelocityVoltage velocityVoltage = new VelocityVoltage(0)
             .withUpdateFreqHz(0);
-    private final PositionTorqueCurrentFOC positionControl = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
     private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0);
 
     public ModuleIOReal(ModuleConfig config) {
@@ -97,23 +95,12 @@ public class ModuleIOReal implements ModuleIO {
         // to be continuous.
         // m_turningPIDController.enableContinuousInput(0, 2*Math.PI);
 
-        // PID coefficients
-        kP = 2; // 0.5
-        kI = 0;
-        kD = 0;
-        kIz = 0;
-        kFF = 0;
-        kMaxOutput = 1;
-        kMinOutput = -1;
-
         pidController = turningMotor.getPIDController();
         // set PID coefficients
-        pidController.setP(kP);
-        pidController.setI(kI);
-        pidController.setD(kD);
-        pidController.setIZone(kIz);
-        pidController.setFF(kFF);
-        pidController.setOutputRange(kMinOutput, kMaxOutput);
+        pidController.setP(ModuleConstants.tkP);
+        pidController.setOutputRange(ModuleConstants.tkMinOutput, ModuleConstants.tkMaxOutput);
+
+        driveMotor.getConfigurator().apply(new Slot0Configs().withKP(ModuleConstants.dkP));
 
         driveMotor.getConfigurator().apply(new CurrentLimitsConfigs()
                 .withSupplyCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit)
@@ -123,7 +110,7 @@ public class ModuleIOReal implements ModuleIO {
         turningMotor.setIdleMode(IdleMode.kBrake);
         turningMotor.setInverted(true);
         driveMotor.setInverted(true);
-        driveMotor.setControl(velocityTorqueCurrentFOC);
+        driveMotor.setControl(velocityVoltage.withEnableFOC(true));
 
         turningMotor.burnFlash();
 
@@ -182,9 +169,9 @@ public class ModuleIOReal implements ModuleIO {
     }
 
     @Override
-    public void runDriveVelocitySetpoint(double velocityRadsPerSec, double feedForward) {
-        driveMotor.setControl(velocityTorqueCurrentFOC.withVelocity(Units.radiansToRotations(velocityRadsPerSec))
-                .withFeedForward(feedForward));
+    public void runDriveVelocitySetpoint(double metersPerSecond, double feedForward) {
+        driveMotor.setControl(velocityVoltage.withVelocity(metersPerSecond)
+                .withFeedForward(feedForward).withEnableFOC(true));
     }
 
     @Override
@@ -197,18 +184,19 @@ public class ModuleIOReal implements ModuleIO {
      *
      * @param state Desired state with speed and angle.
      */
-    public void setDesiredState(SwerveModuleState state) {
-        setDesiredState(state, false);
+    @Override
+    public void setDesiredState(SwerveModuleState state, double feedForward) {
+        setDesiredState(state, feedForward, false);
     }
 
     @Override
-    public void setDesiredState(SwerveModuleState state, boolean forceAngle) {
+    public void setDesiredState(SwerveModuleState state, double feedForward, boolean forceAngle) {
 
-        double desiredDrive = state.speedMetersPerSecond / SwerveConstants.kMaxSpeedMetersPerSecond;
+        double desiredDrive = state.speedMetersPerSecond;
 
         if (Math.abs(desiredDrive) < 0.01 && !forceAngle) {
-            velocityTorqueCurrentFOC.Velocity = 0;
-            driveMotor.setControl(velocityTorqueCurrentFOC);
+            driveMotor.setControl(
+                    velocityVoltage.withVelocity(desiredDrive).withFeedForward(feedForward).withEnableFOC(true));
             return;
         }
         double desiredSteering = state.angle.getRadians();
@@ -228,9 +216,8 @@ public class ModuleIOReal implements ModuleIO {
 
         double steeringSetpoint = currentSteering + steeringError;
 
-        // m_driveMotor.set(desiredDrive + Math.cos(steeringError));
-        velocityTorqueCurrentFOC.Velocity = desiredDrive;
-        driveMotor.setControl(velocityTorqueCurrentFOC);
+        driveMotor.setControl(
+                velocityVoltage.withVelocity(desiredDrive).withFeedForward(feedForward).withEnableFOC(true));
         pidController.setReference(steeringSetpoint, com.revrobotics.CANSparkBase.ControlType.kPosition);
     }
 

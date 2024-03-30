@@ -2,6 +2,7 @@ package com.team1533.frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team1533.frc.robot.Constants;
+import com.team1533.lib.swerve.ModuleConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -28,9 +29,8 @@ public class ModuleIOSim implements ModuleIO {
     private boolean driveCoast = false;
     private SlewRateLimiter driveVoltsLimiter = new SlewRateLimiter(4.0);
 
-    public ModuleIOSim(int driveMotorChannel, int turningMotorChannel, int absoluteEncoderChannel,
-            boolean turningEncoderReversed, double angleOffset) {
-        turnAbsoluteInitPosition = new Rotation2d(Units.degreesToRadians(angleOffset));
+    public ModuleIOSim(ModuleConfig config) {
+        turnAbsoluteInitPosition = new Rotation2d(Units.degreesToRadians(config.getAngleOffset()));
         turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
     }
 

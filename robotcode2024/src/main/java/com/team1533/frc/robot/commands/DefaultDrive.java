@@ -21,7 +21,6 @@ public class DefaultDrive extends Command {
   private double rotationSpeed;
   private Timer timer = new Timer();
   private double deadzone;
-  private ProfiledPIDController rotation_controller;
 
   /**
    * Creates a new Drive.
@@ -37,9 +36,7 @@ public class DefaultDrive extends Command {
     speed = MathUtil.clamp(speed, -SwerveConstants.kMaxSpeedMetersPerSecond,
         SwerveConstants.kMaxSpeedMetersPerSecond);
     deadzone = 0.2;
-    rotation_controller = new ProfiledPIDController(0.2, 0.17, 0.015, new Constraints(720, 200));
-    rotation_controller.enableContinuousInput(0, 360);
-    rotation_controller.setIZone(10);
+
   }
 
   // Called when the command is initially scheduled.
@@ -53,34 +50,22 @@ public class DefaultDrive extends Command {
   public void execute() {
     double speedR;
 
-    if (Math.abs(JoystickButtons.m_driverController.getRightX()) > 0.075) {
-      m_swerve.setPresetEnabled(false);
+    if (Math.abs(JoystickButtons.m_driverController.getRightX()) > deadzone) {
+      m_swerve.disableHeadingController();
     }
 
-    double rot = rotation_controller.calculate(m_swerve.getPose().getRotation().getDegrees(),
-        m_swerve.getRotationPreset());
-    rot = MathUtil.clamp(rot, -2 * Math.PI, 2 * Math.PI);
-    // System.out.println("rotation PID: " + rot);
-
-    // System.out.println("gyro: " + m_swerve.getAngle().getDegrees());
-    // System.out.println("desiredHeading: " + m_swerve.getRotationPreset());
     double norm = Math.hypot(JoystickButtons.m_driverController.getLeftX(),
         JoystickButtons.m_driverController.getLeftY());
 
     double speedY = JoystickButtons.m_driverController.getLeftY() * speed;
     double speedX = JoystickButtons.m_driverController.getLeftX() * speed;
 
-    if (m_swerve.getPresetEnabled()) {
-
-      speedR = rot;
-    } else {
-      if (Math.abs(JoystickButtons.m_driverController.getRightX()) <= deadzone) {
-        speedR = 0;
-      }
-      // rotation was reversed
-      else {
-        speedR = Math.pow(JoystickButtons.m_driverController.getRightX(), 3) * -4 * rotationSpeed;
-      }
+    if (Math.abs(JoystickButtons.m_driverController.getRightX()) <= deadzone) {
+      speedR = 0;
+    }
+    // rotation was reversed
+    else {
+      speedR = Math.pow(JoystickButtons.m_driverController.getRightX(), 3) * -4 * rotationSpeed;
     }
 
     if (Math.abs(JoystickButtons.m_driverController.getLeftY()) <= deadzone) {
@@ -90,7 +75,7 @@ public class DefaultDrive extends Command {
       speedX = 0;
     }
 
-    m_swerve.drive(
+    m_swerve.acceptTeleopInput(
         -speedY * Math.pow(norm, 2),
         -speedX * Math.pow(norm, 2),
         speedR,

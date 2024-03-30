@@ -20,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import lombok.Getter;
 
 public class Shoot {
 
@@ -54,6 +55,7 @@ public class Shoot {
 
     // variables for shooting
 
+    @Getter
     Rotation2d shootingRotation;
     double shootingAngle = 0;
     double flywheelSetpoint;
@@ -121,7 +123,7 @@ public class Shoot {
             // * -0.1));
         }
 
-        m_RobotContainer.m_robotDrive.setPresetEnabled(true, shootingRotation.getDegrees());
+        m_RobotContainer.m_robotDrive.setHeadingController(this::getShootingRotation);
         if (isAllianceRed()) {
             flywheelSetpoint = m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()) * 4850.0 / 3;
@@ -180,8 +182,6 @@ public class Shoot {
 
             m_RobotContainer.m_indexer.runIn();
 
-            m_RobotContainer.m_robotDrive.setPresetEnabled(true);
-
         }
     }
 
@@ -191,8 +191,6 @@ public class Shoot {
                 && velocityCheck()) {
 
             m_RobotContainer.m_indexer.runIn();
-
-            m_RobotContainer.m_robotDrive.setPresetEnabled(false);
 
         }
     }

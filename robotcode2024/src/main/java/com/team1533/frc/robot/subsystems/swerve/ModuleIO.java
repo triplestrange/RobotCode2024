@@ -58,10 +58,10 @@ public interface ModuleIO {
     default void runTurnPositionSetpoint(double angleRads) {
     }
 
-    default void setDesiredState(SwerveModuleState state) {
+    default void setDesiredState(SwerveModuleState state, double feedForward) {
     }
 
-    default void setDesiredState(SwerveModuleState state, boolean forceAngle) {
+    default void setDesiredState(SwerveModuleState state, double feedForward, boolean forceAngle) {
     }
 
     /** Configure drive PID */

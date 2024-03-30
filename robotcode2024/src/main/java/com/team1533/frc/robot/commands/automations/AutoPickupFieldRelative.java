@@ -31,7 +31,7 @@ public class AutoPickupFieldRelative extends SequentialCommandGroup {
                                 new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.GROUND),
                                                 m_Superstructure),
                                 new GroundToIntake(m_intake),
-                                new DriveTo(new Pose2d(note2d,
+                                new Pathfind(new Pose2d(note2d,
                                                 m_swerve.getPose().getTranslation().minus(note2d).getAngle()), 0, 0,
                                                 m_swerve),
                                 new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.STOW))

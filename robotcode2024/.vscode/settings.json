@@ -29,5 +29,6 @@
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
   "wpilib.autoSaveOnDeploy": true,
-  "wpilib.selectDefaultSimulateExtension": true
+  "wpilib.selectDefaultSimulateExtension": true,
+  "java.debug.settings.onBuildFailureProceed": true
 }
