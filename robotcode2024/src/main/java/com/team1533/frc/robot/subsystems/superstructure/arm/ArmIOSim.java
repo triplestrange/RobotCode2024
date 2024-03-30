@@ -15,8 +15,8 @@ public class ArmIOSim implements ArmIO {
     private final SingleJointedArmSim jointSim = new SingleJointedArmSim(DCMotor.getNEO(2),
             2, Units.lbsToKilograms(4.916),
             Units.inchesToMeters(11.822640),
-            Units.degreesToRadians(Constants.IntakeConstants.minAngle),
-            Units.degreesToRadians(Constants.IntakeConstants.maxAngle),
+            Units.degreesToRadians(ArmConstants.minAngle),
+            Units.degreesToRadians(ArmConstants.maxAngle),
             true,
             0);
 

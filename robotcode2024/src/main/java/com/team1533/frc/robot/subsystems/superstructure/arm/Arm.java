@@ -6,7 +6,6 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -97,10 +96,10 @@ public class Arm {
 
         disableSupplier = DriverStation::isDisabled;
 
-        pivotController = new ProfiledPIDController(Constants.ShooterConstants.pivotkP,
-                Constants.ShooterConstants.pivotkI, Constants.ShooterConstants.pivotkD,
-                new Constraints(Constants.ShooterConstants.kMaxAngularPivotSpeedDegreesPerSecond,
-                        Constants.ShooterConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
+        pivotController = new ProfiledPIDController(ArmConstants.pivotkP,
+                ArmConstants.pivotkI, ArmConstants.pivotkD,
+                new Constraints(ArmConstants.kMaxAngularPivotSpeedDegreesPerSecond,
+                        ArmConstants.kMaxAngularPivotAccelerationDegreesPerSecondSquared));
 
         pivotController.setIZone(1);
 

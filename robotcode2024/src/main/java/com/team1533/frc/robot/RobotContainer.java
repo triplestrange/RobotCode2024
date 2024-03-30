@@ -4,16 +4,11 @@
 
 package com.team1533.frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.team1533.frc.robot.Constants.JoystickButtons;
 import com.team1533.frc.robot.commands.AutoMain;
 import com.team1533.frc.robot.commands.DefaultDrive;
-import com.team1533.frc.robot.commands.automations.AutoPickupFieldRelative;
-import com.team1533.frc.robot.commands.automations.DriveTo;
+import com.team1533.frc.robot.commands.automations.Pathfind;
 import com.team1533.frc.robot.commands.automations.Shoot;
-import com.team1533.frc.robot.commands.indexer.GroundToIndexer;
 import com.team1533.frc.robot.commands.indexer.GroundToIntake;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheel;
@@ -34,28 +29,29 @@ import com.team1533.frc.robot.subsystems.superstructure.arm.Arm;
 import com.team1533.frc.robot.subsystems.superstructure.arm.ArmIO;
 import com.team1533.frc.robot.subsystems.superstructure.arm.ArmIOReal;
 import com.team1533.frc.robot.subsystems.superstructure.arm.ArmIOSim;
-import com.team1533.frc.robot.subsystems.superstructure.climb.Climb;
-import com.team1533.frc.robot.subsystems.superstructure.climb.ClimbIO;
-import com.team1533.frc.robot.subsystems.superstructure.climb.ClimbIOReal;
-import com.team1533.frc.robot.subsystems.superstructure.climb.ClimbIOSim;
+import com.team1533.frc.robot.subsystems.superstructure.climb.Climber;
+import com.team1533.frc.robot.subsystems.superstructure.climb.ClimberIO;
+import com.team1533.frc.robot.subsystems.superstructure.climb.ClimberIOReal;
+import com.team1533.frc.robot.subsystems.superstructure.climb.ClimberIOSim;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIOReal;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
+import com.team1533.frc.robot.subsystems.swerve.GyroIO;
+import com.team1533.frc.robot.subsystems.swerve.GyroIOReal;
+import com.team1533.frc.robot.subsystems.swerve.GyroIOSim;
+import com.team1533.frc.robot.subsystems.swerve.ModuleConstants;
+import com.team1533.frc.robot.subsystems.swerve.ModuleIO;
+import com.team1533.frc.robot.subsystems.swerve.ModuleIOReal;
+import com.team1533.frc.robot.subsystems.swerve.ModuleIOSim;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 import com.team1533.frc.robot.subsystems.vision.Vision;
 import com.team1533.frc.robot.util.Alert;
 import com.team1533.frc.robot.util.Alert.AlertType;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -68,12 +64,12 @@ public class RobotContainer {
         public final Robot m_robot;
         public final Superstructure m_superstructure;
 
-        public final SwerveDrive m_robotDrive;
+        public SwerveDrive m_robotDrive;
         public Elevator m_elevator;
         public Intake m_intake;
         public Arm m_Arm;
         public FlyWheel m_flywheel;
-        public Climb m_climb;
+        public Climber m_climb;
         public Indexer m_indexer;
         public final Shoot m_shoot;
         public final Vision m_vision;
@@ -89,8 +85,8 @@ public class RobotContainer {
          */
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
-                m_robotDrive = new SwerveDrive(this);
 
+                m_robotDrive = null;
                 m_Arm = null;
                 m_indexer = null;
                 m_elevator = null;
@@ -100,22 +96,46 @@ public class RobotContainer {
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
                                 case COMPBOT -> {
+                                        m_robotDrive = new SwerveDrive(this, new ModuleIOReal(ModuleConstants.FL),
+                                                        new ModuleIOReal(ModuleConstants.FR),
+                                                        new ModuleIOReal(ModuleConstants.BL),
+                                                        new ModuleIOReal(ModuleConstants.BR),
+                                                        new GyroIOReal());
                                         m_indexer = new Indexer(new IndexerIOReal());
                                         m_elevator = new Elevator(new ElevatorIOReal());
                                         m_intake = new Intake(new IntakeIOReal());
                                         m_flywheel = new FlyWheel(new FlyWheelIOReal());
-                                        m_climb = new Climb(new ClimbIOReal());
+                                        m_climb = new Climber(new ClimberIOReal());
                                         m_Arm = new Arm(new ArmIOReal(), m_robotDrive);
                                 }
                                 case SIMBOT -> {
+                                        m_robotDrive = new SwerveDrive(this, new ModuleIOSim(ModuleConstants.FL),
+                                                        new ModuleIOSim(ModuleConstants.FR),
+                                                        new ModuleIOSim(ModuleConstants.BL),
+                                                        new ModuleIOSim(ModuleConstants.BR),
+                                                        new GyroIOSim());
                                         m_elevator = new Elevator(new ElevatorIOSim());
                                         m_intake = new Intake(new IntakeIOSim());
                                         m_indexer = new Indexer(new IndexerIOSim());
                                         m_flywheel = new FlyWheel(new FlyWheelIOSim());
-                                        m_climb = new Climb(new ClimbIOSim());
+                                        m_climb = new Climber(new ClimberIOSim());
                                         m_Arm = new Arm(new ArmIOSim(), m_robotDrive);
                                 }
                         }
+                }
+                if (m_robotDrive == null) {
+                        m_robotDrive = new SwerveDrive(this,
+                                        new ModuleIO() {
+                                        },
+                                        new ModuleIO() {
+                                        },
+                                        new ModuleIO() {
+                                        },
+                                        new ModuleIO() {
+
+                                        }, new GyroIO() {
+
+                                        });
                 }
 
                 if (m_elevator == null) {
@@ -135,7 +155,7 @@ public class RobotContainer {
                         });
                 }
                 if (m_climb == null) {
-                        m_climb = new Climb(new ClimbIO() {
+                        m_climb = new Climber(new ClimberIO() {
 
                         });
                 }
@@ -173,13 +193,17 @@ public class RobotContainer {
                 JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
 
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(
-                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? -90 : 90)));
+                                () -> m_robotDrive.setHeadingController(
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? -90 : 90))));
                 JoystickButtons.dDpadU.onTrue(new InstantCommand(
-                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 0 : 180)));
+                                () -> m_robotDrive.setHeadingController(
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 0 : 180))));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(
-                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 90 : -90)));
+                                () -> m_robotDrive.setHeadingController(
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 90 : -90))));
                 JoystickButtons.dDpadD.onTrue(new InstantCommand(
-                                () -> m_robotDrive.setPresetEnabled(true, m_robotDrive.isRedAlliance() ? 180 : 0)));
+                                () -> m_robotDrive.setHeadingController(
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 180 : 0))));
 
                 // Elevator Controls
 
@@ -244,11 +268,14 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_superstructure, m_indexer));
+                                new RunCommand(() -> m_shoot.autoShoot(), m_superstructure, m_indexer)
+                                                .alongWith(new InstantCommand(() -> m_robotDrive
+                                                                .setHeadingController(
+                                                                                m_shoot::getShootingRotation))));
                 // Amp Automations
 
                 JoystickButtons.dB
-                                .whileTrue(new DriveTo(Constants.MechPositions.amp, 0, 0, m_robotDrive));
+                                .whileTrue(new Pathfind(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
 
                 // Note Pick Automation
                 // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,

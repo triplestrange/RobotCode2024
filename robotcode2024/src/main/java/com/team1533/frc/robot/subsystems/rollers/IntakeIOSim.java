@@ -1,24 +1,14 @@
 package com.team1533.frc.robot.subsystems.rollers;
 
-import org.littletonrobotics.junction.Logger;
-
-import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
-import com.revrobotics.CANSparkBase.FaultID;
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.team1533.frc.robot.Constants;
-import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class IntakeIOSim implements IntakeIO {
-    private final FlywheelSim intakeSim = new FlywheelSim(DCMotor.getNEO(1), Constants.IntakeConstants.rollerGearing,
-            Constants.IntakeConstants.jKGMetersPerSecondSquared);
+    private final FlywheelSim intakeSim = new FlywheelSim(DCMotor.getNEO(1), IntakeConstants.rollerGearing,
+            IntakeConstants.jKGMetersPerSecondSquared);
 
     double intakeMotorCurrent = 0.0;
     double intakeAppliedVolts = 0.0;
@@ -44,8 +34,8 @@ public class IntakeIOSim implements IntakeIO {
 
         intakeSim.update(Constants.LoggerConstants.kDt);
 
-        inputs.linearVel = intakeSim.getAngularVelocityRPM() * Constants.IntakeConstants.rollerDiameterMeters
-                * Math.PI / Constants.IntakeConstants.rollerGearing / 60;
+        inputs.linearVel = intakeSim.getAngularVelocityRPM() * IntakeConstants.rollerDiameterMeters
+                * Math.PI / IntakeConstants.rollerGearing / 60;
         inputs.appliedVolts = intakeAppliedVolts;
         inputs.motorCurrent = intakeSim.getCurrentDrawAmps();
         inputs.tempCelcius = 0.0;

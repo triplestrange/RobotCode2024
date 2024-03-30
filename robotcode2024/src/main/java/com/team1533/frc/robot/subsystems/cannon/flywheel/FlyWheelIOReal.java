@@ -41,32 +41,32 @@ public class FlyWheelIOReal implements FlyWheelIO {
     int smartMotionSlot = 0;
 
     // fly wheel
-    lFWController.setP(Constants.ShooterConstants.flyWheelkP);
-    lFWController.setI(Constants.ShooterConstants.flyWheelkI);
-    lFWController.setD(Constants.ShooterConstants.flyWheelkD);
-    lFWController.setIZone(Constants.ShooterConstants.flyWheelkIz);
-    lFWController.setFF(Constants.ShooterConstants.flyWheelkFF);
-    lFWController.setOutputRange(Constants.ShooterConstants.flyWheelkMinOutput,
-        Constants.ShooterConstants.flyWheelkMaxOutput);
+    lFWController.setP(FlyWheelConstants.flyWheelkP);
+    lFWController.setI(FlyWheelConstants.flyWheelkI);
+    lFWController.setD(FlyWheelConstants.flyWheelkD);
+    lFWController.setIZone(FlyWheelConstants.flyWheelkIz);
+    lFWController.setFF(FlyWheelConstants.flyWheelkFF);
+    lFWController.setOutputRange(FlyWheelConstants.flyWheelkMinOutput,
+        FlyWheelConstants.flyWheelkMaxOutput);
 
-    lFWController.setSmartMotionMaxVelocity(Constants.ShooterConstants.flyWheelmaxVel, smartMotionSlot);
-    lFWController.setSmartMotionMinOutputVelocity(Constants.ShooterConstants.flyWheelminVel, smartMotionSlot);
-    lFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
-    lFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
+    lFWController.setSmartMotionMaxVelocity(FlyWheelConstants.flyWheelmaxVel, smartMotionSlot);
+    lFWController.setSmartMotionMinOutputVelocity(FlyWheelConstants.flyWheelminVel, smartMotionSlot);
+    lFWController.setSmartMotionMaxAccel(FlyWheelConstants.flyWheelmaxAcc, smartMotionSlot);
+    lFWController.setSmartMotionAllowedClosedLoopError(FlyWheelConstants.flyWheelallowedErr,
         smartMotionSlot);
 
-    rFWController.setP(Constants.ShooterConstants.flyWheelkP);
-    rFWController.setI(Constants.ShooterConstants.flyWheelkI);
-    rFWController.setD(Constants.ShooterConstants.flyWheelkD);
-    rFWController.setIZone(Constants.ShooterConstants.flyWheelkIz);
-    rFWController.setFF(Constants.ShooterConstants.flyWheelkFF);
-    rFWController.setOutputRange(Constants.ShooterConstants.flyWheelkMinOutput,
-        Constants.ShooterConstants.flyWheelkMaxOutput);
+    rFWController.setP(FlyWheelConstants.flyWheelkP);
+    rFWController.setI(FlyWheelConstants.flyWheelkI);
+    rFWController.setD(FlyWheelConstants.flyWheelkD);
+    rFWController.setIZone(FlyWheelConstants.flyWheelkIz);
+    rFWController.setFF(FlyWheelConstants.flyWheelkFF);
+    rFWController.setOutputRange(FlyWheelConstants.flyWheelkMinOutput,
+        FlyWheelConstants.flyWheelkMaxOutput);
 
-    rFWController.setSmartMotionMaxVelocity(Constants.ShooterConstants.flyWheelmaxVel, smartMotionSlot);
-    rFWController.setSmartMotionMinOutputVelocity(Constants.ShooterConstants.flyWheelminVel, smartMotionSlot);
-    rFWController.setSmartMotionMaxAccel(Constants.ShooterConstants.flyWheelmaxAcc, smartMotionSlot);
-    rFWController.setSmartMotionAllowedClosedLoopError(Constants.ShooterConstants.flyWheelallowedErr,
+    rFWController.setSmartMotionMaxVelocity(FlyWheelConstants.flyWheelmaxVel, smartMotionSlot);
+    rFWController.setSmartMotionMinOutputVelocity(FlyWheelConstants.flyWheelminVel, smartMotionSlot);
+    rFWController.setSmartMotionMaxAccel(FlyWheelConstants.flyWheelmaxAcc, smartMotionSlot);
+    rFWController.setSmartMotionAllowedClosedLoopError(FlyWheelConstants.flyWheelallowedErr,
         smartMotionSlot);
 
     lFlyWheel.enableVoltageCompensation(12);
@@ -96,7 +96,7 @@ public class FlyWheelIOReal implements FlyWheelIO {
   @Override
   public void runSpeed(double RPM) {
     lFlyWheelSetpoint = RPM;
-    rFlyWheelSetpoint = Math.abs(RPM) - Constants.ShooterConstants.rotationalSpeed / 2;
+    rFlyWheelSetpoint = Math.abs(RPM) - FlyWheelConstants.rotationalSpeed / 2;
 
     if (lFlyWheelSetpoint == 0) {
       lFlyWheel.stopMotor();
