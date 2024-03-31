@@ -268,7 +268,7 @@ public class RobotContainer {
                                         * 4850.0 / 3;
                 } else {
                         flywheelSetpoint = m_robotDrive.getPose().getTranslation()
-                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 6;
+                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 3;
                 }
 
                 flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
@@ -280,7 +280,8 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_indexer)
+                                new RunCommand(() -> m_shoot.teleopShoot(), m_indexer,
+                                                m_flywheel)
                                                 .alongWith(new InstantCommand(() -> m_robotDrive
                                                                 .setHeadingController(
                                                                                 m_shoot::rotationToSpeaker)),
@@ -288,6 +289,17 @@ public class RobotContainer {
                                                                                 () -> m_superstructure
                                                                                                 .setGoal(Goal.AIM),
                                                                                 m_superstructure)));
+
+                JoystickButtons.dA.whileTrue(
+                                new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
+                                                .alongWith(new InstantCommand(() -> m_robotDrive
+                                                                .setHeadingController(
+                                                                                m_shoot::rotationToShuttle)),
+                                                                new InstantCommand(
+                                                                                () -> m_superstructure
+                                                                                                .setGoal(Goal.SHUTTLE),
+                                                                                m_superstructure)));
+
                 // Amp Automations
 
                 JoystickButtons.dB

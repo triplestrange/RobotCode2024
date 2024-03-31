@@ -28,9 +28,6 @@ public class Arm {
     public static double shootingAngle = 0;
 
     @AutoLogOutput
-    public static double shuttlingAngle = 0;
-
-    @AutoLogOutput
     private boolean shooterPIDEnabled;
 
     @AutoLogOutput
@@ -71,7 +68,7 @@ public class Arm {
         PREPARE_CLIMB(() -> -15),
         CLIMB(() -> 0),
         UNTRAP(() -> 0),
-        SHUTTLE(() -> shuttlingAngle),
+        SHUTTLE(() -> 0),
         CUSTOM(() -> -20);
 
         private final DoubleSupplier armSetpointSupplier;
@@ -93,7 +90,7 @@ public class Arm {
     public Arm(ArmIO armIO, SwerveDrive m_swerve, Shoot m_shoot) {
         super();
 
-          io = armIO;
+        io = armIO;
 
         this.m_swerve = m_swerve;
 
@@ -150,18 +147,13 @@ public class Arm {
         return false;
     }
 
-    public void setAutoShootAngleDeg() {
+    public void updateShootAngleDeg() {
         shootingAngle = m_shoot.degToSpeaker();
     }
 
     public void enableAutoShooting(boolean enable) {
         pivotSetpoint = shootingAngle;
         shooterPIDEnabled = enable;
-    }
-
-    public Translation3d flipTranslation3d(Translation3d translation) {
-        return new Translation3d(16.54 - translation.getX(), translation.getY(), translation.getZ());
-
     }
 
     @AutoLogOutput(key = "Superstructure/Arm/AtGoal")
@@ -173,7 +165,7 @@ public class Arm {
         io.updateInputs(inputs);
         Logger.processInputs("Arm", inputs);
 
-        setAutoShootAngleDeg();
+        updateShootAngleDeg();
 
         if (goal != Goal.MANUAL) {
             pivotSetpoint = goal.getDeg();

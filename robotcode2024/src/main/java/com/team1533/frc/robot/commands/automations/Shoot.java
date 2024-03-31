@@ -6,6 +6,8 @@ package com.team1533.frc.robot.commands.automations;
 
 import java.util.Optional;
 
+import javax.swing.TransferHandler.TransferSupport;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.team1533.frc.robot.RobotContainer;
@@ -63,11 +65,15 @@ public class Shoot {
     Rotation2d shootingRotation;
     @AutoLogOutput(key = "Shoot/shootingAngle")
     double shootingAngle = 0;
-    @AutoLogOutput(key =  "Shoot/flywheelSetpoint")
+    @AutoLogOutput(key = "Shoot/flywheelSetpoint")
     double flywheelSetpoint;
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
 
+    public Translation2d shuttlingTranslation2d = new Translation2d();
+
     public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
+
+    public InterpolatingDoubleTreeMap shuttlingData = new InterpolatingDoubleTreeMap();
 
     // double speedR;
     // double rot;
@@ -82,19 +88,6 @@ public class Shoot {
         shootingRotation = new Rotation2d();
 
         SmartDashboard.putNumber("compensationH", compensationHorizontal);
-        // driveTo = new DriveTo(new Pose2d(
-        // speakerTranslation3d.getX() + Units.inchesToMeters(16) +
-        // Units.inchesToMeters(36.241382),
-        // speakerTranslation3d.getY(), new Rotation2d().fromDegrees(0)), 0, 0,
-        // m_RobotContainer.m_robotDrive,
-        // m_RobotContainer.m_robot);
-
-        // shootingData.put(1.0, 0.0);
-        // shootingData.put(1.655738, -12.2);
-        // shootingData.put(2.2, -16.0);
-        // shootingData.put(3.120114, -23.5);
-        shootingData.put(6.38, -33.4);
-        shootingData.put(7.39, -34.5);
 
         shootingData.put(1.0, 0.0);
         shootingData.put(1.5, -3.2);
@@ -103,26 +96,31 @@ public class Shoot {
         shootingData.put(3.0, -21.7);
         shootingData.put(3.5, -25.85);
         shootingData.put(4.0, -28.6);
-
-
         shootingData.put(4.9, -30.5);
         shootingData.put(5.6, -33.0);
+        shootingData.put(6.38, -33.4);
+        shootingData.put(7.39, -34.5);
 
-
-        // rotation_controller = new ProfiledPIDController(0.2, 0.17, 0.015, new Constraints(720, 100));
-        // rotation_controller.enableContinuousInput(0, 360);
-        // rotation_controller.setIZone(10);
-
-        // System.out.println("rotation PID: " + rot);
-
-        // System.out.println("gyro: " + m_swerve.getAngle().getDegrees());
-        // System.out.println("desiredHeading: " + m_swerve.getRotationPreset());
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
+        shuttlingData.put(null, null);
 
     }
 
-    public void prepare() {
-      
-
+    public void teleopShoot() {
         if (isAllianceRed()) {
             flywheelSetpoint = m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()) * 4850.0 / 3;
@@ -134,39 +132,37 @@ public class Shoot {
         flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
 
         m_RobotContainer.m_flywheel.setFWSpeed(-flywheelSetpoint);
-
-    }
-
-    public void autoPrepare() {
-        // rot = rotation_controller.calculate(m_RobotContainer.m_robotDrive.getPose().getRotation().getDegrees(),
-        //         shootingRotation.getDegrees());
-        // rot = MathUtil.clamp(rot, -2 * Math.PI, 2 * Math.PI);
-
-        // speedR = rot;
-
-        // m_RobotContainer.m_robotDrive.drive(
-        //         0,
-        //         0,
-        //         speedR,
-        //         true);
-
-    }
-
-    public void execute() {
-
-        m_RobotContainer.m_superstructure.setGoal(Goal.AIM);
-    }
-
-    public void shoot() {
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) && velocityCheck()) {
 
             m_RobotContainer.m_indexer.runIn();
 
         }
+
     }
 
-    public void autonomousShoot() {
+    public void teleopShuttle() {
+        flywheelSetpoint = shuttlingData.get(isAllianceRed() ? m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                .getDistance(flipTranslation2d(
+                        shuttlingTranslation2d))
+                : m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                        .getDistance(shuttlingTranslation2d));
+
+        flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
+
+        m_RobotContainer.m_flywheel.setFWSpeed(-flywheelSetpoint);
+
+        if (flyWheelCheck()
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) && velocityCheck()) {
+
+            m_RobotContainer.m_indexer.runIn();
+
+        }
+
+    }
+
+    public void autoShoot() {
+        m_RobotContainer.m_superstructure.setGoal(Goal.AIM);
         if (pivotCheck()
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose())
                 && velocityCheck()) {
@@ -176,38 +172,56 @@ public class Shoot {
         }
     }
 
-    public void autoShoot() {
-        prepare();
-
-        if (swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
-            // execute();
-            shoot();
-        }
-
-    }
-
     public Rotation2d rotationToSpeaker() {
         if (isAllianceRed()) {
             shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
                     flipTranslation3d(speakerTranslation3d).getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
                     .plus(Rotation2d.fromDegrees(180))
-                        .minus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
-            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
-            m_RobotContainer.m_robotDrive.getPose())
-            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
-            .getDistance((speakerTranslation3d.toTranslation2d()))
-            * compensationHorizontal));
+                    .minus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+                            m_RobotContainer.m_robotDrive.getPose())
+                            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                                    .getDistance((speakerTranslation3d.toTranslation2d()))
+                            * compensationHorizontal));
         } else {
             shootingRotation = new Translation2d(speakerTranslation3d.getX(), speakerTranslation3d.getY())
                     .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
                     .plus(Rotation2d.fromDegrees(180))
-                        .minus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
-            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
-            m_RobotContainer.m_robotDrive.getPose())
-            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
-            .getDistance((speakerTranslation3d.toTranslation2d()))
-            * compensationHorizontal));
+                    .minus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+                            m_RobotContainer.m_robotDrive.getPose())
+                            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                                    .getDistance((speakerTranslation3d.toTranslation2d()))
+                            * compensationHorizontal));
+
+        }
+
+        return shootingRotation;
+
+    }
+
+    public Rotation2d rotationToShuttle() {
+        if (isAllianceRed()) {
+            shootingRotation = flipTranslation2d(shuttlingTranslation2d)
+                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
+                    .plus(Rotation2d.fromDegrees(180))
+                    .minus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+                            m_RobotContainer.m_robotDrive.getPose())
+                            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                                    .getDistance((speakerTranslation3d.toTranslation2d()))
+                            * compensationHorizontal));
+        } else {
+            shootingRotation = shuttlingTranslation2d
+                    .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()).getAngle()
+                    .plus(Rotation2d.fromDegrees(180))
+                    .minus(new Rotation2d(getRelativeHorizontalSpeedMetersPerSecond(
+                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+                            m_RobotContainer.m_robotDrive.getPose())
+                            * m_RobotContainer.m_robotDrive.getPose().getTranslation()
+                                    .getDistance((speakerTranslation3d.toTranslation2d()))
+                            * compensationHorizontal));
 
         }
 
@@ -216,25 +230,23 @@ public class Shoot {
     }
 
     public double degToSpeaker() {
- if (isAllianceRed()) {
+        if (isAllianceRed()) {
             shootingAngle = shootingData.get(m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d())
-                     - getRelativeVerticalSpeedMetersPerSecond(
-            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
-            m_RobotContainer.m_robotDrive.getPose())
-            * compensationVertical);
+                    - getRelativeVerticalSpeedMetersPerSecond(
+                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+                            m_RobotContainer.m_robotDrive.getPose())
+                            * compensationVertical);
         } else {
             shootingAngle = shootingData.get(m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance((speakerTranslation3d.toTranslation2d()))
-                                - getRelativeVerticalSpeedMetersPerSecond(
-            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
-            m_RobotContainer.m_robotDrive.getPose())
-            * compensationVertical);
+                    - getRelativeVerticalSpeedMetersPerSecond(
+                            m_RobotContainer.m_robotDrive.getChassisSpeeds(),
+                            m_RobotContainer.m_robotDrive.getPose())
+                            * compensationVertical);
         }
         return shootingAngle;
-    }    
-
-    
+    }
 
     public Optional<Rotation2d> getRotationTargetOverride() {
         // Some condition that should decide if we want to override rotation
@@ -246,13 +258,6 @@ public class Shoot {
             // return an empty optional when we don't want to override the path's rotation
             return Optional.empty();
         }
-    }
-
-    public void autonomous() {
-        // autoPrepare();
-        execute();
-        autonomousShoot();
-
     }
 
     public Boolean swerveCheck(Pose2d robotPose2d) {
@@ -312,6 +317,10 @@ public class Shoot {
                 pose.getRotation().rotateBy(new Rotation2d().fromRadians(Math.PI / 2)));
     }
 
+    public Translation2d flipTranslation2d(Translation2d translation) {
+        return new Translation2d(16.54 - translation.getX(), translation.getY());
+    }
+
     public Translation3d flipTranslation3d(Translation3d translation) {
         return new Translation3d(16.54 - translation.getX(), translation.getY(), translation.getZ());
 
@@ -324,12 +333,13 @@ public class Shoot {
         }
         return false;
     }
+
     public double getRelativeVerticalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
         Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation())
                 .getAngle();
         Translation2d fieldOrientSpeeds = new Translation2d(robotSpeeds.vxMetersPerSecond,
                 robotSpeeds.vyMetersPerSecond).rotateBy(robotPose.getRotation()).rotateBy(robotRot.unaryMinus());
-                return fieldOrientSpeeds.getX();
+        return fieldOrientSpeeds.getX();
     }
 
     public double getRelativeHorizontalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
@@ -348,9 +358,9 @@ public class Shoot {
         }
     }
 
-    public void periodic()  {
-        
-        }
+    public void periodic() {
+
+    }
 
     public void updateSmartDashBoard() {
         compensationHorizontal = SmartDashboard.getNumber("compensationHorizontal", 0.1);
@@ -369,9 +379,10 @@ public class Shoot {
         SmartDashboard.putNumber("normalized distance", m_RobotContainer.m_robotDrive.getPose().getTranslation()
                 .getDistance(speakerTranslation3d.toTranslation2d()));
 
-        SmartDashboard.putNumber("relativeH", getRelativeHorizontalSpeedMetersPerSecond(m_RobotContainer.m_robotDrive.getChassisSpeeds(), m_RobotContainer.m_robotDrive.getPose()));
-                SmartDashboard.putNumber("relativeV", getRelativeVerticalSpeedMetersPerSecond(m_RobotContainer.m_robotDrive.getChassisSpeeds(), m_RobotContainer.m_robotDrive.getPose()));
-
+        SmartDashboard.putNumber("relativeH", getRelativeHorizontalSpeedMetersPerSecond(
+                m_RobotContainer.m_robotDrive.getChassisSpeeds(), m_RobotContainer.m_robotDrive.getPose()));
+        SmartDashboard.putNumber("relativeV", getRelativeVerticalSpeedMetersPerSecond(
+                m_RobotContainer.m_robotDrive.getChassisSpeeds(), m_RobotContainer.m_robotDrive.getPose()));
 
     }
 }

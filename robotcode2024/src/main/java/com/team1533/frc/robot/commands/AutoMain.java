@@ -96,7 +96,7 @@ public class AutoMain extends Command {
 
                 // Shooter
                 NamedCommands.registerCommand("shoot",
-                                (new RunCommand(() -> m_robotContainer.m_shoot.autonomous(),
+                                (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(),
                                                 m_robotContainer.m_indexer,
                                                 m_robotContainer.m_superstructure, m_robotContainer.m_flywheel)
                                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive
