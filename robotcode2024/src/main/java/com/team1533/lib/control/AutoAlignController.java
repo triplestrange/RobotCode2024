@@ -62,7 +62,8 @@ public class AutoAlignController {
         }
 
         public boolean isAtFastGoal() {
-                return true;
+                return Math.hypot(xController.getPositionError(), yController.getPositionError()) < 1;
+                // && omegaController.getPositionError() < 2;
         }
 
         public boolean isAtSlowGoal() {

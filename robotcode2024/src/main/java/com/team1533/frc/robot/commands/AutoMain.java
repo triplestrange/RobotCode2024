@@ -100,9 +100,14 @@ public class AutoMain extends Command {
                                                 m_robotContainer.m_indexer,
                                                 m_robotContainer.m_superstructure, m_robotContainer.m_flywheel)
                                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive
-                                                                .setHeadingController(
-                                                                                m_robotContainer.m_shoot::rotationToSpeaker)).alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive.acceptTeleopInput(0, 0, 0, true))))
-                                                .withTimeout(10)));
+                                                                .setHeadingControllerInAuto(
+                                                                                m_robotContainer.m_shoot::rotationToSpeaker))
+                                                                .alongWith(new InstantCommand(
+                                                                                () -> m_robotContainer.m_robotDrive
+                                                                                                .acceptTeleopInput(0, 0,
+                                                                                                                0,
+                                                                                                                true))))
+                                                .withTimeout(1.5)));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_Arm.setGoal(Arm.Goal.SUBWOOFER),

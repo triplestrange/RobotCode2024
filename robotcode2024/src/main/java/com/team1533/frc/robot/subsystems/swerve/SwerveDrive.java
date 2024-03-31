@@ -437,8 +437,35 @@ public class SwerveDrive extends SubsystemBase {
     headingController.setGoal(desiredHeading);
   }
 
+  public void setHeadingControllerInAuto(HeadingControllerState state, Supplier<Rotation2d> desiredHeading) {
+    headingController.setM_HeadingControllerState(state);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
+  public void setHeadingControllerInAuto(Supplier<Rotation2d> desiredHeading) {
+    headingController.setM_HeadingControllerState(HeadingControllerState.SNAP);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
+  public void setHeadingControllerInAuto(HeadingControllerState state, Rotation2d desiredHeading) {
+    headingController.setM_HeadingControllerState(state);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
+  public void setHeadingControllerInAuto(Rotation2d desiredHeading) {
+    headingController.setM_HeadingControllerState(HeadingControllerState.SNAP);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
   public void disableHeadingController() {
     headingController.setM_HeadingControllerState(HeadingControllerState.OFF);
+    if (currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED && currentDriveMode != DriveMode.TRAJECTORY) {
+      currentDriveMode = DriveMode.TELEOP;
+    }
   }
 
   public HeadingControllerState getHeadingControllerState() {
