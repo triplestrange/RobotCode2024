@@ -11,9 +11,6 @@ public class SwerveConstants {
 
     public static final double kScaleTranslationInputs = 1;
 
-    public static final double autoAlignMaxSpeedMetersPerSecond = 1;
-    public static final double autoAlignRotationalMaxSpeedMetersPerSecond = 1;
-
     public static final boolean kGyroReversed = true;
 
     // encoder's aren't reversed
@@ -47,6 +44,12 @@ public class SwerveConstants {
         public static final double kMaintainSwerveHeadingKiHighVelocity = 0.1;
         public static final double kMaintainSwerveHeadingKdHighVelocity = 0.0025;
 
+    }
+
+    public static final class AutoAlignConstants {
+        public static final double kAutoALignControllerErrorTolerance = 0.0762;
+        public static final double autoAlignMaxSpeedMetersPerSecond = 1;
+        public static final double autoAlignRotationalMaxSpeedMetersPerSecond = 1;
     }
 
 }

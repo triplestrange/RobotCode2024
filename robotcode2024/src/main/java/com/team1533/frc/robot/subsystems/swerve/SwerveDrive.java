@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.subsystems.vision.VisionConstants;
+import com.team1533.lib.control.AutoAlignController;
 import com.team1533.lib.control.HeadingController;
 import com.team1533.lib.control.HeadingController.HeadingControllerState;
 
@@ -24,7 +25,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
-import lombok.Setter;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SwerveDrive extends SubsystemBase {
@@ -37,6 +37,7 @@ public class SwerveDrive extends SubsystemBase {
   private final Module[] modules = new Module[4];
 
   private final HeadingController headingController;
+  private final AutoAlignController autoAlignController;
 
   public static enum DriveMode {
     /** Driving with input from driver joysticks. (Default) */
@@ -52,7 +53,7 @@ public class SwerveDrive extends SubsystemBase {
   @AutoLogOutput
   @Getter
   private DriveMode currentDriveMode = DriveMode.TELEOP;
-@AutoLogOutput
+  @AutoLogOutput
   private SwerveModuleState[] desiredSwerveModuleStates;
   @AutoLogOutput
   private SwerveModuleState[] currentSwerveModuleStates;
@@ -61,7 +62,7 @@ public class SwerveDrive extends SubsystemBase {
   @AutoLogOutput
   public ChassisSpeeds desiredMovement;
 
-    public SwerveDrivePoseEstimator m_odometry;
+  public SwerveDrivePoseEstimator m_odometry;
 
   public double controllerX = 0;
   public double controllerY = 0;
@@ -77,32 +78,47 @@ public class SwerveDrive extends SubsystemBase {
 
     this.gyroIO = gyroIO;
 
+    headingController = new HeadingController(this);
+    autoAlignController = new AutoAlignController(this);
 
     modules[0] = new Module(FL, 0);
     modules[1] = new Module(FR, 1);
     modules[2] = new Module(BL, 2);
     modules[3] = new Module(BR, 3);
 
-        headingController = new HeadingController(this);
+    headingController = new HeadingController(this);
 
+    resetEncoders();
 
-        resetEncoders();
+    // Odometry class for tracking robot pose with vision
+    m_odometry = new SwerveDrivePoseEstimator(
+        SwerveConstants.kDriveKinematics,
+        getGyroInRotations(),
+        new SwerveModulePosition[] {
+            modules[0].getPosition(),
+            modules[1].getPosition(),
+            modules[2].getPosition(),
+            modules[3].getPosition()
+        },
+        new Pose2d(0, 0, new Rotation2d(0)),
+        VisionConstants.STATE_STD_DEVS,
+        VisionConstants.VISION_MEASUREMENT_STD_DEVS);
 
-        // Odometry class for tracking robot pose with vision
-m_odometry = new SwerveDrivePoseEstimator(
-      SwerveConstants.kDriveKinematics,
-      getGyroInRotations(),
-      new SwerveModulePosition[] {
-          modules[0].getPosition(),
-          modules[1].getPosition(),
-          modules[2].getPosition(),
-          modules[3].getPosition()
-      },
-      new Pose2d(0, 0, new Rotation2d(0)),
-      VisionConstants.STATE_STD_DEVS,
-      VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+    resetEncoders();
 
-
+    // Odometry class for tracking robot pose with vision
+    m_odometry = new SwerveDrivePoseEstimator(
+        SwerveConstants.kDriveKinematics,
+        getGyroInRotations(),
+        new SwerveModulePosition[] {
+            modules[0].getPosition(),
+            modules[1].getPosition(),
+            modules[2].getPosition(),
+            modules[3].getPosition()
+        },
+        new Pose2d(0, 0, new Rotation2d(0)),
+        VisionConstants.STATE_STD_DEVS,
+        VisionConstants.VISION_MEASUREMENT_STD_DEVS);
 
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
@@ -139,7 +155,6 @@ m_odometry = new SwerveDrivePoseEstimator(
 
   boolean gyroReset;
 
-  
   public Boolean isAllianceRed() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
@@ -221,9 +236,9 @@ m_odometry = new SwerveDrivePoseEstimator(
       case WHEEL_RADIUS_CHARACTERIZATION:
 
     }
-
-    setChassisSpeeds(desiredMovement);
-
+    if (currentDriveMode != DriveMode.TRAJECTORY) {
+      setChassisSpeeds(desiredMovement);
+    }
   }
 
   /**
@@ -277,11 +292,11 @@ m_odometry = new SwerveDrivePoseEstimator(
   }
 
   public void setXWheels() {
-    desiredSwerveModuleStates = new SwerveModuleState[]  {
-    new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
-    new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-    new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-    new SwerveModuleState(0, Rotation2d.fromDegrees(45))
+    desiredSwerveModuleStates = new SwerveModuleState[] {
+        new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(45))
 
     };
 
@@ -350,9 +365,9 @@ m_odometry = new SwerveDrivePoseEstimator(
         modules[3].getState());
   }
 
-  public void updateSwerveModuleStates()  {
+  public void updateSwerveModuleStates() {
     currentSwerveModuleStates = new SwerveModuleState[] {
-       modules[0].getState(),
+        modules[0].getState(),
         modules[1].getState(),
         modules[2].getState(),
         modules[3].getState()
