@@ -31,8 +31,9 @@ public class ModuleConstants {
         public final static double tkMaxOutput = 1;
         public final static double tkMinOutput = -1;
 
-        public final static double dkP = 0.1;
-        public final static double dffkS = 0.32;
+        public final static double dkP = 2;
+        public final static double dkI = 1;
+        public final static double dffkS = 0;
         public final static double dffkV = 12 / SwerveConstants.kMaxSpeedMetersPerSecond;
 
         public final static ModuleConfig FL = new ModuleConfig(Constants.CAN.FL_DRIVE, Constants.CAN.FL_STEER, 1,

@@ -32,7 +32,7 @@ public class HeadingController {
     private final PIDController m_PIDController;
     private Supplier<Rotation2d> m_Setpoint;
 
-    @AutoLogOutput
+    @AutoLogOutput(key = "HeadingController/AtGoal")
     @Getter
     @Setter
     private HeadingControllerState m_HeadingControllerState = HeadingControllerState.OFF;

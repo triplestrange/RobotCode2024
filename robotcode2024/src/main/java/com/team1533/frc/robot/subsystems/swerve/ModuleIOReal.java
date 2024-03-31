@@ -142,13 +142,15 @@ public class ModuleIOReal implements ModuleIO {
         inputs.absMotorConnected = absoluteEncoder.isConnected();
         inputs.hasCurrentControl = true;
 
+        inputs.drivePositionMeters = driveMotor.getPosition().getValueAsDouble();
+        inputs.driveVelocityMetersPerSec = driveMotor.getVelocity().getValueAsDouble();
         inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
         inputs.driveSupplyCurrentAmps = driveSupplyCurrent.getValueAsDouble();
         inputs.driveTorqueCurrentAmps = driveTorqueCurrent.getValueAsDouble();
 
         inputs.turnAbsolutePosition = Rotation2d.fromRadians(absoluteEncoder.getAngle());
-        inputs.turnPosition = Rotation2d.fromRotations(turningEncoder.getPosition());
-        inputs.turnVelocityPerSec = Rotation2d.fromRotations(turningEncoder.getVelocity());
+        inputs.turnPosition = Rotation2d.fromRadians(turningEncoder.getPosition());
+        inputs.turnVelocityPerSec = Rotation2d.fromRadians(turningEncoder.getVelocity());
         inputs.turnAppliedVolts = turningMotor.getAppliedOutput() * turningMotor.getBusVoltage();
         inputs.turnSupplyCurrentAmps = turningMotor.getOutputCurrent();
     }
@@ -209,9 +211,11 @@ public class ModuleIOReal implements ModuleIO {
         if (steeringError > Math.PI / 2) {
             steeringError -= Math.PI;
             desiredDrive *= -1;
+            feedForward *= -1;
         } else if (steeringError < -Math.PI / 2) {
             steeringError += Math.PI;
             desiredDrive *= -1;
+            feedForward *= -1;
         }
 
         double steeringSetpoint = currentSteering + steeringError;

@@ -44,6 +44,7 @@ import com.team1533.frc.robot.subsystems.swerve.ModuleConstants;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIO;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIOReal;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIOSim;
+import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 import com.team1533.frc.robot.subsystems.vision.Vision;
 import com.team1533.frc.robot.util.Alert;
@@ -52,6 +53,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -93,6 +95,9 @@ public class RobotContainer {
                 m_intake = null;
                 m_flywheel = null;
 
+                m_shoot = new Shoot(this);
+
+
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
                                 case COMPBOT -> {
@@ -106,7 +111,7 @@ public class RobotContainer {
                                         m_intake = new Intake(new IntakeIOReal());
                                         m_flywheel = new FlyWheel(new FlyWheelIOReal());
                                         m_climb = new Climber(new ClimberIOReal());
-                                        m_Arm = new Arm(new ArmIOReal(), m_robotDrive);
+                                        m_Arm = new Arm(new ArmIOReal(), m_robotDrive, m_shoot);
                                 }
                                 case SIMBOT -> {
                                         m_robotDrive = new SwerveDrive(this, new ModuleIOSim(ModuleConstants.FL),
@@ -119,7 +124,7 @@ public class RobotContainer {
                                         m_indexer = new Indexer(new IndexerIOSim());
                                         m_flywheel = new FlyWheel(new FlyWheelIOSim());
                                         m_climb = new Climber(new ClimberIOSim());
-                                        m_Arm = new Arm(new ArmIOSim(), m_robotDrive);
+                                        m_Arm = new Arm(new ArmIOSim(), m_robotDrive, m_shoot);
                                 }
                         }
                 }
@@ -162,14 +167,14 @@ public class RobotContainer {
                 if (m_Arm == null) {
                         m_Arm = new Arm(new ArmIO() {
 
-                        }, m_robotDrive);
+                        }, m_robotDrive, m_shoot);
                 }
 
-                m_shoot = new Shoot(this);
                 m_vision = new Vision(this);
-                m_Autos = new AutoMain(this);
 
                 m_superstructure = new Superstructure(m_elevator, m_climb, m_Arm);
+                                m_Autos = new AutoMain(this);
+
 
                 configureButtonBindings();
 
@@ -184,7 +189,7 @@ public class RobotContainer {
                 // Swerve Controls
 
                 m_robotDrive.setDefaultCommand(
-                                new DefaultDrive(m_robotDrive, 4.7, 2));// 2.5, 1));
+                                new DefaultDrive(m_robotDrive, SwerveConstants.kMaxSpeedMetersPerSecond,  8));// 2.5, 1));
 
                 JoystickButtons.dlBump.whileTrue(
                                 new DefaultDrive(m_robotDrive, 0.85, 1));
@@ -205,30 +210,36 @@ public class RobotContainer {
                                 () -> m_robotDrive.setHeadingController(
                                                 Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 180 : 0))));
 
+                m_superstructure.setDefaultCommand(
+                        new RunCommand(() -> {m_elevator.moveElev(
+                                0.3 * JoystickButtons.m_operatorController.getRightY(), 0.3 * (JoystickButtons.m_operatorController.getRightTriggerAxis() - JoystickButtons.m_operatorController.getLeftTriggerAxis()));
+                                m_climb.moveClimb(
+                0.6 * JoystickButtons.m_operatorController.getLeftY(),
+                0.6 * JoystickButtons.m_operatorController.getLeftY());
+                m_Arm.moveShooter(
+                        0.3 * JoystickButtons.m_operatorController.getRightX()
+                );
+                        }, m_superstructure));                                                
                 // Elevator Controls
 
                 JoystickButtons.opA.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoalCommand(Goal.STOW)));
+                                () -> m_superstructure.setGoal(Goal.STOW)));
                 JoystickButtons.opDpadU.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoalCommand(Goal.AMP)));
+                                () -> m_superstructure.setGoal(Goal.AMP)));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoalCommand(Goal.GROUND)));
+                                () -> m_superstructure.setGoal(Goal.GROUND)));
 
                 // Climb Controls
 
-                // m_climb.setDefaultCommand(new RunCommand(
-                // () -> m_climb.moveClimb(
-                // 0.6 * JoystickButtons.m_operatorController.getLeftY(),
-                // 0.6 * JoystickButtons.m_operatorController.getLeftY()),
-                // m_climb));
+                
 
                 // Pivot Controls
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoalCommand(Goal.CLIMB)));
+                                () -> m_superstructure.setGoal(Goal.CLIMB)));
 
                 JoystickButtons.opX.whileTrue(new InstantCommand(
-                                () -> m_superstructure.setGoalCommand(Goal.PREPARE_CLIMB)));
+                                () -> m_superstructure.setGoal(Goal.PREPARE_CLIMB)));
 
                 // Intake and indexer Controls
 
@@ -268,10 +279,11 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.autoShoot(), m_superstructure, m_indexer)
+                                new RunCommand(() -> m_shoot.autoShoot(), m_indexer)
                                                 .alongWith(new InstantCommand(() -> m_robotDrive
                                                                 .setHeadingController(
-                                                                                m_shoot::getShootingRotation))));
+                                                                                m_shoot::rotationToSpeaker)), new InstantCommand(() -> m_superstructure.setGoal(Goal.AIM), m_superstructure), 
+                                                                                new DefaultDrive(m_robotDrive, 1, 0)));
                 // Amp Automations
 
                 JoystickButtons.dB

@@ -32,7 +32,7 @@ public class DefaultDrive extends Command {
     addRequirements(m_swerve);
     this.m_swerve = m_swerve;
     this.speed = speed;
-    this.rotationSpeed = rotationSpeed;
+    this.rotationSpeed = -rotationSpeed;
     speed = MathUtil.clamp(speed, -SwerveConstants.kMaxSpeedMetersPerSecond,
         SwerveConstants.kMaxSpeedMetersPerSecond);
     deadzone = 0.2;
@@ -65,7 +65,7 @@ public class DefaultDrive extends Command {
     }
     // rotation was reversed
     else {
-      speedR = Math.pow(JoystickButtons.m_driverController.getRightX(), 3) * -4 * rotationSpeed;
+      speedR = Math.pow(JoystickButtons.m_driverController.getRightX(), 3) * rotationSpeed;
     }
 
     if (Math.abs(JoystickButtons.m_driverController.getLeftY()) <= deadzone) {

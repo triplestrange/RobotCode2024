@@ -37,15 +37,15 @@ public class SwerveConstants {
 
     public static final class RotationConfigs {
 
-        public static final double kSwerveHeadingControllerErrorTolerance = 0.1;
+        public static final double kSwerveHeadingControllerErrorTolerance = 1.5;
 
-        public static final double kSnapSwerveHeadingKp = 0.2;
+        public static final double kSnapSwerveHeadingKp = 0.1;
         public static final double kSnapSwerveHeadingKi = 0.17;
-        public static final double kSnapSwerveHeadingKd = 0.015;
+        public static final double kSnapSwerveHeadingKd = 0.005;
 
-        public static final double kMaintainSwerveHeadingKpHighVelocity = 0;
-        public static final double kMaintainSwerveHeadingKiHighVelocity = 0;
-        public static final double kMaintainSwerveHeadingKdHighVelocity = 0;
+        public static final double kMaintainSwerveHeadingKpHighVelocity = 0.05;
+        public static final double kMaintainSwerveHeadingKiHighVelocity = 0.1;
+        public static final double kMaintainSwerveHeadingKdHighVelocity = 0.0025;
 
     }
 

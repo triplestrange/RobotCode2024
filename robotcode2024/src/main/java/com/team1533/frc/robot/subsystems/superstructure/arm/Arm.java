@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.team1533.frc.robot.commands.automations.Shoot;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -21,7 +22,6 @@ public class Arm {
 
     private ProfiledPIDController pivotController;
 
-    @AutoLogOutput
     public BooleanSupplier disableSupplier;
 
     @AutoLogOutput
@@ -42,6 +42,7 @@ public class Arm {
     public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
     private static SwerveDrive m_swerve;
+    private static Shoot m_shoot;
 
     private static Arm instance;
 
@@ -54,7 +55,7 @@ public class Arm {
 
     public static Arm initialize(ArmIO io) {
         if (instance == null) {
-            instance = new Arm(io, m_swerve);
+            instance = new Arm(io, m_swerve, m_shoot);
         }
         return instance;
     }
@@ -89,10 +90,14 @@ public class Arm {
      * Creates a new Shooter.
      */
 
-    public Arm(ArmIO armIO, SwerveDrive m_swerve) {
+    public Arm(ArmIO armIO, SwerveDrive m_swerve, Shoot m_shoot) {
         super();
 
+          io = armIO;
+
         this.m_swerve = m_swerve;
+
+        this.m_shoot = m_shoot;
 
         disableSupplier = DriverStation::isDisabled;
 
@@ -105,22 +110,6 @@ public class Arm {
 
         pivotController.setTolerance(0.3);
 
-        shootingData.put(1.0, 0.0);
-        shootingData.put(1.5, -3.2);
-        shootingData.put(2.0, -9.5);
-        shootingData.put(2.5, -15.5);
-        shootingData.put(3.0, -19.7);
-        shootingData.put(3.5, -23.85);
-        shootingData.put(4.0, -25.6);
-
-        // shootingData.put(1.655738, -12.2);
-        // shootingData.put(2.2, -16.0);
-        // shootingData.put(3.120114, -23.5);
-        shootingData.put(4.9, -30.5);
-        // // shootingData.put(4.991135, -29.55);
-        shootingData.put(5.3, -31.0);
-        shootingData.put(6.38, -33.4);
-        shootingData.put(7.39, -34.5);
     }
 
     public void moveShooter(double motorPivotPower) {
@@ -133,6 +122,7 @@ public class Arm {
             pivotSetpoint = inputs.posDeg;
             pivotController.reset(pivotSetpoint);
             shooterPIDEnabled = false;
+            goal = Goal.MANUAL;
         }
     }
 
@@ -161,14 +151,7 @@ public class Arm {
     }
 
     public void setAutoShootAngleDeg() {
-        if (isAllianceRed()) {
-            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
-                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()));
-        } else {
-            shootingAngle = shootingData.get(m_swerve.getPose().getTranslation()
-                    .getDistance((speakerTranslation3d.toTranslation2d())));
-
-        }
+        shootingAngle = m_shoot.degToSpeaker();
     }
 
     public void enableAutoShooting(boolean enable) {

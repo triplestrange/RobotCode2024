@@ -40,14 +40,14 @@ public class Climber {
     public void moveClimb(double motorLWinchPower, double motorRWinchPower) {
 
         if (Math.abs(motorLWinchPower) < 0.05) {
-            io.runLeftSpeed(motorLWinchPower);
+            io.runLeftSpeed(0);
         } else {
             leftPower = motorLWinchPower;
             io.runLeftSpeed(leftPower);
         }
 
         if (Math.abs(motorRWinchPower) < 0.05) {
-            io.runRightSpeed(motorRWinchPower);
+            io.runRightSpeed(0);
         } else {
             rightPower = motorRWinchPower;
             io.runRightSpeed(rightPower);

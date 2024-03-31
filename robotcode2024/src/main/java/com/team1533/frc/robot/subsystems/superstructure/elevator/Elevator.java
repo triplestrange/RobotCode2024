@@ -132,6 +132,7 @@ public class Elevator {
             io.runWinchVolts(elevPower * 12);
             elevSetpoint = getIntakePos().getHeight();
             elevPIDEnabled = false;
+                goal = Goal.MANUAL;
         }
         if (Math.abs(motorIntakePower) < 0.05) {
             intakePIDEnabled = true;
@@ -141,6 +142,7 @@ public class Elevator {
             intakeSetpoint = getIntakePos().getAngle();
             intakeController.reset(intakeSetpoint);
             intakePIDEnabled = false;
+                goal = Goal.MANUAL;
         }
     }
 

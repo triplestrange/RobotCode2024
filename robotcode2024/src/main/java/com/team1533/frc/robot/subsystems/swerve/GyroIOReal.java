@@ -18,7 +18,7 @@ public class GyroIOReal implements GyroIO {
     public GyroIOReal() {
         navX = new AHRS(SPI.Port.kMXP);
 
-        yaw = () -> navX.getFusedHeading();
+        yaw = () -> navX.getYaw();
         roll = () -> navX.getRoll();
         pitch = () -> navX.getPitch();
     }

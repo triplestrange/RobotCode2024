@@ -52,10 +52,16 @@ public class SwerveDrive extends SubsystemBase {
   @AutoLogOutput
   @Getter
   private DriveMode currentDriveMode = DriveMode.TELEOP;
-
-  private SwerveModuleState[] swerveModuleStates;
+@AutoLogOutput
+  private SwerveModuleState[] desiredSwerveModuleStates;
+  @AutoLogOutput
+  private SwerveModuleState[] currentSwerveModuleStates;
+  @AutoLogOutput
   public ChassisSpeeds currentMovement;
+  @AutoLogOutput
   public ChassisSpeeds desiredMovement;
+
+    public SwerveDrivePoseEstimator m_odometry;
 
   public double controllerX = 0;
   public double controllerY = 0;
@@ -67,17 +73,36 @@ public class SwerveDrive extends SubsystemBase {
    */
   public SwerveDrive(RobotContainer m_RobotContainer, ModuleIO FL, ModuleIO FR, ModuleIO BL, ModuleIO BR,
       GyroIO gyroIO) {
-    resetEncoders();
     this.m_RobotContainer = m_RobotContainer;
 
     this.gyroIO = gyroIO;
 
-    headingController = new HeadingController(this);
 
     modules[0] = new Module(FL, 0);
     modules[1] = new Module(FR, 1);
     modules[2] = new Module(BL, 2);
     modules[3] = new Module(BR, 3);
+
+        headingController = new HeadingController(this);
+
+
+        resetEncoders();
+
+        // Odometry class for tracking robot pose with vision
+m_odometry = new SwerveDrivePoseEstimator(
+      SwerveConstants.kDriveKinematics,
+      getGyroInRotations(),
+      new SwerveModulePosition[] {
+          modules[0].getPosition(),
+          modules[1].getPosition(),
+          modules[2].getPosition(),
+          modules[3].getPosition()
+      },
+      new Pose2d(0, 0, new Rotation2d(0)),
+      VisionConstants.STATE_STD_DEVS,
+      VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+
+
 
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
@@ -114,20 +139,7 @@ public class SwerveDrive extends SubsystemBase {
 
   boolean gyroReset;
 
-  // Odometry class for tracking robot pose with vision
-  public SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
-      SwerveConstants.kDriveKinematics,
-      getGyroInRotations(),
-      new SwerveModulePosition[] {
-          modules[0].getPosition(),
-          modules[1].getPosition(),
-          modules[2].getPosition(),
-          modules[3].getPosition()
-      },
-      new Pose2d(0, 0, new Rotation2d(0)),
-      VisionConstants.STATE_STD_DEVS,
-      VisionConstants.VISION_MEASUREMENT_STD_DEVS);
-
+  
   public Boolean isAllianceRed() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
@@ -155,7 +167,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public Boolean isMovingXY() {
-    return (currentMovement.vxMetersPerSecond < 1) && (currentMovement.vyMetersPerSecond < 1);
+    return (currentMovement.vxMetersPerSecond < 2) && (currentMovement.vyMetersPerSecond < 2);
   }
 
   public void acceptTeleopInput(double x, double y, double omega, boolean robotRelative) {
@@ -184,6 +196,7 @@ public class SwerveDrive extends SubsystemBase {
 
     updateOdometry();
     updateChassisSpeeds();
+    updateSwerveModuleStates();
 
     gyroIO.addOffset(getChassisSpeeds());
 
@@ -234,17 +247,17 @@ public class SwerveDrive extends SubsystemBase {
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
 
-    swerveModuleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(
+    desiredSwerveModuleStates = SwerveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
             xSpeed, ySpeed, rot,
             isAllianceRed() ? getPose().getRotation().plus(Rotation2d.fromDegrees(180)) : getPose().getRotation())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredSwerveModuleStates,
         SwerveConstants.kMaxSpeedMetersPerSecond);
-    modules[0].setDesiredState(swerveModuleStates[0]);
-    modules[1].setDesiredState(swerveModuleStates[1]);
-    modules[2].setDesiredState(swerveModuleStates[2]);
-    modules[3].setDesiredState(swerveModuleStates[3]);
+    modules[0].setDesiredState(desiredSwerveModuleStates[0]);
+    modules[1].setDesiredState(desiredSwerveModuleStates[1]);
+    modules[2].setDesiredState(desiredSwerveModuleStates[2]);
+    modules[3].setDesiredState(desiredSwerveModuleStates[3]);
   }
 
   /**
@@ -259,13 +272,23 @@ public class SwerveDrive extends SubsystemBase {
     modules[1].setDesiredState(desiredStates[1]);
     modules[2].setDesiredState(desiredStates[2]);
     modules[3].setDesiredState(desiredStates[3]);
+
+    desiredSwerveModuleStates = desiredStates;
   }
 
   public void setXWheels() {
-    modules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
-    modules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), true);
-    modules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), true);
-    modules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
+    desiredSwerveModuleStates = new SwerveModuleState[]  {
+    new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+    new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+    new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+    new SwerveModuleState(0, Rotation2d.fromDegrees(45))
+
+    };
+
+    modules[0].setDesiredState(desiredSwerveModuleStates[0], true);
+    modules[1].setDesiredState(desiredSwerveModuleStates[1], true);
+    modules[2].setDesiredState(desiredSwerveModuleStates[2], true);
+    modules[3].setDesiredState(desiredSwerveModuleStates[3], true);
   }
 
   /**
@@ -325,6 +348,15 @@ public class SwerveDrive extends SubsystemBase {
         modules[1].getState(),
         modules[2].getState(),
         modules[3].getState());
+  }
+
+  public void updateSwerveModuleStates()  {
+    currentSwerveModuleStates = new SwerveModuleState[] {
+       modules[0].getState(),
+        modules[1].getState(),
+        modules[2].getState(),
+        modules[3].getState()
+    };
   }
 
   @AutoLogOutput

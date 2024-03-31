@@ -46,7 +46,7 @@ public class Module {
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        inputs.driveVelocityRadsPerSec
+        inputs.driveVelocityMetersPerSec
             + inputs.turnVelocityPerSec.getRadians() * ModuleConstants.kWheelDiameterMeters / 2,
         inputs.turnPosition);
   }
@@ -77,7 +77,7 @@ public class Module {
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        inputs.drivePositionRads,
+        inputs.drivePositionMeters,
         inputs.turnPosition);
   }
 }

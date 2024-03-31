@@ -1,5 +1,6 @@
 package com.team1533.frc.robot.commands;
 
+import java.time.InstantSource;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -50,15 +51,15 @@ public class AutoMain extends Command {
         public void registerCommands() {
                 // Elev Commands
                 NamedCommands.registerCommand("amp",
-                                new InstantCommand(() -> m_robotContainer.m_superstructure.setGoalCommand(
+                                new InstantCommand(() -> m_robotContainer.m_superstructure.setGoal(
                                                 Superstructure.Goal.AMP),
                                                 m_robotContainer.m_superstructure));
                 NamedCommands.registerCommand("ground", new InstantCommand(
-                                () -> m_robotContainer.m_superstructure.setGoalCommand(Superstructure.Goal.GROUND),
+                                () -> m_robotContainer.m_superstructure.setGoal(Superstructure.Goal.GROUND),
                                 m_robotContainer.m_superstructure));
 
                 NamedCommands.registerCommand("stowElev",
-                                new InstantCommand(() -> m_robotContainer.m_superstructure.setGoalCommand(
+                                new InstantCommand(() -> m_robotContainer.m_superstructure.setGoal(
                                                 Superstructure.Goal.STOW),
                                                 m_robotContainer.m_superstructure));
                 // Intake Commands
@@ -100,8 +101,8 @@ public class AutoMain extends Command {
                                                 m_robotContainer.m_superstructure, m_robotContainer.m_flywheel)
                                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive
                                                                 .setHeadingController(
-                                                                                m_robotContainer.m_shoot::getShootingRotation)))
-                                                .withTimeout(1.5)));
+                                                                                m_robotContainer.m_shoot::rotationToSpeaker)).alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive.acceptTeleopInput(0, 0, 0, true))))
+                                                .withTimeout(10)));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_Arm.setGoal(Arm.Goal.SUBWOOFER),
