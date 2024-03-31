@@ -97,7 +97,6 @@ public class RobotContainer {
 
                 m_shoot = new Shoot(this);
 
-
                 if (Constants.LoggerConstants.getMode() != Constants.LoggerConstants.Mode.REPLAY) {
                         switch (Constants.LoggerConstants.getRobot()) {
                                 case COMPBOT -> {
@@ -173,8 +172,7 @@ public class RobotContainer {
                 m_vision = new Vision(this);
 
                 m_superstructure = new Superstructure(m_elevator, m_climb, m_Arm);
-                                m_Autos = new AutoMain(this);
-
+                m_Autos = new AutoMain(this);
 
                 configureButtonBindings();
 
@@ -189,7 +187,8 @@ public class RobotContainer {
                 // Swerve Controls
 
                 m_robotDrive.setDefaultCommand(
-                                new DefaultDrive(m_robotDrive, SwerveConstants.kMaxSpeedMetersPerSecond,  8));// 2.5, 1));
+                                new DefaultDrive(m_robotDrive, SwerveConstants.kMaxSpeedMetersPerSecond, 8));// 2.5,
+                                                                                                             // 1));
 
                 JoystickButtons.dlBump.whileTrue(
                                 new DefaultDrive(m_robotDrive, 0.85, 1));
@@ -211,15 +210,19 @@ public class RobotContainer {
                                                 Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 180 : 0))));
 
                 m_superstructure.setDefaultCommand(
-                        new RunCommand(() -> {m_elevator.moveElev(
-                                0.3 * JoystickButtons.m_operatorController.getRightY(), 0.3 * (JoystickButtons.m_operatorController.getRightTriggerAxis() - JoystickButtons.m_operatorController.getLeftTriggerAxis()));
-                                m_climb.moveClimb(
-                0.6 * JoystickButtons.m_operatorController.getLeftY(),
-                0.6 * JoystickButtons.m_operatorController.getLeftY());
-                m_Arm.moveShooter(
-                        0.3 * JoystickButtons.m_operatorController.getRightX()
-                );
-                        }, m_superstructure));                                                
+                                new RunCommand(() -> {
+                                        m_elevator.moveElev(
+                                                        0.3 * JoystickButtons.m_operatorController.getRightY(),
+                                                        0.3 * (JoystickButtons.m_operatorController
+                                                                        .getRightTriggerAxis()
+                                                                        - JoystickButtons.m_operatorController
+                                                                                        .getLeftTriggerAxis()));
+                                        m_climb.moveClimb(
+                                                        0.6 * JoystickButtons.m_operatorController.getLeftY(),
+                                                        0.6 * JoystickButtons.m_operatorController.getLeftY());
+                                        m_Arm.moveShooter(
+                                                        0.3 * JoystickButtons.m_operatorController.getRightX());
+                                }, m_superstructure));
                 // Elevator Controls
 
                 JoystickButtons.opA.onTrue(new InstantCommand(
@@ -230,8 +233,6 @@ public class RobotContainer {
                                 () -> m_superstructure.setGoal(Goal.GROUND)));
 
                 // Climb Controls
-
-                
 
                 // Pivot Controls
 
@@ -282,8 +283,11 @@ public class RobotContainer {
                                 new RunCommand(() -> m_shoot.autoShoot(), m_indexer)
                                                 .alongWith(new InstantCommand(() -> m_robotDrive
                                                                 .setHeadingController(
-                                                                                m_shoot::rotationToSpeaker)), new InstantCommand(() -> m_superstructure.setGoal(Goal.AIM), m_superstructure), 
-                                                                                new DefaultDrive(m_robotDrive, 1, 0)));
+                                                                                m_shoot::rotationToSpeaker)),
+                                                                new InstantCommand(
+                                                                                () -> m_superstructure
+                                                                                                .setGoal(Goal.AIM),
+                                                                                m_superstructure)));
                 // Amp Automations
 
                 JoystickButtons.dB

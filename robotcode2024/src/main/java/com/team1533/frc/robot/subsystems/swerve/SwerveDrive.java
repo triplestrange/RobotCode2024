@@ -15,6 +15,7 @@ import com.team1533.lib.control.HeadingController;
 import com.team1533.lib.control.AutoAlignController.AutoAlignControllerState;
 import com.team1533.lib.control.HeadingController.HeadingControllerState;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
+import lombok.Setter;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SwerveDrive extends SubsystemBase {
@@ -47,6 +49,8 @@ public class SwerveDrive extends SubsystemBase {
     AUTO_ALIGN,
     /** Driving with heading locked */
     AUTONOMOUS_HEADING_LOCKED,
+    /** Ensures the robot does not move too fast while shooting. */
+    SHOOTING,
     /** Autonoumous */
     TRAJECTORY,
     /** Running wheel radius characterization routine (spinning in circle) */
@@ -55,6 +59,7 @@ public class SwerveDrive extends SubsystemBase {
 
   @AutoLogOutput
   @Getter
+  @Setter
   private DriveMode currentDriveMode = DriveMode.TELEOP;
   @AutoLogOutput
   private SwerveModuleState[] desiredSwerveModuleStates;
@@ -230,16 +235,28 @@ public class SwerveDrive extends SubsystemBase {
           desiredMovement.omegaRadiansPerSecond = headingController.update();
         }
 
+        if (currentDriveMode == DriveMode.SHOOTING) {
+          desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(
+              MathUtil.clamp(desiredMovement.vxMetersPerSecond, -1, 1),
+              MathUtil.clamp(desiredMovement.vyMetersPerSecond, -1, 1), desiredMovement.omegaRadiansPerSecond,
+              getPose().getRotation());
+        }
+
       case AUTO_ALIGN:
         if (autoAlignController.getM_AutoAlignControllerState() != AutoAlignController.AutoAlignControllerState.OFF) {
           desiredMovement = autoAlignController.update();
         }
 
       case AUTONOMOUS_HEADING_LOCKED:
-
+        break;
       case TRAJECTORY:
-
+        break;
       case WHEEL_RADIUS_CHARACTERIZATION:
+        break;
+      case SHOOTING:
+        break;
+      default:
+        break;
 
     }
     if (currentDriveMode != DriveMode.TRAJECTORY || currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED) {
@@ -420,11 +437,13 @@ public class SwerveDrive extends SubsystemBase {
   public void setHeadingController(HeadingControllerState state, Supplier<Rotation2d> desiredHeading) {
     headingController.setM_HeadingControllerState(state);
     headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.SHOOTING;
   }
 
   public void setHeadingController(Supplier<Rotation2d> desiredHeading) {
     headingController.setM_HeadingControllerState(HeadingControllerState.SNAP);
     headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.SHOOTING;
   }
 
   public void setHeadingController(HeadingControllerState state, Rotation2d desiredHeading) {
