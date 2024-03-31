@@ -86,8 +86,6 @@ public class SwerveDrive extends SubsystemBase {
     modules[2] = new Module(BL, 2);
     modules[3] = new Module(BR, 3);
 
-    headingController = new HeadingController(this);
-
     resetEncoders();
 
     // Odometry class for tracking robot pose with vision
