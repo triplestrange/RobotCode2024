@@ -69,6 +69,8 @@ public class SwerveDrive extends SubsystemBase {
   public ChassisSpeeds currentMovement;
   @AutoLogOutput
   public ChassisSpeeds desiredMovement;
+  @AutoLogOutput
+  public double characterizationInput = 0.0;
 
   public SwerveDrivePoseEstimator m_odometry;
 
@@ -179,6 +181,10 @@ public class SwerveDrive extends SubsystemBase {
     return gyroInputs.yawPosition.times(SwerveConstants.kGyroReversed ? 1.0 : -1.0);
   }
 
+  public Rotation2d getGyroTotalRotations() {
+    return gyroInputs.totalDistanceYaw;
+  }
+
   public boolean getGyroReset() {
     return gyroReset;
   }
@@ -252,7 +258,7 @@ public class SwerveDrive extends SubsystemBase {
       case TRAJECTORY:
         break;
       case WHEEL_RADIUS_CHARACTERIZATION:
-        break;
+        desiredMovement = new ChassisSpeeds(0, 0, characterizationInput);
       case SHOOTING:
         break;
       default:
@@ -312,6 +318,27 @@ public class SwerveDrive extends SubsystemBase {
     modules[3].setDesiredState(desiredStates[3]);
 
     desiredSwerveModuleStates = desiredStates;
+  }
+
+  public Rotation2d getModuleRotations() {
+    double totalDistanceTraveledInRadians = (modules[0].getPosition().distanceMeters
+        + modules[1].getPosition().distanceMeters
+        + modules[2].getPosition().distanceMeters
+        + modules[3].getPosition().distanceMeters)
+        / (4.0 * SwerveConstants.kDriveBaseRadius);
+    return Rotation2d.fromRadians(totalDistanceTraveledInRadians);
+  }
+
+  /** Runs in a circle at omega. */
+  public void runWheelRadiusCharacterization(double omegaSpeed) {
+    currentDriveMode = DriveMode.WHEEL_RADIUS_CHARACTERIZATION;
+    characterizationInput = omegaSpeed;
+  }
+
+  public double getWheelOffsetExperimental() {
+    double offset = getModuleRotations().getDegrees() / getGyroTotalRotations().getDegrees();
+
+    return offset;
   }
 
   public void setXWheels() {
