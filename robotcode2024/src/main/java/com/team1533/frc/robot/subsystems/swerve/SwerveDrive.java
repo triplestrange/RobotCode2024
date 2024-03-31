@@ -12,6 +12,7 @@ import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.subsystems.vision.VisionConstants;
 import com.team1533.lib.control.AutoAlignController;
 import com.team1533.lib.control.HeadingController;
+import com.team1533.lib.control.AutoAlignController.AutoAlignControllerState;
 import com.team1533.lib.control.HeadingController.HeadingControllerState;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -44,6 +45,8 @@ public class SwerveDrive extends SubsystemBase {
     TELEOP,
     /** Driving to a location on the field automatically. */
     AUTO_ALIGN,
+    /** Driving with heading locked */
+    AUTONOMOUS_HEADING_LOCKED,
     /** Autonoumous */
     TRAJECTORY,
     /** Running wheel radius characterization routine (spinning in circle) */
@@ -228,13 +231,18 @@ public class SwerveDrive extends SubsystemBase {
         }
 
       case AUTO_ALIGN:
+        if (autoAlignController.getM_AutoAlignControllerState() != AutoAlignController.AutoAlignControllerState.OFF) {
+          desiredMovement = autoAlignController.update();
+        }
+
+      case AUTONOMOUS_HEADING_LOCKED:
 
       case TRAJECTORY:
 
       case WHEEL_RADIUS_CHARACTERIZATION:
 
     }
-    if (currentDriveMode != DriveMode.TRAJECTORY) {
+    if (currentDriveMode != DriveMode.TRAJECTORY || currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED) {
       setChassisSpeeds(desiredMovement);
     }
   }
@@ -439,6 +447,38 @@ public class SwerveDrive extends SubsystemBase {
 
   public Rotation2d getHeadingControllerGoal() {
     return headingController.getGoal();
+  }
+
+  public void setAutoAlignController(AutoAlignControllerState state, Supplier<Pose2d> desiredPose) {
+    autoAlignController.setM_AutoAlignControllerState(state);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void setAutoAlignController(Supplier<Pose2d> desiredPose) {
+    autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void setAutoAlignController(AutoAlignControllerState state, Pose2d desiredPose) {
+    autoAlignController.setM_AutoAlignControllerState(state);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void setAutoAlignController(Pose2d desiredPose) {
+    autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void disableAutoAlignController() {
+    autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.OFF);
+  }
+
+  public AutoAlignControllerState getAutoAlignControllerState() {
+    return autoAlignController.getM_AutoAlignControllerState();
+  }
+
+  public Pose2d getAutoAlignControllerGoal() {
+    return autoAlignController.getGoal();
   }
 
   public void updateSmartDashBoard() {
