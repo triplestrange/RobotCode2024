@@ -6,34 +6,103 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
-import com.team1533.frc.robot.util.AllianceFlipUtil;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import lombok.Getter;
+import lombok.Setter;
 
 public class AutoAlignController {
-        @AutoLogOutput
-        @Getter
-        public ChassisSpeeds desiredSpeed = new ChassisSpeeds(0, 0, 0);
+
         public double xAutoSpeed = 0;
         public double yAutoSpeed = 0;
         public double rAutoSpeed = 0;
         public PIDController xController = new PIDController(5, 0.01, 0);
         public PIDController yController = new PIDController(3, 0.01, 0);
         public PIDController omegaController = new PIDController(7, 0.01, 0);
-        private SwerveDrive m_SwerveDrive;
-        public Supplier<Pose2d> poseSupplier;
-        public Pose2d targetPose;
+        private SwerveDrive m_swerve;
+        public Supplier<Pose2d> m_Setpoint;
 
         public enum AutoAlignControllerState {
                 OFF, AUTO_ALIGN_FAST, AUTO_ALIGN_SLOW
+        }
+
+        @AutoLogOutput
+        @Getter
+        @Setter
+        private AutoAlignControllerState m_AutoAlignControllerState = AutoAlignControllerState.OFF;
+
+        public AutoAlignController(SwerveDrive m_swerve) {
+                this.m_swerve = m_swerve;
+                xController.setTolerance(SwerveConstants.AutoAlignConstants.kAutoALignControllerErrorTolerance);
+                yController.setTolerance(SwerveConstants.AutoAlignConstants.kAutoALignControllerErrorTolerance);
+                omegaController.setTolerance(SwerveConstants.RotationConfigs.kSwerveHeadingControllerErrorTolerance);
+                omegaController.setIZone(10);
+                omegaController.enableContinuousInput(0, 360);
+        }
+
+        /**
+         * @param goal_pos pos in degrees
+         */
+        public void setGoal(Pose2d goal_pos) {
+                m_Setpoint = () -> goal_pos;
+        }
+
+        /**
+         * @param goal_pos pos supplier in degrees
+         */
+        public void setGoal(Supplier<Pose2d> supplier) {
+                m_Setpoint = supplier;
+        }
+
+        public Pose2d getGoal() {
+                return m_Setpoint.get();
+        }
+
+        public boolean isAtFastGoal() {
+                return true;
+        }
+
+        public boolean isAtSlowGoal() {
+                return xController.atSetpoint() && yController.atSetpoint() && omegaController.atSetpoint();
+        }
+
+        /**
+         * Should be called from a looper at a constant dt
+         */
+        public ChassisSpeeds update() {
+                xController.setSetpoint(m_Setpoint.get().getX());
+                yController.setSetpoint(m_Setpoint.get().getY());
+                omegaController.setSetpoint(m_Setpoint.get().getRotation().getDegrees());
+
+                double maxTranslationOutput = Double.POSITIVE_INFINITY;
+                double maxOmegaOutput = Double.POSITIVE_INFINITY;
+
+                if (isAtFastGoal() && getM_AutoAlignControllerState() == AutoAlignControllerState.AUTO_ALIGN_FAST) {
+                        m_AutoAlignControllerState = AutoAlignControllerState.AUTO_ALIGN_SLOW;
+                }
+                switch (m_AutoAlignControllerState) {
+                        case OFF:
+                                return ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, 0.0, Rotation2d.fromDegrees(0));
+                        case AUTO_ALIGN_FAST:
+                                break;
+                        case AUTO_ALIGN_SLOW:
+                                maxOmegaOutput = 1.0;
+                                maxTranslationOutput = 1.0;
+                                break;
+                }
+                return ChassisSpeeds.fromFieldRelativeSpeeds(
+                                MathUtil.clamp(xController.calculate(m_swerve.getPose().getX()),
+                                                -maxTranslationOutput,
+                                                maxTranslationOutput),
+                                MathUtil.clamp(yController.calculate(m_swerve.getPose().getY()),
+                                                -maxTranslationOutput,
+                                                maxTranslationOutput),
+                                MathUtil.clamp(omegaController.calculate(m_swerve.getPose().getRotation().getDegrees()),
+                                                -maxOmegaOutput,
+                                                maxOmegaOutput),
+                                m_swerve.getPose().getRotation());
         }
 }

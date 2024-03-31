@@ -9,8 +9,8 @@ import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.RobotContainer;
-import com.team1533.frc.robot.commands.automations.DriveTo;
 import com.team1533.frc.robot.subsystems.vision.VisionConstants;
+import com.team1533.lib.control.AutoAlignController;
 import com.team1533.lib.control.HeadingController;
 import com.team1533.lib.control.HeadingController.HeadingControllerState;
 
@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
-import lombok.Setter;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SwerveDrive extends SubsystemBase {
@@ -38,7 +37,7 @@ public class SwerveDrive extends SubsystemBase {
   private final Module[] modules = new Module[4];
 
   private final HeadingController headingController;
-  private final DriveTo driveTo;
+  private final AutoAlignController autoAlignController;
 
   public static enum DriveMode {
     /** Driving with input from driver joysticks. (Default) */
@@ -75,7 +74,7 @@ public class SwerveDrive extends SubsystemBase {
     this.gyroIO = gyroIO;
 
     headingController = new HeadingController(this);
-    driveTo = new DriveTo(getPose(), this);
+    autoAlignController = new AutoAlignController(this);
 
     modules[0] = new Module(FL, 0);
     modules[1] = new Module(FR, 1);

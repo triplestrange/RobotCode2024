@@ -1,20 +1,16 @@
 package com.team1533.lib.control;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
-import com.team1533.frc.robot.commands.automations.Shoot;
 import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -75,18 +71,6 @@ public class HeadingController {
         m_PIDController.setSetpoint(m_Setpoint.get().getDegrees());
 
         double maxOutput = Double.POSITIVE_INFINITY;
-
-        var current_translational_velocity = Math.hypot(m_swerve.currentMovement.vxMetersPerSecond,
-                m_swerve.currentMovement.vyMetersPerSecond);
-        final double kMinTranslationalVelocity = 0.2;
-        if (current_translational_velocity < kMinTranslationalVelocity) {
-            current_translational_velocity = kMinTranslationalVelocity;
-        }
-        final double kMaxTranlationalVelocity = 2.5;
-        if (current_translational_velocity > kMaxTranlationalVelocity) {
-            current_translational_velocity = kMaxTranlationalVelocity;
-        }
-        double interp = (current_translational_velocity - kMinTranslationalVelocity) / kMaxTranlationalVelocity;
 
         if (isAtGoal() && getM_HeadingControllerState() == HeadingControllerState.SNAP) {
             m_HeadingControllerState = HeadingControllerState.MAINTAIN;
