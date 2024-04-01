@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.signals.DifferentialControlModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.RobotContainer;
@@ -203,7 +204,7 @@ public class SwerveDrive extends SubsystemBase {
     controllerOmega = omega;
     this.robotRelative = robotRelative;
     if (DriverStation.isTeleopEnabled()) {
-      if (currentDriveMode != DriveMode.AUTO_ALIGN) {
+      if (currentDriveMode != DriveMode.AUTO_ALIGN && currentDriveMode != DriveMode.SHOOTING) {
         currentDriveMode = DriveMode.TELEOP;
       }
     }
@@ -229,6 +230,8 @@ public class SwerveDrive extends SubsystemBase {
 
     switch (currentDriveMode) {
       case TELEOP:
+      case SHOOTING:
+
         if (isAllianceRed()) {
           desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(controllerX, controllerY, controllerOmega,
               getPose().getRotation().plus(Rotation2d.fromDegrees(180)));
@@ -247,25 +250,26 @@ public class SwerveDrive extends SubsystemBase {
               MathUtil.clamp(desiredMovement.vyMetersPerSecond, -1, 1), desiredMovement.omegaRadiansPerSecond,
               getPose().getRotation());
         }
+        break;
 
       case AUTO_ALIGN:
-        if (autoAlignController.getM_AutoAlignControllerState() != AutoAlignController.AutoAlignControllerState.OFF) {
-          desiredMovement = autoAlignController.update();
-        }
+        desiredMovement = autoAlignController.update();
 
       case AUTONOMOUS_HEADING_LOCKED:
+        desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, headingController.update(),
+            getPose().getRotation());
+
         break;
       case TRAJECTORY:
         break;
       case WHEEL_RADIUS_CHARACTERIZATION:
         desiredMovement = new ChassisSpeeds(0, 0, characterizationInput);
-      case SHOOTING:
         break;
       default:
         break;
 
     }
-    if (currentDriveMode != DriveMode.TRAJECTORY || currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED) {
+    if (currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED) {
       setChassisSpeeds(desiredMovement);
     }
   }

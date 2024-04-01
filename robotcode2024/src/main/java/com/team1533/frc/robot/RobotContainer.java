@@ -288,7 +288,9 @@ public class RobotContainer {
                                                                 new InstantCommand(
                                                                                 () -> m_superstructure
                                                                                                 .setGoal(Goal.AIM),
-                                                                                m_superstructure)));
+                                                                                m_superstructure)))
+                                .onFalse(new InstantCommand(
+                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)));
 
                 JoystickButtons.dA.whileTrue(
                                 new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
@@ -298,12 +300,19 @@ public class RobotContainer {
                                                                 new InstantCommand(
                                                                                 () -> m_superstructure
                                                                                                 .setGoal(Goal.SHUTTLE),
-                                                                                m_superstructure)));
+                                                                                m_superstructure)))
+                                .onFalse(new InstantCommand(
+                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)));
 
                 // Amp Automations
 
-                JoystickButtons.dB
-                                .whileTrue(new Pathfind(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
+                // JoystickButtons.dB
+                // .whileTrue(new Pathfind(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
+
+                JoystickButtons.dB.whileTrue(
+                                new RunCommand(() -> m_robotDrive.setAutoAlignController(Constants.FieldPositions.AMP)))
+                                .onFalse(new InstantCommand(
+                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)));
 
                 // Note Pick Automation
                 // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
