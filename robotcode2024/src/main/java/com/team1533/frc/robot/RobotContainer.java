@@ -19,6 +19,7 @@ import com.team1533.frc.robot.subsystems.cannon.indexer.Indexer;
 import com.team1533.frc.robot.subsystems.cannon.indexer.IndexerIO;
 import com.team1533.frc.robot.subsystems.cannon.indexer.IndexerIOReal;
 import com.team1533.frc.robot.subsystems.cannon.indexer.IndexerIOSim;
+import com.team1533.frc.robot.subsystems.leds.Leds;
 import com.team1533.frc.robot.subsystems.rollers.Intake;
 import com.team1533.frc.robot.subsystems.rollers.IntakeIO;
 import com.team1533.frc.robot.subsystems.rollers.IntakeIOReal;
@@ -76,8 +77,9 @@ public class RobotContainer {
         public final Shoot m_shoot;
         public final Vision m_vision;
 
-        // private final SendableChooser<Command> choose;
         public final AutoMain m_Autos;
+
+        public final Leds m_Leds;
 
         private double flywheelSetpoint;
 
@@ -87,6 +89,7 @@ public class RobotContainer {
          */
         public RobotContainer(Robot m_Robot) {
                 this.m_robot = m_Robot;
+                m_Leds = new Leds();
 
                 m_robotDrive = null;
                 m_Arm = null;
