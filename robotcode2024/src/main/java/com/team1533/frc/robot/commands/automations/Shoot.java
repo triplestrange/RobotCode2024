@@ -94,22 +94,22 @@ public class Shoot {
         shootingData.put(6.38, -33.4);
         shootingData.put(7.39, -34.5);
 
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
-        shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
+        // shuttlingData.put(null, null);
 
     }
 

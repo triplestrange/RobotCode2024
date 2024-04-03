@@ -23,12 +23,12 @@ public class Leds extends SubsystemBase {
         AUTO(() -> -0.57),
         HAS_NOTE(() -> 0.75),
         AUTO_SHOOT(() -> 0.35),
-        FLYWHEEL_CHECK(() -> 0),
-        PIVOT_CHECK(() -> 0),
-        HEADING_CHECK(() -> 0),
-        VELOCITY_CHECK(() -> 0),
-        ROTATION_CHECK(() -> 0),
-        SWERVE_CHECK(() -> 0),
+        FLYWHEEL_CHECK(() -> 0.91),
+        PIVOT_CHECK(() -> 0.57),
+        HEADING_CHECK(() -> 0.59),
+        VELOCITY_CHECK(() -> 0.79),
+        ROTATION_CHECK(() -> 0.81),
+        SWERVE_CHECK(() -> 0.65),
         CLIMBING(() -> -0.57),
         AUTO_ALIGN(() -> 0.19),
         INTAKING(() -> 0.15);
@@ -46,7 +46,6 @@ public class Leds extends SubsystemBase {
     private LedMode mode = LedMode.DEFAULT;
 
     public Leds() {
-        setDefaultCommand(new InstantCommand(() -> setMode(LedMode.DEFAULT)));
 
     }
 

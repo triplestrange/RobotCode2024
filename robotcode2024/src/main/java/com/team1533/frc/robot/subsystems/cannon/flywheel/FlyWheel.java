@@ -82,17 +82,17 @@ public class FlyWheel extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
 
-        switch (mode) {
-            case TELEOP:
-                setDefaultCommand(new InstantCommand(() -> setLeftSpeed(900)));
-                setDefaultCommand(new InstantCommand(() -> setRightSpeed(900)));
-                break;
+        // switch (mode) {
+        //     case TELEOP:
+        //         setDefaultCommand(new InstantCommand(() -> setLeftSpeed(900), getInstance()));
+        //         setDefaultCommand(new InstantCommand(() -> setRightSpeed(900), getInstance()));
+        //         break;
 
-            case AUTO:
-                setDefaultCommand(new InstantCommand(() -> setLeftSpeed(4700)));
-                setDefaultCommand(new InstantCommand(() -> setRightSpeed(3000)));
-                break;
-        }
+        //     case AUTO:
+        //         setDefaultCommand(new InstantCommand(() -> setLeftSpeed(4700), getInstance()));
+        //         setDefaultCommand(new InstantCommand(() -> setRightSpeed(3000), getInstance()));
+        //         break;
+        // }
 
     }
 

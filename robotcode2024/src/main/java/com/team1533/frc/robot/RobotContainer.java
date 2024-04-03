@@ -288,8 +288,8 @@ public class RobotContainer {
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
                                 .withName("Manual Flywheel Speed"));
 
-                // m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(),
-                // m_flywheel));
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(),
+                m_flywheel));
 
                 // Shooting Automations
 
@@ -345,6 +345,10 @@ public class RobotContainer {
                 // (new InstantCommand(
                 // () -> m_Leds.setMode(LedMode.DEFAULT)))
                 // .withName("Note Pick Up Off"));
+
+                // leds
+                        m_Leds.setDefaultCommand(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT), m_Leds));
+
         }
 
         /**
