@@ -1,8 +1,12 @@
 package com.team1533.frc.robot.subsystems.cannon.flywheel;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import lombok.Getter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FlyWheel extends SubsystemBase {
@@ -21,6 +25,15 @@ public class FlyWheel extends SubsystemBase {
         }
         return instance;
     }
+
+    public enum Mode {
+        TELEOP,
+        AUTO
+    }
+
+    @Getter
+    @AutoLogOutput(key = "Flywheels/mode")
+    private Mode mode = Mode.TELEOP;
 
     /**
      * Creates a new Shooter.
@@ -46,6 +59,14 @@ public class FlyWheel extends SubsystemBase {
         io.runSpeed(RPM);
     }
 
+    public void setLeftSpeed(double RPM) {
+        io.setLeftSpeed(RPM);
+    }
+
+    public void setRightSpeed(double RPM) {
+        io.setRightSpeed(RPM);
+    }
+
     public void flyWheelOn() {
         io.setLeftSpeed(-900);
         io.setRightSpeed(900);
@@ -60,6 +81,18 @@ public class FlyWheel extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
+
+        switch (mode) {
+            case TELEOP:
+                setDefaultCommand(new InstantCommand(() -> setLeftSpeed(900)));
+                setDefaultCommand(new InstantCommand(() -> setRightSpeed(900)));
+                break;
+
+            case AUTO:
+                setDefaultCommand(new InstantCommand(() -> setLeftSpeed(4700)));
+                setDefaultCommand(new InstantCommand(() -> setRightSpeed(3000)));
+                break;
+        }
 
     }
 

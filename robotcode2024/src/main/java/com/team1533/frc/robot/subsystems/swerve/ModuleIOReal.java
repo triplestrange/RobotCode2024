@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -104,7 +105,12 @@ public class ModuleIOReal implements ModuleIO {
 
         driveMotor.getConfigurator().apply(new CurrentLimitsConfigs()
                 .withSupplyCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit)
-                .withSupplyCurrentLimitEnable(true));
+                .withSupplyCurrentLimitEnable(true)
+                .withStatorCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit + 60)
+                .withStatorCurrentLimitEnable(true));
+        driveMotor.getConfigurator()
+                .apply(new TorqueCurrentConfigs().withPeakForwardTorqueCurrent(80.0)
+                        .withPeakReverseTorqueCurrent(80.0));
         turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
         driveMotor.setNeutralMode(NeutralModeValue.Brake);
         turningMotor.setIdleMode(IdleMode.kBrake);

@@ -6,13 +6,18 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.signals.DifferentialControlModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.RobotContainer;
+import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.vision.VisionConstants;
+import com.team1533.lib.control.AutoAlignController;
 import com.team1533.lib.control.HeadingController;
+import com.team1533.lib.control.AutoAlignController.AutoAlignControllerState;
 import com.team1533.lib.control.HeadingController.HeadingControllerState;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,12 +42,17 @@ public class SwerveDrive extends SubsystemBase {
   private final Module[] modules = new Module[4];
 
   private final HeadingController headingController;
+  private final AutoAlignController autoAlignController;
 
   public static enum DriveMode {
     /** Driving with input from driver joysticks. (Default) */
     TELEOP,
     /** Driving to a location on the field automatically. */
     AUTO_ALIGN,
+    /** Driving with heading locked */
+    AUTONOMOUS_HEADING_LOCKED,
+    /** Ensures the robot does not move too fast while shooting. */
+    SHOOTING,
     /** Autonoumous */
     TRAJECTORY,
     /** Running wheel radius characterization routine (spinning in circle) */
@@ -51,8 +61,9 @@ public class SwerveDrive extends SubsystemBase {
 
   @AutoLogOutput
   @Getter
+  @Setter
   private DriveMode currentDriveMode = DriveMode.TELEOP;
-@AutoLogOutput
+  @AutoLogOutput
   private SwerveModuleState[] desiredSwerveModuleStates;
   @AutoLogOutput
   private SwerveModuleState[] currentSwerveModuleStates;
@@ -60,8 +71,10 @@ public class SwerveDrive extends SubsystemBase {
   public ChassisSpeeds currentMovement;
   @AutoLogOutput
   public ChassisSpeeds desiredMovement;
+  @AutoLogOutput
+  public double characterizationInput = 0.0;
 
-    public SwerveDrivePoseEstimator m_odometry;
+  public SwerveDrivePoseEstimator m_odometry;
 
   public double controllerX = 0;
   public double controllerY = 0;
@@ -77,32 +90,45 @@ public class SwerveDrive extends SubsystemBase {
 
     this.gyroIO = gyroIO;
 
+    headingController = new HeadingController(this);
+    autoAlignController = new AutoAlignController(this);
 
     modules[0] = new Module(FL, 0);
     modules[1] = new Module(FR, 1);
     modules[2] = new Module(BL, 2);
     modules[3] = new Module(BR, 3);
 
-        headingController = new HeadingController(this);
+    resetEncoders();
 
+    // Odometry class for tracking robot pose with vision
+    m_odometry = new SwerveDrivePoseEstimator(
+        SwerveConstants.kDriveKinematics,
+        getGyroInRotations(),
+        new SwerveModulePosition[] {
+            modules[0].getPosition(),
+            modules[1].getPosition(),
+            modules[2].getPosition(),
+            modules[3].getPosition()
+        },
+        new Pose2d(0, 0, new Rotation2d(0)),
+        VisionConstants.STATE_STD_DEVS,
+        VisionConstants.VISION_MEASUREMENT_STD_DEVS);
 
-        resetEncoders();
+    resetEncoders();
 
-        // Odometry class for tracking robot pose with vision
-m_odometry = new SwerveDrivePoseEstimator(
-      SwerveConstants.kDriveKinematics,
-      getGyroInRotations(),
-      new SwerveModulePosition[] {
-          modules[0].getPosition(),
-          modules[1].getPosition(),
-          modules[2].getPosition(),
-          modules[3].getPosition()
-      },
-      new Pose2d(0, 0, new Rotation2d(0)),
-      VisionConstants.STATE_STD_DEVS,
-      VisionConstants.VISION_MEASUREMENT_STD_DEVS);
-
-
+    // Odometry class for tracking robot pose with vision
+    m_odometry = new SwerveDrivePoseEstimator(
+        SwerveConstants.kDriveKinematics,
+        getGyroInRotations(),
+        new SwerveModulePosition[] {
+            modules[0].getPosition(),
+            modules[1].getPosition(),
+            modules[2].getPosition(),
+            modules[3].getPosition()
+        },
+        new Pose2d(0, 0, new Rotation2d(0)),
+        VisionConstants.STATE_STD_DEVS,
+        VisionConstants.VISION_MEASUREMENT_STD_DEVS);
 
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
@@ -139,7 +165,6 @@ m_odometry = new SwerveDrivePoseEstimator(
 
   boolean gyroReset;
 
-  
   public Boolean isAllianceRed() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
@@ -156,6 +181,10 @@ m_odometry = new SwerveDrivePoseEstimator(
   public Rotation2d getGyroInRotations() {
     // Negating the angle because WPILib gyros are CW positive.
     return gyroInputs.yawPosition.times(SwerveConstants.kGyroReversed ? 1.0 : -1.0);
+  }
+
+  public Rotation2d getGyroTotalRotations() {
+    return gyroInputs.totalDistanceYaw;
   }
 
   public boolean getGyroReset() {
@@ -176,7 +205,7 @@ m_odometry = new SwerveDrivePoseEstimator(
     controllerOmega = omega;
     this.robotRelative = robotRelative;
     if (DriverStation.isTeleopEnabled()) {
-      if (currentDriveMode != DriveMode.AUTO_ALIGN) {
+      if (currentDriveMode != DriveMode.AUTO_ALIGN && currentDriveMode != DriveMode.SHOOTING) {
         currentDriveMode = DriveMode.TELEOP;
       }
     }
@@ -202,6 +231,8 @@ m_odometry = new SwerveDrivePoseEstimator(
 
     switch (currentDriveMode) {
       case TELEOP:
+      case SHOOTING:
+
         if (isAllianceRed()) {
           desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(controllerX, controllerY, controllerOmega,
               getPose().getRotation().plus(Rotation2d.fromDegrees(180)));
@@ -214,16 +245,34 @@ m_odometry = new SwerveDrivePoseEstimator(
           desiredMovement.omegaRadiansPerSecond = headingController.update();
         }
 
+        if (currentDriveMode == DriveMode.SHOOTING) {
+          desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(
+              MathUtil.clamp(desiredMovement.vxMetersPerSecond, -1, 1),
+              MathUtil.clamp(desiredMovement.vyMetersPerSecond, -1, 1), desiredMovement.omegaRadiansPerSecond,
+              getPose().getRotation());
+        }
+        break;
+
       case AUTO_ALIGN:
+        desiredMovement = autoAlignController.update();
 
+      case AUTONOMOUS_HEADING_LOCKED:
+        desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, headingController.update(),
+            getPose().getRotation());
+
+        break;
       case TRAJECTORY:
-
+        break;
       case WHEEL_RADIUS_CHARACTERIZATION:
+        desiredMovement = new ChassisSpeeds(0, 0, characterizationInput);
+        break;
+      default:
+        break;
 
     }
-
-    setChassisSpeeds(desiredMovement);
-
+    if (currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED) {
+      setChassisSpeeds(desiredMovement);
+    }
   }
 
   /**
@@ -276,12 +325,33 @@ m_odometry = new SwerveDrivePoseEstimator(
     desiredSwerveModuleStates = desiredStates;
   }
 
+  public Rotation2d getModuleRotations() {
+    double totalDistanceTraveledInRadians = (modules[0].getPosition().distanceMeters
+        + modules[1].getPosition().distanceMeters
+        + modules[2].getPosition().distanceMeters
+        + modules[3].getPosition().distanceMeters)
+        / (4.0 * SwerveConstants.kDriveBaseRadius);
+    return Rotation2d.fromRadians(totalDistanceTraveledInRadians);
+  }
+
+  /** Runs in a circle at omega. */
+  public void runWheelRadiusCharacterization(double omegaSpeed) {
+    currentDriveMode = DriveMode.WHEEL_RADIUS_CHARACTERIZATION;
+    characterizationInput = omegaSpeed;
+  }
+
+  public double getWheelOffsetExperimental() {
+    double offset = getModuleRotations().getDegrees() / getGyroTotalRotations().getDegrees();
+
+    return offset;
+  }
+
   public void setXWheels() {
-    desiredSwerveModuleStates = new SwerveModuleState[]  {
-    new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
-    new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-    new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
-    new SwerveModuleState(0, Rotation2d.fromDegrees(45))
+    desiredSwerveModuleStates = new SwerveModuleState[] {
+        new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(45))
 
     };
 
@@ -350,9 +420,9 @@ m_odometry = new SwerveDrivePoseEstimator(
         modules[3].getState());
   }
 
-  public void updateSwerveModuleStates()  {
+  public void updateSwerveModuleStates() {
     currentSwerveModuleStates = new SwerveModuleState[] {
-       modules[0].getState(),
+        modules[0].getState(),
         modules[1].getState(),
         modules[2].getState(),
         modules[3].getState()
@@ -399,11 +469,13 @@ m_odometry = new SwerveDrivePoseEstimator(
   public void setHeadingController(HeadingControllerState state, Supplier<Rotation2d> desiredHeading) {
     headingController.setM_HeadingControllerState(state);
     headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.SHOOTING;
   }
 
   public void setHeadingController(Supplier<Rotation2d> desiredHeading) {
     headingController.setM_HeadingControllerState(HeadingControllerState.SNAP);
     headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.SHOOTING;
   }
 
   public void setHeadingController(HeadingControllerState state, Rotation2d desiredHeading) {
@@ -416,8 +488,35 @@ m_odometry = new SwerveDrivePoseEstimator(
     headingController.setGoal(desiredHeading);
   }
 
+  public void setHeadingControllerInAuto(HeadingControllerState state, Supplier<Rotation2d> desiredHeading) {
+    headingController.setM_HeadingControllerState(state);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
+  public void setHeadingControllerInAuto(Supplier<Rotation2d> desiredHeading) {
+    headingController.setM_HeadingControllerState(HeadingControllerState.SNAP);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
+  public void setHeadingControllerInAuto(HeadingControllerState state, Rotation2d desiredHeading) {
+    headingController.setM_HeadingControllerState(state);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
+  public void setHeadingControllerInAuto(Rotation2d desiredHeading) {
+    headingController.setM_HeadingControllerState(HeadingControllerState.SNAP);
+    headingController.setGoal(desiredHeading);
+    currentDriveMode = DriveMode.AUTONOMOUS_HEADING_LOCKED;
+  }
+
   public void disableHeadingController() {
     headingController.setM_HeadingControllerState(HeadingControllerState.OFF);
+    if (currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED && currentDriveMode != DriveMode.TRAJECTORY) {
+      currentDriveMode = DriveMode.TELEOP;
+    }
   }
 
   public HeadingControllerState getHeadingControllerState() {
@@ -426,6 +525,43 @@ m_odometry = new SwerveDrivePoseEstimator(
 
   public Rotation2d getHeadingControllerGoal() {
     return headingController.getGoal();
+  }
+
+  public void setAutoAlignController(AutoAlignControllerState state, Supplier<Pose2d> desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
+    autoAlignController.setM_AutoAlignControllerState(state);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void setAutoAlignController(Supplier<Pose2d> desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
+    autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void setAutoAlignController(AutoAlignControllerState state, Pose2d desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
+    autoAlignController.setM_AutoAlignControllerState(state);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void setAutoAlignController(Pose2d desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
+    autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
+    autoAlignController.setGoal(desiredPose);
+  }
+
+  public void disableAutoAlignController() {
+    m_RobotContainer.m_Leds.setMode(LedMode.DEFAULT);
+    autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.OFF);
+  }
+
+  public AutoAlignControllerState getAutoAlignControllerState() {
+    return autoAlignController.getM_AutoAlignControllerState();
+  }
+
+  public Pose2d getAutoAlignControllerGoal() {
+    return autoAlignController.getGoal();
   }
 
   public void updateSmartDashBoard() {

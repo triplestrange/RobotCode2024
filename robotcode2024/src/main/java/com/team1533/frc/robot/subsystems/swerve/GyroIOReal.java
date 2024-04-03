@@ -11,6 +11,7 @@ import java.util.function.DoubleSupplier;
 /** IO implementation for Pigeon2 */
 public class GyroIOReal implements GyroIO {
     private final AHRS navX;
+    private DoubleSupplier totalDistanceYaw;
     private DoubleSupplier yaw;
     private DoubleSupplier roll;
     private DoubleSupplier pitch;
@@ -18,6 +19,7 @@ public class GyroIOReal implements GyroIO {
     public GyroIOReal() {
         navX = new AHRS(SPI.Port.kMXP);
 
+        totalDistanceYaw = () -> navX.getAngle();
         yaw = () -> navX.getYaw();
         roll = () -> navX.getRoll();
         pitch = () -> navX.getPitch();
@@ -26,6 +28,7 @@ public class GyroIOReal implements GyroIO {
     @Override
     public void updateInputs(GyroIOInputs inputs) {
         inputs.connected = navX.isConnected();
+        inputs.totalDistanceYaw = Rotation2d.fromDegrees(totalDistanceYaw.getAsDouble());
         inputs.yawPosition = Rotation2d.fromDegrees(yaw.getAsDouble());
         inputs.yawVelocityRadPerSec = navX.getRate() * (SwerveConstants.kGyroReversed ? -1.0 : 1.0);
 

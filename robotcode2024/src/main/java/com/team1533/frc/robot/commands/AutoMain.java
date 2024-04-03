@@ -1,12 +1,12 @@
 package com.team1533.frc.robot.commands;
 
-import java.time.InstantSource;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
+import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.superstructure.Superstructure;
 import com.team1533.frc.robot.subsystems.superstructure.arm.Arm;
 
@@ -74,9 +74,11 @@ public class AutoMain extends Command {
                 NamedCommands.registerCommand("indexerOut", new InstantCommand(
                                 () -> m_robotContainer.m_indexer.runOut(), m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("conveyorIn", new IntakeToIndexer(m_robotContainer.m_indexer));
+                NamedCommands.registerCommand("conveyorIn",
+                                new IntakeToIndexer(m_robotContainer.m_indexer, m_robotContainer.m_Leds));
 
-                NamedCommands.registerCommand("indexerIn", new IntakeToIndexer(m_robotContainer.m_indexer));
+                NamedCommands.registerCommand("indexerIn", new IntakeToIndexer(m_robotContainer.m_indexer,
+                                m_robotContainer.m_Leds));
 
                 NamedCommands.registerCommand("indexerShoot", new InstantCommand(
                                 () -> m_robotContainer.m_indexer.runIn(), m_robotContainer.m_indexer));
@@ -87,7 +89,8 @@ public class AutoMain extends Command {
                                 () -> m_robotContainer.m_indexer.indexerOff(), m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("intakeNote",
-                                (new ParallelDeadlineGroup(new IntakeToIndexer(m_robotContainer.m_indexer))
+                                (new ParallelDeadlineGroup(new IntakeToIndexer(m_robotContainer.m_indexer,
+                                                m_robotContainer.m_Leds))
                                                 .alongWith(
                                                                 new RunCommand(
                                                                                 () -> m_robotContainer.m_intake
@@ -96,13 +99,18 @@ public class AutoMain extends Command {
 
                 // Shooter
                 NamedCommands.registerCommand("shoot",
-                                (new RunCommand(() -> m_robotContainer.m_shoot.autonomous(),
+                                (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(),
                                                 m_robotContainer.m_indexer,
                                                 m_robotContainer.m_superstructure, m_robotContainer.m_flywheel)
                                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive
-                                                                .setHeadingController(
-                                                                                m_robotContainer.m_shoot::rotationToSpeaker)).alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive.acceptTeleopInput(0, 0, 0, true))))
-                                                .withTimeout(10)));
+                                                                .setHeadingControllerInAuto(
+                                                                                m_robotContainer.m_shoot::rotationToSpeaker))
+                                                                .alongWith(new InstantCommand(
+                                                                                () -> m_robotContainer.m_robotDrive
+                                                                                                .acceptTeleopInput(0, 0,
+                                                                                                                0,
+                                                                                                                true))))
+                                                .withTimeout(1.5)));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_Arm.setGoal(Arm.Goal.SUBWOOFER),
@@ -116,6 +124,7 @@ public class AutoMain extends Command {
         }
 
         public Command getAutoChooser() {
-                return autoChooser.getSelected();
+                return new InstantCommand(() -> m_robotContainer.m_Leds.setMode(LedMode.AUTO))
+                                .andThen(autoChooser.getSelected());
         }
 }
