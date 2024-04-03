@@ -7,6 +7,7 @@ package com.team1533.frc.robot;
 import com.team1533.frc.robot.Constants.JoystickButtons;
 import com.team1533.frc.robot.commands.AutoMain;
 import com.team1533.frc.robot.commands.DefaultDrive;
+import com.team1533.frc.robot.commands.automations.AutoPickupFieldRelative;
 import com.team1533.frc.robot.commands.automations.Pathfind;
 import com.team1533.frc.robot.commands.automations.Shoot;
 import com.team1533.frc.robot.commands.indexer.GroundToIntake;
@@ -191,30 +192,39 @@ public class RobotContainer {
                 // Swerve Controls
 
                 m_robotDrive.setDefaultCommand(
-                                new DefaultDrive(m_robotDrive, SwerveConstants.kMaxSpeedMetersPerSecond, 8));// 2.5,
-                                                                                                             // 1));
+                                new DefaultDrive(m_robotDrive, SwerveConstants.kMaxSpeedMetersPerSecond, 8)
+                                                .withName("Normal Drive"));// 2.5,
+                // 1));
 
                 JoystickButtons.dlBump.whileTrue(
-                                new DefaultDrive(m_robotDrive, 0.85, 1));
+                                new DefaultDrive(m_robotDrive, 0.85, 1).withName("Slow Drive"));
 
-                JoystickButtons.dlWing.onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
-                JoystickButtons.drWing.onTrue(new InstantCommand(m_robotDrive::setXWheels, m_robotDrive));
+                JoystickButtons.dlWing.onTrue(
+                                new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive).withName("Zero Heading"));
+                JoystickButtons.drWing.onTrue(
+                                new InstantCommand(m_robotDrive::setXWheels, m_robotDrive).withName("Swerve Break"));
 
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? -90 : 90))));
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 90 : -90)))
+                                .withName("Rotate Left"));
                 JoystickButtons.dDpadU.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 0 : 180))));
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 0 : 180)))
+                                .withName("Rotate Up"));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 90 : -90))));
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? -90 : 90)))
+                                .withName("Rotate Right"));
                 JoystickButtons.dDpadD.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 180 : 0))));
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 180 : 0)))
+                                .withName("Rotate Down"));
+
+                // superstructure commands
 
                 m_superstructure.setDefaultCommand(
-                                new RunCommand(() -> {
+                                (new RunCommand(() -> {
                                         m_elevator.moveElev(
                                                         0.3 * JoystickButtons.m_operatorController.getRightY(),
                                                         0.3 * (JoystickButtons.m_operatorController
@@ -226,43 +236,41 @@ public class RobotContainer {
                                                         0.6 * JoystickButtons.m_operatorController.getLeftY());
                                         m_Arm.moveShooter(
                                                         0.3 * JoystickButtons.m_operatorController.getRightX());
-                                }, m_superstructure));
-                // Elevator Controls
+                                }, m_superstructure)).withName("Superstructure Default Command"));
 
                 JoystickButtons.opA.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.STOW)));
+                                () -> m_superstructure.setGoal(Goal.STOW)).withName("Stow Superstructure"));
                 JoystickButtons.opDpadU.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.AMP)));
+                                () -> m_superstructure.setGoal(Goal.AMP)).withName("Amp Superstructure"));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.GROUND)));
-
-                // Climb Controls
-
-                // Pivot Controls
+                                () -> m_superstructure.setGoal(Goal.GROUND)).withName("Ground Intake Superstructure"));
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.CLIMB)));
+                                () -> m_superstructure.setGoal(Goal.CLIMB)).withName("Climb Superstructure"));
 
                 JoystickButtons.opX.whileTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.PREPARE_CLIMB)));
+                                () -> m_superstructure.setGoal(Goal.PREPARE_CLIMB))
+                                .withName("Prepare Climb Superstructure"));
 
                 // Intake and indexer Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
                                 m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
+                                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)).withName("Run Intake"));
 
-                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds));
+                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake"));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new IntakeToIndexer(m_indexer, m_Leds)));
+                                (new IntakeToIndexer(m_indexer, m_Leds)).withName("Intake To Indexer"));
 
-                JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer)));
+                JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(), m_intake)
+                                .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer))).withName("Outtake"));
 
-                m_intake.setDefaultCommand(new InstantCommand(() -> m_intake.intakeOff(), m_intake));
+                m_intake.setDefaultCommand(
+                                new InstantCommand(() -> m_intake.intakeOff(), m_intake).withName("Intake Off"));
 
-                m_indexer.setDefaultCommand(new InstantCommand(() -> m_indexer.indexerOff(), m_indexer));
+                m_indexer.setDefaultCommand(
+                                new InstantCommand(() -> m_indexer.indexerOff(), m_indexer).withName("Indexer Off"));
 
                 // Fly Wheels controls
 
@@ -277,7 +285,8 @@ public class RobotContainer {
 
                 flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
 
-                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint)));
+                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
+                                .withName("Manual Flywheel Speed"));
 
                 // m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(),
                 // m_flywheel));
@@ -285,7 +294,7 @@ public class RobotContainer {
                 // Shooting Automations
 
                 JoystickButtons.dX.whileTrue(
-                                new RunCommand(() -> m_shoot.teleopShoot(), m_indexer,
+                                (new RunCommand(() -> m_shoot.teleopShoot(), m_indexer,
                                                 m_flywheel)
                                                 .alongWith(new InstantCommand(() -> m_robotDrive
                                                                 .setHeadingController(
@@ -294,12 +303,14 @@ public class RobotContainer {
                                                                                 () -> m_superstructure
                                                                                                 .setGoal(Goal.AIM),
                                                                                 m_superstructure)))
-                                .onFalse(new InstantCommand(
+                                                .withName("Teleop Shoot"))
+                                .onFalse((new InstantCommand(
                                                 () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
-                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))));
+                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
+                                                .withName("Teleop Shoot Off"));
 
                 JoystickButtons.dA.whileTrue(
-                                new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
+                                (new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
                                                 .alongWith(new InstantCommand(() -> m_robotDrive
                                                                 .setHeadingController(
                                                                                 m_shoot::rotationToShuttle)),
@@ -307,9 +318,11 @@ public class RobotContainer {
                                                                                 () -> m_superstructure
                                                                                                 .setGoal(Goal.SHUTTLE),
                                                                                 m_superstructure)))
-                                .onFalse(new InstantCommand(
+                                                .withName("Teleop Shuttle"))
+                                .onFalse((new InstantCommand(
                                                 () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
-                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))));
+                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
+                                                .withName("Teleop Shuttle Off"));
 
                 // Amp Automations
 
@@ -317,14 +330,21 @@ public class RobotContainer {
                 // .whileTrue(new Pathfind(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
 
                 JoystickButtons.dB.whileTrue(
-                                new RunCommand(() -> m_robotDrive.setAutoAlignController(Constants.FieldPositions.AMP)))
-                                .onFalse(new InstantCommand(
-                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)));
+                                (new RunCommand(() -> m_robotDrive
+                                                .setAutoAlignController(Constants.FieldPositions.AMP)))
+                                                .withName("Drive To Amp"))
+                                .onFalse((new InstantCommand(
+                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)))
+                                                .withName("Drive To Amp Off"));
 
                 // Note Pick Automation
                 // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
-                // m_elevator, m_intake,
-                // m_vision.getObjectToField(m_robotDrive.getPose())));
+                // m_superstructure, m_intake,
+                // m_Leds, m_vision.getObjectToField(m_robotDrive.getPose()).getTranslation())
+                // .withName("Pick Up Note")).onFalse(
+                // (new InstantCommand(
+                // () -> m_Leds.setMode(LedMode.DEFAULT)))
+                // .withName("Note Pick Up Off"));
         }
 
         /**
