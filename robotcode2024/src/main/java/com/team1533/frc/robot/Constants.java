@@ -33,7 +33,7 @@ public final class Constants {
 
   public static final class FieldPositions {
 
-    public static final Pose2d AMP = new Pose2d(new Translation2d(1.82, 7.68), new Rotation2d().fromDegrees(90));
+    public static final Pose2d AMP = new Pose2d(new Translation2d(1.82, 7.68), Rotation2d.fromDegrees(90));
   }
 
   public static final class LoggerConstants {

@@ -159,7 +159,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
-     m_robotContainer.m_robotDrive.m_odometry
+    m_robotContainer.m_robotDrive.m_odometry
         .setVisionMeasurementStdDevs(VisionConstants.VISION_MEASUREMENT_STD_DEVS);
     m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 

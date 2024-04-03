@@ -20,6 +20,7 @@ import com.team1533.frc.robot.subsystems.cannon.indexer.IndexerIO;
 import com.team1533.frc.robot.subsystems.cannon.indexer.IndexerIOReal;
 import com.team1533.frc.robot.subsystems.cannon.indexer.IndexerIOSim;
 import com.team1533.frc.robot.subsystems.leds.Leds;
+import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.rollers.Intake;
 import com.team1533.frc.robot.subsystems.rollers.IntakeIO;
 import com.team1533.frc.robot.subsystems.rollers.IntakeIOReal;
@@ -251,10 +252,10 @@ public class RobotContainer {
                                 m_intake)
                                 .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)));
 
-                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake));
+                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new IntakeToIndexer(m_indexer)));
+                                (new IntakeToIndexer(m_indexer, m_Leds)));
 
                 JoystickButtons.oplBump.whileTrue(new RunCommand(() -> m_intake.runOutake(), m_intake)
                                 .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer)));
@@ -278,7 +279,8 @@ public class RobotContainer {
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint)));
 
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(), m_flywheel));
+                // m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(),
+                // m_flywheel));
 
                 // Shooting Automations
 
@@ -293,7 +295,8 @@ public class RobotContainer {
                                                                                                 .setGoal(Goal.AIM),
                                                                                 m_superstructure)))
                                 .onFalse(new InstantCommand(
-                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)));
+                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
+                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))));
 
                 JoystickButtons.dA.whileTrue(
                                 new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
@@ -305,7 +308,8 @@ public class RobotContainer {
                                                                                                 .setGoal(Goal.SHUTTLE),
                                                                                 m_superstructure)))
                                 .onFalse(new InstantCommand(
-                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)));
+                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
+                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))));
 
                 // Amp Automations
 

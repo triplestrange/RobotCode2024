@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.DifferentialControlModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.RobotContainer;
+import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.vision.VisionConstants;
 import com.team1533.lib.control.AutoAlignController;
 import com.team1533.lib.control.HeadingController;
@@ -527,26 +528,31 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public void setAutoAlignController(AutoAlignControllerState state, Supplier<Pose2d> desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(state);
     autoAlignController.setGoal(desiredPose);
   }
 
   public void setAutoAlignController(Supplier<Pose2d> desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
     autoAlignController.setGoal(desiredPose);
   }
 
   public void setAutoAlignController(AutoAlignControllerState state, Pose2d desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(state);
     autoAlignController.setGoal(desiredPose);
   }
 
   public void setAutoAlignController(Pose2d desiredPose) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
     autoAlignController.setGoal(desiredPose);
   }
 
   public void disableAutoAlignController() {
+    m_RobotContainer.m_Leds.setMode(LedMode.DEFAULT);
     autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.OFF);
   }
 

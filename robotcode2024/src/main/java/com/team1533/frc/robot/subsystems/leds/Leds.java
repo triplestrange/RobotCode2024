@@ -18,13 +18,19 @@ public class Leds extends SubsystemBase {
     public Spark leds = new Spark(Constants.ELECTRICAL.ledPWMInput);
 
     @RequiredArgsConstructor
-    public enum ledMode {
+    public enum LedMode {
         DEFAULT(() -> -0.93),
         AUTO(() -> -0.57),
         HAS_NOTE(() -> 0.75),
         AUTO_SHOOT(() -> 0.35),
+        FLYWHEEL_CHECK(() -> 0),
+        PIVOT_CHECK(() -> 0),
+        HEADING_CHECK(() -> 0),
+        VELOCITY_CHECK(() -> 0),
+        ROTATION_CHECK(() -> 0),
+        SWERVE_CHECK(() -> 0),
         CLIMBING(() -> -0.57),
-        AMP(() -> 0.19),
+        AUTO_ALIGN(() -> 0.19),
         INTAKING(() -> 0.15);
 
         private final DoubleSupplier ledSetpoint;
@@ -37,10 +43,10 @@ public class Leds extends SubsystemBase {
     @AutoLogOutput(key = "Leds/mode")
     @Setter
     @Getter
-    private ledMode mode = ledMode.DEFAULT;
+    private LedMode mode = LedMode.DEFAULT;
 
     public Leds() {
-        setDefaultCommand(new InstantCommand(() -> setMode(ledMode.DEFAULT)));
+        setDefaultCommand(new InstantCommand(() -> setMode(LedMode.DEFAULT)));
 
     }
 

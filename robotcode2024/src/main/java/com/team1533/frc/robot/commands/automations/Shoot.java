@@ -6,28 +6,21 @@ package com.team1533.frc.robot.commands.automations;
 
 import java.util.Optional;
 
-import javax.swing.TransferHandler.TransferSupport;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.team1533.frc.robot.RobotContainer;
+import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.superstructure.Superstructure.Goal;
-import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
-import com.team1533.frc.robot.util.LoggedTunableNumber;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import lombok.Getter;
 
 public class Shoot {
 
@@ -293,23 +286,45 @@ public class Shoot {
 
         canShoot = ((lowerY > robotPose2dInches.getY()) || (robotPose2dInches.getY() > upperY));
 
+        if (canShoot) {
+            m_RobotContainer.m_Leds.setMode(LedMode.SWERVE_CHECK);
+        }
         return canShoot;
     }
 
     public Boolean velocityCheck() {
-        return m_RobotContainer.m_robotDrive.isMovingXY();
+        boolean isSlowEnough = m_RobotContainer.m_robotDrive.isMovingXY();
+        if (isSlowEnough) {
+            m_RobotContainer.m_Leds.setMode(LedMode.VELOCITY_CHECK);
+        }
+        return isSlowEnough;
     }
 
     public Boolean pivotCheck() {
-        return Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < .5;
+        boolean pivotCheck = Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < .5;
+        if (pivotCheck) {
+            m_RobotContainer.m_Leds.setMode(LedMode.PIVOT_CHECK);
+
+        }
+        return pivotCheck;
     }
 
     public Boolean rotationCheck(Pose2d robotPose2d) {
-        return robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 3;
+        boolean rotationCheck = robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 3;
+        if (rotationCheck) {
+            m_RobotContainer.m_Leds.setMode(LedMode.ROTATION_CHECK);
+
+        }
+        return rotationCheck;
     }
 
     public Boolean flyWheelCheck() {
-        return Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 300;
+        boolean flyWheelCheck = Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 300;
+        if (flyWheelCheck) {
+            m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
+
+        }
+        return flyWheelCheck;
     }
 
     public Pose2d flipPose(Pose2d pose) {
