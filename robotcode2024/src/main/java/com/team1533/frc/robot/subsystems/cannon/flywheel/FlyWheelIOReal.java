@@ -75,8 +75,8 @@ public class FlyWheelIOReal implements FlyWheelIO {
 
   @Override
   public void updateInputs(FlyWheelIOInputs inputs) {
-    inputs.leftMotorConnected = lFlyWheel.getFault(FaultID.kSensorFault);
-    inputs.rightMotorConnected = rFlyWheel.getFault(FaultID.kSensorFault);
+    inputs.leftMotorConnected = !lFlyWheel.getFault(FaultID.kSensorFault);
+    inputs.rightMotorConnected = !rFlyWheel.getFault(FaultID.kSensorFault);
 
     inputs.leftVel = lFWEncoder.getVelocity();
     inputs.leftInputVolts = lFlyWheel.getAppliedOutput() * lFlyWheel.getBusVoltage();
@@ -99,10 +99,10 @@ public class FlyWheelIOReal implements FlyWheelIO {
     rFlyWheelSetpoint = Math.abs(RPM) - FlyWheelConstants.rotationalSpeed / 2;
 
     if (lFlyWheelSetpoint == 0) {
-      lFlyWheel.stopMotor();
+      lFlyWheel.set(0);
     }
     if (rFlyWheelSetpoint == 0) {
-      rFlyWheel.stopMotor();
+      rFlyWheel.set(0);
     }
     lFWController.setReference(lFlyWheelSetpoint, ControlType.kVelocity);
     rFWController.setReference(rFlyWheelSetpoint, ControlType.kVelocity);

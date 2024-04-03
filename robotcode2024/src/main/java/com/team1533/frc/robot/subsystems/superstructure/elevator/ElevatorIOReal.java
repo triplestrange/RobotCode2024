@@ -59,8 +59,8 @@ public class ElevatorIOReal implements ElevatorIO {
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.jointAbsoluteEncoderConnected = intakeEncoder.isConnected();
 
-    inputs.elevMotorConnected = elev.getFault(FaultID.kSensorFault);
-    inputs.jointMotorConnected = intake.getFault(FaultID.kSensorFault);
+    inputs.elevMotorConnected = !elev.getFault(FaultID.kSensorFault);
+    inputs.jointMotorConnected = !intake.getFault(FaultID.kSensorFault);
 
     inputs.elevatorPosInches = elevRelativeEncoder.getPosition();
     inputs.elevatorVelInchesPerSecond = elevRelativeEncoder.getVelocity();

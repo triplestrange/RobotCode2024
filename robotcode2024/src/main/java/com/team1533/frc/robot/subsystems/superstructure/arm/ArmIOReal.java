@@ -37,7 +37,7 @@ public class ArmIOReal implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-    inputs.leftMotorConnected = lPivot.getFault(FaultID.kSensorFault);
+    inputs.leftMotorConnected = !lPivot.getFault(FaultID.kSensorFault);
     inputs.absoluteEncoderConnected = pivotEncoder.isConnected();
 
     inputs.leftInputVolts = inputVolts;
@@ -50,7 +50,7 @@ public class ArmIOReal implements ArmIO {
 
     inputs.leftTempCelcius = lPivot.getMotorTemperature();
 
-    inputs.rightMotorConnected = rPivot.getFault(FaultID.kSensorFault);
+    inputs.rightMotorConnected = !rPivot.getFault(FaultID.kSensorFault);
 
     inputs.rightInputVolts = inputVolts;
     inputs.rightInputSpeed = inputSpeed;

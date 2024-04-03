@@ -68,7 +68,7 @@ public class Arm {
         MANUAL(() -> 0),
         SUBWOOFER(() -> -5),
         PODIUM(() -> -22),
-        PREPARE_CLIMB(() -> -15),
+        PREPARE_CLIMB(() -> -5),
         CLIMB(() -> 0),
         UNTRAP(() -> 0),
         SHUTTLE(() -> shuttlingAngle),

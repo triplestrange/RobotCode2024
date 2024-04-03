@@ -40,7 +40,7 @@ public class IntakeIOReal implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.motorConnected = intake.getFault(FaultID.kSensorFault);
+    inputs.motorConnected = !intake.getFault(FaultID.kSensorFault);
 
     inputs.linearVel = intakeRelativeEncoder.getVelocity();
     inputs.inputVolts = intake.getAppliedOutput() * intake.getBusVoltage();

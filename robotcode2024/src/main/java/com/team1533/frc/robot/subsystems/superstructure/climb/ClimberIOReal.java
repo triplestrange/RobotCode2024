@@ -82,8 +82,8 @@ public class ClimberIOReal implements ClimberIO {
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
-    inputs.leftMotorConnected = lWinch.getFault(FaultID.kSensorFault);
-    inputs.rightMotorConnected = rWinch.getFault(FaultID.kSensorFault);
+    inputs.leftMotorConnected = !lWinch.getFault(FaultID.kSensorFault);
+    inputs.rightMotorConnected = !rWinch.getFault(FaultID.kSensorFault);
 
     inputs.leftInputVolts = lWinchPower;
     inputs.leftMotorCurrent = lWinch.getOutputCurrent();

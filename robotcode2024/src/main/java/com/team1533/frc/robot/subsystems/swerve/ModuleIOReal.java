@@ -138,7 +138,7 @@ public class ModuleIOReal implements ModuleIO {
                 driveSupplyCurrent,
                 driveTorqueCurrent)
                 .isOK();
-        inputs.turnMotorConnected = turningMotor.getFault(FaultID.kSensorFault);
+        inputs.turnMotorConnected = !turningMotor.getFault(FaultID.kSensorFault);
         inputs.absMotorConnected = absoluteEncoder.isConnected();
         inputs.hasCurrentControl = true;
 
