@@ -155,7 +155,7 @@ public class Shoot {
     }
 
     public void autoShoot() {
-        m_RobotContainer.m_superstructure.setGoal(Goal.AIM);
+        m_RobotContainer.m_superstructure.setGoal(Goal.AUTO_AIM);
         if (pivotCheck()
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose())
                 && velocityCheck()) {

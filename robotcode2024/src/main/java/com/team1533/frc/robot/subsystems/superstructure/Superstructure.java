@@ -31,11 +31,12 @@ public class Superstructure extends SubsystemBase {
     this.m_Elevator = m_Elevator;
     this.m_Climb = m_Climb;
     this.m_Arm = m_Arm;
-    
+
     goalTimer.start();
   }
 
   public enum Goal {
+    AUTO_AIM,
     AIM,
     AMP,
     TRAP,
@@ -52,7 +53,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // if (DriverStation.isDisabled()) {
-    //   setDefaultCommand(setGoalCommand(Goal.STOW));
+    // setDefaultCommand(setGoalCommand(Goal.STOW));
     // }
 
     // Reset timer
@@ -71,6 +72,10 @@ public class Superstructure extends SubsystemBase {
 
   public void setGoal(Goal goal) {
     switch (goal) {
+      case AUTO_AIM -> {
+        m_Arm.setGoal(Arm.Goal.AIM);
+        m_Elevator.setGoal(Elevator.Goal.GROUND);
+      }
       case AIM -> {
         m_Arm.setGoal(Arm.Goal.AIM);
         m_Elevator.setGoal(Elevator.Goal.STOW);
