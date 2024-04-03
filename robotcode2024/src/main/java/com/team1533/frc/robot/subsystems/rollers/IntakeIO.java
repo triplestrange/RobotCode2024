@@ -1,17 +1,8 @@
 package com.team1533.frc.robot.subsystems.rollers;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
-
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public interface IntakeIO {
 

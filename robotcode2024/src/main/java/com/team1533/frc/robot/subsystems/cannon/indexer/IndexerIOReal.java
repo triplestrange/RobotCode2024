@@ -48,7 +48,7 @@ public class IndexerIOReal implements IndexerIO {
     Indexer.burnFlash();
 
     IndexerRelativeEncoder.setVelocityConversionFactor(
-        Constants.IndexerConstants.rollerDiameterMeters * Math.PI / Constants.IndexerConstants.rollerGearing / 60);
+        IndexerConstants.rollerDiameterMeters * Math.PI / IndexerConstants.rollerGearing / 60);
 
     double motorCurrent = Indexer.getOutputCurrent();
     double appliedVolts = Indexer.getAppliedOutput() * Indexer.getBusVoltage();

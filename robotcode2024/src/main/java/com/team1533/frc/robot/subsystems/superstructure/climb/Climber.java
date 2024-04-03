@@ -1,27 +1,27 @@
 package com.team1533.frc.robot.subsystems.superstructure.climb;
 
-public class Climb {
+public class Climber {
 
     public double leftPower;
     public double rightPower;
 
-    private static Climb instance;
+    private static Climber instance;
 
-    private ClimbIO io;
-    private ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
+    private ClimberIO io;
+    private ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
-    public static Climb getInstance() {
+    public static Climber getInstance() {
         return instance;
     }
 
-    public static Climb initialize(ClimbIO io) {
+    public static Climber initialize(ClimberIO io) {
         if (instance == null) {
-            instance = new Climb(io);
+            instance = new Climber(io);
         }
         return instance;
     }
 
-    public Climb(ClimbIO climbIO) {
+    public Climber(ClimberIO climbIO) {
         super();
 
         io = climbIO;
@@ -40,14 +40,14 @@ public class Climb {
     public void moveClimb(double motorLWinchPower, double motorRWinchPower) {
 
         if (Math.abs(motorLWinchPower) < 0.05) {
-            io.runLeftSpeed(motorLWinchPower);
+            io.runLeftSpeed(0);
         } else {
             leftPower = motorLWinchPower;
             io.runLeftSpeed(leftPower);
         }
 
         if (Math.abs(motorRWinchPower) < 0.05) {
-            io.runRightSpeed(motorRWinchPower);
+            io.runRightSpeed(0);
         } else {
             rightPower = motorRWinchPower;
             io.runRightSpeed(rightPower);

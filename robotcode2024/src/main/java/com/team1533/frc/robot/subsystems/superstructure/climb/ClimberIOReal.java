@@ -1,38 +1,16 @@
 package com.team1533.frc.robot.subsystems.superstructure.climb;
 
-import java.util.List;
-
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.team1533.frc.robot.Constants;
-import com.team1533.frc.robot.subsystems.superstructure.climb.Climb.ClimbPosition;
-import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator.IntakePosition;
+import com.team1533.frc.robot.subsystems.superstructure.climb.Climber.ClimbPosition;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.SparkRelativeEncoder;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
-public class ClimbIOReal implements ClimbIO {
+public class ClimberIOReal implements ClimberIO {
 
   private final CANSparkMax lWinch;
   private final CANSparkMax rWinch;
@@ -53,7 +31,7 @@ public class ClimbIOReal implements ClimbIO {
 
   private double rWinchPower;
 
-  public ClimbIOReal() {
+  public ClimberIOReal() {
 
     lWinch = new CANSparkMax(Constants.CAN.CLIMBL, MotorType.kBrushless);
     rWinch = new CANSparkMax(Constants.CAN.CLIMBR, MotorType.kBrushless);
@@ -70,40 +48,40 @@ public class ClimbIOReal implements ClimbIO {
 
     lWinchController = lWinch.getPIDController();
     lWinchEncoder = lWinch.getEncoder();
-    lWinchEncoder.setPositionConversionFactor(Constants.ClimbConstants.climbPosConv);
+    lWinchEncoder.setPositionConversionFactor(ClimberConstants.climbPosConv);
 
     rWinchController = rWinch.getPIDController();
     rWinchEncoder = rWinch.getEncoder();
-    rWinchEncoder.setPositionConversionFactor(Constants.ClimbConstants.climbPosConv);
+    rWinchEncoder.setPositionConversionFactor(ClimberConstants.climbPosConv);
 
     // set PID coefficients
-    lWinchController.setP(Constants.ClimbConstants.kP);
-    lWinchController.setI(Constants.ClimbConstants.kI);
-    lWinchController.setD(Constants.ClimbConstants.kD);
-    lWinchController.setOutputRange(Constants.ClimbConstants.kMinOutput, Constants.ClimbConstants.kMaxOutput);
+    lWinchController.setP(ClimberConstants.kP);
+    lWinchController.setI(ClimberConstants.kI);
+    lWinchController.setD(ClimberConstants.kD);
+    lWinchController.setOutputRange(ClimberConstants.kMinOutput, ClimberConstants.kMaxOutput);
 
-    rWinchController.setP(Constants.ClimbConstants.kP);
-    rWinchController.setI(Constants.ClimbConstants.kI);
-    rWinchController.setD(Constants.ClimbConstants.kD);
-    rWinchController.setOutputRange(Constants.ClimbConstants.kMinOutput, Constants.ClimbConstants.kMaxOutput);
+    rWinchController.setP(ClimberConstants.kP);
+    rWinchController.setI(ClimberConstants.kI);
+    rWinchController.setD(ClimberConstants.kD);
+    rWinchController.setOutputRange(ClimberConstants.kMinOutput, ClimberConstants.kMaxOutput);
 
     int smartMotionSlot = 0;
-    lWinchController.setSmartMotionMaxVelocity(Constants.ElevatorConstants.maxVel, smartMotionSlot);
-    lWinchController.setSmartMotionMinOutputVelocity(Constants.ElevatorConstants.minVel, smartMotionSlot);
-    lWinchController.setSmartMotionMaxAccel(Constants.ElevatorConstants.maxAcc, smartMotionSlot);
-    lWinchController.setSmartMotionAllowedClosedLoopError(Constants.ElevatorConstants.allowedErr, smartMotionSlot);
+    lWinchController.setSmartMotionMaxVelocity(ClimberConstants.maxVel, smartMotionSlot);
+    lWinchController.setSmartMotionMinOutputVelocity(ClimberConstants.minVel, smartMotionSlot);
+    lWinchController.setSmartMotionMaxAccel(ClimberConstants.maxAcc, smartMotionSlot);
+    lWinchController.setSmartMotionAllowedClosedLoopError(ClimberConstants.allowedErr, smartMotionSlot);
 
-    rWinchController.setSmartMotionMaxVelocity(Constants.ClimbConstants.maxVel, smartMotionSlot);
-    rWinchController.setSmartMotionMinOutputVelocity(Constants.ClimbConstants.minVel, smartMotionSlot);
-    rWinchController.setSmartMotionMaxAccel(Constants.ClimbConstants.maxAcc, smartMotionSlot);
-    rWinchController.setSmartMotionAllowedClosedLoopError(Constants.ClimbConstants.allowedErr, smartMotionSlot);
+    rWinchController.setSmartMotionMaxVelocity(ClimberConstants.maxVel, smartMotionSlot);
+    rWinchController.setSmartMotionMinOutputVelocity(ClimberConstants.minVel, smartMotionSlot);
+    rWinchController.setSmartMotionMaxAccel(ClimberConstants.maxAcc, smartMotionSlot);
+    rWinchController.setSmartMotionAllowedClosedLoopError(ClimberConstants.allowedErr, smartMotionSlot);
 
     lWinch.burnFlash();
     rWinch.burnFlash();
   }
 
   @Override
-  public void updateInputs(ClimbIOInputs inputs) {
+  public void updateInputs(ClimberIOInputs inputs) {
     inputs.leftMotorConnected = lWinch.getFault(FaultID.kSensorFault);
     inputs.rightMotorConnected = rWinch.getFault(FaultID.kSensorFault);
 

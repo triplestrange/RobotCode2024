@@ -39,6 +39,10 @@ public class AbsoluteEncoder extends AnalogInput {
         return normalizeAngle(angle - angleOffset);
     }
 
+    public boolean isConnected() {
+        return RobotController.getVoltage5V() > 0;
+    }
+
     /**
      * Convert an angle to its equivalent between 0 and 2pi
      * 

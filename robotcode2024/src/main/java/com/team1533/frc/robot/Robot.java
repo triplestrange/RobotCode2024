@@ -15,6 +15,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.team1533.frc.robot.subsystems.vision.VisionConstants;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -30,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -159,7 +160,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.m_robotDrive.m_odometry
-        .setVisionMeasurementStdDevs(VecBuilder.fill(1000000000, 1000000000, 1000000000));
+        .setVisionMeasurementStdDevs(VisionConstants.VISION_MEASUREMENT_STD_DEVS);
     m_autonomousCommand = m_robotContainer.m_Autos.getAutoChooser();
 
     // schedule the autonomous command (example)
@@ -182,7 +183,7 @@ public class Robot extends LoggedRobot {
     // m_robotContainer.m_robotDrive.m_odometry
     // .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
     m_robotContainer.m_robotDrive.m_odometry
-        .setVisionMeasurementStdDevs(Constants.VisionConstants.VISION_MEASUREMENT_STD_DEVS);
+        .setVisionMeasurementStdDevs(VisionConstants.VISION_MEASUREMENT_STD_DEVS);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

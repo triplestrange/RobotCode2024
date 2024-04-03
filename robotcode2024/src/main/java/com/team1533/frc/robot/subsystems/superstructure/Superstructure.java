@@ -5,13 +5,14 @@ import org.littletonrobotics.junction.Logger;
 
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.subsystems.superstructure.arm.Arm;
-import com.team1533.frc.robot.subsystems.superstructure.climb.Climb;
+import com.team1533.frc.robot.subsystems.superstructure.climb.Climber;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Superstructure extends SubsystemBase {
@@ -21,17 +22,16 @@ public class Superstructure extends SubsystemBase {
   private Goal lastGoal = Goal.STOW;
 
   private final Elevator m_Elevator;
-  private final Climb m_Climb;
+  private final Climber m_Climb;
   private final Arm m_Arm;
 
   private Timer goalTimer = new Timer();
 
-  public Superstructure(Elevator m_Elevator, Climb m_Climb, Arm m_Arm) {
+  public Superstructure(Elevator m_Elevator, Climber m_Climb, Arm m_Arm) {
     this.m_Elevator = m_Elevator;
     this.m_Climb = m_Climb;
     this.m_Arm = m_Arm;
-
-    setDefaultCommand(setGoalCommand(Goal.STOW));
+    
     goalTimer.start();
   }
 
@@ -51,9 +51,9 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (DriverStation.isDisabled()) {
-      setDefaultCommand(setGoalCommand(Goal.STOW));
-    }
+    // if (DriverStation.isDisabled()) {
+    //   setDefaultCommand(setGoalCommand(Goal.STOW));
+    // }
 
     // Reset timer
     if (currentGoal != lastGoal) {
@@ -69,8 +69,8 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("Superstructure/CurrentState", currentGoal);
   }
 
-  private void setGoal(Goal goal) {
-    switch (currentGoal) {
+  public void setGoal(Goal goal) {
+    switch (goal) {
       case AIM -> {
         m_Arm.setGoal(Arm.Goal.AIM);
         m_Elevator.setGoal(Elevator.Goal.STOW);
@@ -80,7 +80,7 @@ public class Superstructure extends SubsystemBase {
         m_Elevator.setGoal(Elevator.Goal.TRAP);
       }
       case AMP -> {
-        m_Arm.setGoal(Arm.Goal.STOW);
+        m_Arm.setGoal(Arm.Goal.PREPARE_CLIMB);
         m_Elevator.setGoal(Elevator.Goal.AMP);
       }
       case STOW -> {
