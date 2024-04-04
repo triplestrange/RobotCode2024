@@ -49,7 +49,7 @@ public class GroundToIndexer extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return m_indexer.getIndexerSensor();
+        return !m_indexer.getIndexerSensor();
 
     }
 }

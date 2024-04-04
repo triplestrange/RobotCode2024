@@ -67,7 +67,7 @@ public class IndexerIOReal implements IndexerIO {
 
   @Override
   public boolean getSensor() {
-    return !IndexerSensor.get();
+    return IndexerSensor.get();
   }
 
   @Override

@@ -10,6 +10,7 @@ import com.team1533.frc.robot.commands.DefaultDrive;
 import com.team1533.frc.robot.commands.automations.AutoPickupFieldRelative;
 import com.team1533.frc.robot.commands.automations.Pathfind;
 import com.team1533.frc.robot.commands.automations.Shoot;
+import com.team1533.frc.robot.commands.indexer.GroundToIndexer;
 import com.team1533.frc.robot.commands.indexer.GroundToIntake;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheel;
@@ -261,7 +262,7 @@ public class RobotContainer {
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake"));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new IntakeToIndexer(m_indexer, m_Leds)).withName("Intake To Indexer"));
+                                (new GroundToIndexer(m_indexer,m_intake ,m_Leds)).withName("Intake To Indexer"));
 
                 JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(), m_intake)
                                 .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer))).withName("Outtake"));
@@ -288,7 +289,7 @@ public class RobotContainer {
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
                                 .withName("Manual Flywheel Speed"));
 
-                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOff(),
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(),
                 m_flywheel));
 
                 // Shooting Automations

@@ -109,8 +109,8 @@ public class ModuleIOReal implements ModuleIO {
                 .withStatorCurrentLimit(40)
                 .withStatorCurrentLimitEnable(true));
         driveMotor.getConfigurator()
-                .apply(new TorqueCurrentConfigs().withPeakForwardTorqueCurrent(80.0)
-                        .withPeakReverseTorqueCurrent(80.0));
+                .apply(new TorqueCurrentConfigs().withPeakForwardTorqueCurrent(40.0)
+                        .withPeakReverseTorqueCurrent(40.0));
         turningMotor.setSmartCurrentLimit(Constants.ELECTRICAL.swerveTurningCurrentLimit);
         driveMotor.setNeutralMode(NeutralModeValue.Brake);
         turningMotor.setIdleMode(IdleMode.kBrake);

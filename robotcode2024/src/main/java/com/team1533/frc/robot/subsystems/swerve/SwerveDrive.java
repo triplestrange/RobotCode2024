@@ -270,9 +270,8 @@ public class SwerveDrive extends SubsystemBase {
         break;
 
     }
-    if (currentDriveMode == DriveMode.AUTONOMOUS_HEADING_LOCKED) {
       setChassisSpeeds(desiredMovement);
-    }
+  
   }
 
   /**

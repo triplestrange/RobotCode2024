@@ -147,7 +147,7 @@ public final class Constants {
     public static final int shooterPivotCurrentLimit = 40;
     public static final int flyWheelCurrentLimit = 30;
 
-    public static final int ledPWMInput = 1;
+    public static final int ledPWMInput = 9;
   }
 
   public static final class CAN {

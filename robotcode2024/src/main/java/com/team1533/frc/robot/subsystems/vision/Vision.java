@@ -320,12 +320,13 @@ public class Vision extends SubsystemBase {
         if (poseShooter.getNumOfTags() != 0) {
             m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
                     poseShooter.getTimestampSeconds());
+            m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
         }
-        if (poseIntake.getNumOfTags() != 0) {
-            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
-                    poseIntake.getTimestampSeconds());
-            m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
-        }
+        // if (poseIntake.getNumOfTags() != 0) {
+        //     m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
+        //             poseIntake.getTimestampSeconds());
+        //     m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
+        // }
         m_field.setRobotPose(m_RobotContainer.m_robotDrive.getPose());
 
     }
