@@ -131,6 +131,20 @@ public class Shoot {
             m_RobotContainer.m_indexer.runIn();
 
         }
+        if (!swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.SWERVE_CHECK);
+        } else if (!velocityCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.VELOCITY_CHECK);
+        } else if (!pivotCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.PIVOT_CHECK);
+
+        } else if (!rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.ROTATION_CHECK);
+
+        } else if (!flyWheelCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
+
+        }
 
     }
 
@@ -152,6 +166,21 @@ public class Shoot {
 
         }
 
+        if (!swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.SWERVE_CHECK);
+        } else if (!velocityCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.VELOCITY_CHECK);
+        } else if (!pivotCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.PIVOT_CHECK);
+
+        } else if (!rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.ROTATION_CHECK);
+
+        } else if (!flyWheelCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
+
+        }
+
     }
 
     public void autoShoot() {
@@ -163,6 +192,22 @@ public class Shoot {
             m_RobotContainer.m_indexer.runIn();
 
         }
+
+        if (!swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.SWERVE_CHECK);
+        } else if (!velocityCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.VELOCITY_CHECK);
+        } else if (!pivotCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.PIVOT_CHECK);
+
+        } else if (!rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.ROTATION_CHECK);
+
+        } else if (!flyWheelCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
+
+        }
+
     }
 
     public Rotation2d rotationToSpeaker() {
@@ -287,7 +332,6 @@ public class Shoot {
         canShoot = ((lowerY > robotPose2dInches.getY()) || (robotPose2dInches.getY() > upperY));
 
         if (canShoot) {
-            m_RobotContainer.m_Leds.setMode(LedMode.SWERVE_CHECK);
         }
         return canShoot;
     }
@@ -295,7 +339,6 @@ public class Shoot {
     public Boolean velocityCheck() {
         boolean isSlowEnough = m_RobotContainer.m_robotDrive.isMovingXY();
         if (isSlowEnough) {
-            m_RobotContainer.m_Leds.setMode(LedMode.VELOCITY_CHECK);
         }
         return isSlowEnough;
     }
@@ -303,7 +346,6 @@ public class Shoot {
     public Boolean pivotCheck() {
         boolean pivotCheck = Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < .5;
         if (pivotCheck) {
-            m_RobotContainer.m_Leds.setMode(LedMode.PIVOT_CHECK);
 
         }
         return pivotCheck;
@@ -312,7 +354,6 @@ public class Shoot {
     public Boolean rotationCheck(Pose2d robotPose2d) {
         boolean rotationCheck = robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 3;
         if (rotationCheck) {
-            m_RobotContainer.m_Leds.setMode(LedMode.ROTATION_CHECK);
 
         }
         return rotationCheck;
@@ -321,7 +362,6 @@ public class Shoot {
     public Boolean flyWheelCheck() {
         boolean flyWheelCheck = Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 300;
         if (flyWheelCheck) {
-            m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
 
         }
         return flyWheelCheck;

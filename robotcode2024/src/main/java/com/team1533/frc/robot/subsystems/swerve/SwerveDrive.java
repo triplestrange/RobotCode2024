@@ -246,15 +246,14 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         if (currentDriveMode == DriveMode.SHOOTING) {
-          desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(
-              MathUtil.clamp(desiredMovement.vxMetersPerSecond, -1, 1),
-              MathUtil.clamp(desiredMovement.vyMetersPerSecond, -1, 1), desiredMovement.omegaRadiansPerSecond,
-              getPose().getRotation());
+          desiredMovement.vxMetersPerSecond = MathUtil.clamp(desiredMovement.vxMetersPerSecond, -1, 1);
+          desiredMovement.vxMetersPerSecond = MathUtil.clamp(desiredMovement.vyMetersPerSecond, -1, 1);
         }
         break;
 
       case AUTO_ALIGN:
         desiredMovement = autoAlignController.update();
+        break;
 
       case AUTONOMOUS_HEADING_LOCKED:
         desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, headingController.update(),
@@ -270,8 +269,8 @@ public class SwerveDrive extends SubsystemBase {
         break;
 
     }
-      setChassisSpeeds(desiredMovement);
-  
+    setChassisSpeeds(desiredMovement);
+
   }
 
   /**
@@ -530,24 +529,32 @@ public class SwerveDrive extends SubsystemBase {
     m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(state);
     autoAlignController.setGoal(desiredPose);
+    currentDriveMode = DriveMode.AUTO_ALIGN;
+
   }
 
   public void setAutoAlignController(Supplier<Pose2d> desiredPose) {
     m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
     autoAlignController.setGoal(desiredPose);
+    currentDriveMode = DriveMode.AUTO_ALIGN;
+
   }
 
   public void setAutoAlignController(AutoAlignControllerState state, Pose2d desiredPose) {
     m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(state);
     autoAlignController.setGoal(desiredPose);
+    currentDriveMode = DriveMode.AUTO_ALIGN;
+
   }
 
   public void setAutoAlignController(Pose2d desiredPose) {
     m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
     autoAlignController.setGoal(desiredPose);
+    currentDriveMode = DriveMode.AUTO_ALIGN;
+
   }
 
   public void disableAutoAlignController() {
