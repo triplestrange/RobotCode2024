@@ -203,8 +203,10 @@ public class RobotContainer {
                 JoystickButtons.dlBump.whileTrue(
                                 new DefaultDrive(m_robotDrive, 0.85, 1).withName("Slow Drive"));
 
-                        //            JoystickButtons.dlBump.whileTrue(
-                        //        new RunCommand(() -> m_robotDrive.runWheelRadiusCharacterization(JoystickButtons.m_driverController.getRightX()), m_robotDrive));
+                // JoystickButtons.dlBump.whileTrue(
+                // new RunCommand(() ->
+                // m_robotDrive.runWheelRadiusCharacterization(JoystickButtons.m_driverController.getRightX()),
+                // m_robotDrive));
 
                 JoystickButtons.dlWing.onTrue(
                                 new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive).withName("Zero Heading"));
@@ -261,17 +263,25 @@ public class RobotContainer {
 
                 // Intake and indexer Controls
 
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
-                                m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)).withName("Run Intake"));
+                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
+                // m_intake)
+                // .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)).withName("Run
+                // Intake"));
 
-                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake"));
+                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake")
+                                .alongWith(new InstantCommand(() -> m_superstructure
+                                                .setGoal(Goal.STOW))));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new GroundToIndexer(m_indexer,m_intake ,m_Leds)).withName("Intake To Indexer"));
+                                (new GroundToIndexer(m_indexer, m_intake, m_Leds)).withName("Intake To Indexer")
+                                                .alongWith(new InstantCommand(() -> m_superstructure
+                                                                .setGoal(Goal.STOW)))
+                                                .withName("Stow Superstructure"));
 
-                JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(), m_intake)
-                                .alongWith(new RunCommand(() -> m_indexer.runOut(), m_indexer))).withName("Outtake"));
+                // JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(),
+                // m_intake)
+                // .alongWith(new RunCommand(() -> m_indexer.runOut(),
+                // m_indexer))).withName("Outtake"));
 
                 m_intake.setDefaultCommand(
                                 new InstantCommand(() -> m_intake.intakeOff(), m_intake).withName("Intake Off"));
@@ -287,16 +297,17 @@ public class RobotContainer {
                                         * FlyWheelConstants.flyWheelmaxRPM / 3;
                 } else {
                         flywheelSetpoint = m_robotDrive.getPose().getTranslation()
-                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * FlyWheelConstants.flyWheelmaxRPM / 3;
+                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d())
+                                        * FlyWheelConstants.flyWheelmaxRPM / 3;
                 }
 
                 flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, FlyWheelConstants.flyWheelmaxRPM);
 
-                JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
                                 .withName("Manual Flywheel Speed"));
 
                 m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(),
-                m_flywheel));
+                                m_flywheel));
 
                 // Shooting Automations
 
@@ -345,16 +356,19 @@ public class RobotContainer {
                                                 .withName("Drive To Amp Off"));
 
                 // Note Pick Automation
-                // JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
-                // m_superstructure, m_intake,
-                // m_Leds, m_vision.getObjectToField(m_robotDrive.getPose()).getTranslation())
-                // .withName("Pick Up Note")).onFalse(
-                // (new InstantCommand(
-                // () -> m_Leds.setMode(LedMode.DEFAULT)))
-                // .withName("Note Pick Up Off"));
+                JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
+                                m_superstructure, m_intake,
+                                m_Leds, m_vision.getObjectToField(m_robotDrive.getPose()).getTranslation())
+                                .withName("Pick Up Note")).onFalse(
+                                                (new InstantCommand(
+                                                                () -> m_Leds.setMode(LedMode.DEFAULT)))
+                                                                .withName("Note Pick Up Off")
+                                                                .alongWith(new InstantCommand(() -> m_superstructure
+                                                                                .setGoal(Goal.STOW)))
+                                                                .withName("Stow Superstructure"));
 
                 // leds
-                        m_Leds.setDefaultCommand(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT), m_Leds));
+                m_Leds.setDefaultCommand(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT), m_Leds));
 
         }
 
