@@ -307,7 +307,7 @@ public class Shoot {
             robotPose2dInches = new Translation2d(Units.metersToInches(robotPose2d.getX()),
                     Units.metersToInches(robotPose2d.getY()));
         }
-        if (robotPose2dInches.getX() > 216) {
+        if (robotPose2dInches.getX() > 263) {
             canShoot = false;
         } else if (robotPose2dInches.getX() >= 230.763) {
             lowerY = 107.484;
