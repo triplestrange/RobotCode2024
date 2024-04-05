@@ -32,6 +32,12 @@
         {
           "type": "named",
           "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "shoot"
           }
         },
@@ -39,6 +45,12 @@
           "type": "path",
           "data": {
             "pathName": "source3note.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
           }
         },
         {
