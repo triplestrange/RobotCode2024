@@ -8,11 +8,9 @@ import com.team1533.frc.robot.Constants.JoystickButtons;
 import com.team1533.frc.robot.commands.AutoMain;
 import com.team1533.frc.robot.commands.DefaultDrive;
 import com.team1533.frc.robot.commands.automations.AutoPickupFieldRelative;
-import com.team1533.frc.robot.commands.automations.Pathfind;
 import com.team1533.frc.robot.commands.automations.Shoot;
 import com.team1533.frc.robot.commands.indexer.GroundToIndexer;
 import com.team1533.frc.robot.commands.indexer.GroundToIntake;
-import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheel;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelConstants;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelIO;
@@ -51,16 +49,13 @@ import com.team1533.frc.robot.subsystems.swerve.ModuleIOReal;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIOSim;
 import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
-import com.team1533.frc.robot.subsystems.swerve.SwerveDrive.DriveMode;
 import com.team1533.frc.robot.subsystems.vision.Vision;
 import com.team1533.frc.robot.util.Alert;
 import com.team1533.frc.robot.util.Alert.AlertType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
