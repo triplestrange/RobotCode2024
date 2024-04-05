@@ -51,11 +51,13 @@ import com.team1533.frc.robot.subsystems.swerve.ModuleIOReal;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIOSim;
 import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
+import com.team1533.frc.robot.subsystems.swerve.SwerveDrive.DriveMode;
 import com.team1533.frc.robot.subsystems.vision.Vision;
 import com.team1533.frc.robot.util.Alert;
 import com.team1533.frc.robot.util.Alert.AlertType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -200,6 +202,9 @@ public class RobotContainer {
 
                 JoystickButtons.dlBump.whileTrue(
                                 new DefaultDrive(m_robotDrive, 0.85, 1).withName("Slow Drive"));
+
+                        //            JoystickButtons.dlBump.whileTrue(
+                        //        new RunCommand(() -> m_robotDrive.runWheelRadiusCharacterization(JoystickButtons.m_driverController.getRightX()), m_robotDrive));
 
                 JoystickButtons.dlWing.onTrue(
                                 new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive).withName("Zero Heading"));

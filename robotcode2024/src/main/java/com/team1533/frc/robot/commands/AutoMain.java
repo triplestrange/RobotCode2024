@@ -124,7 +124,6 @@ public class AutoMain extends Command {
         }
 
         public Command getAutoChooser() {
-                return new InstantCommand(() -> m_robotContainer.m_Leds.setMode(LedMode.AUTO))
-                                .andThen(autoChooser.getSelected());
+                return autoChooser.getSelected();
         }
 }

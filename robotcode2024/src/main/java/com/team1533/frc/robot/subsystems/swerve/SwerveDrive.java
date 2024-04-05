@@ -324,10 +324,10 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public Rotation2d getModuleRotations() {
-    double totalDistanceTraveledInRadians = (modules[0].getPosition().distanceMeters
-        + modules[1].getPosition().distanceMeters
-        + modules[2].getPosition().distanceMeters
-        + modules[3].getPosition().distanceMeters)
+    double totalDistanceTraveledInRadians = (Math.abs(modules[0].getPosition().distanceMeters)
+        + Math.abs(modules[1].getPosition().distanceMeters)
+        + Math.abs(modules[2].getPosition().distanceMeters)
+        + Math.abs(modules[3].getPosition().distanceMeters))
         / (4.0 * SwerveConstants.kDriveBaseRadius);
     return Rotation2d.fromRadians(totalDistanceTraveledInRadians);
   }
@@ -337,9 +337,9 @@ public class SwerveDrive extends SubsystemBase {
     currentDriveMode = DriveMode.WHEEL_RADIUS_CHARACTERIZATION;
     characterizationInput = omegaSpeed;
   }
-
+@AutoLogOutput
   public double getWheelOffsetExperimental() {
-    double offset = getModuleRotations().getDegrees() / getGyroTotalRotations().getDegrees();
+    double offset = getModuleRotations().getDegrees() / Math.abs(getGyroTotalRotations().getDegrees());
 
     return offset;
   }
@@ -576,6 +576,7 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("y", getPose().getTranslation().getY());
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", gyroInputs.yawPosition.getDegrees());
+    SmartDashboard.putNumber("wheel offset" ,getWheelOffsetExperimental());
 
     SmartDashboard.putNumber("BRsteering", modules[0].getPosition().angle.getDegrees());
     SmartDashboard.putNumber("FRsteering", modules[1].getPosition().angle.getDegrees());
