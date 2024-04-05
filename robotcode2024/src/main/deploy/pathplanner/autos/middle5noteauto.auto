@@ -5,7 +5,7 @@
       "x": 1.3242789506912231,
       "y": 5.588408470153809
     },
-    "rotation": -2.5637377696753556e-20
+    "rotation": 1.7920569775088034e-25
   },
   "command": {
     "type": "sequential",
@@ -87,6 +87,12 @@
           "type": "named",
           "data": {
             "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
           }
         }
       ]
