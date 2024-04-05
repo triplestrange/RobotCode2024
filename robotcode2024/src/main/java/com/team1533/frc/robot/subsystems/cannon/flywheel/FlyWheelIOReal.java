@@ -45,7 +45,7 @@ public class FlyWheelIOReal implements FlyWheelIO {
     lFWController.setI(FlyWheelConstants.flyWheelkI);
     lFWController.setD(FlyWheelConstants.flyWheelkD);
     lFWController.setIZone(FlyWheelConstants.flyWheelkIz);
-    lFWController.setFF(FlyWheelConstants.flyWheelkFF);
+    lFWController.setFF(FlyWheelConstants.flyWheelkFFL);
     lFWController.setOutputRange(FlyWheelConstants.flyWheelkMinOutput,
         FlyWheelConstants.flyWheelkMaxOutput);
 
@@ -59,7 +59,7 @@ public class FlyWheelIOReal implements FlyWheelIO {
     rFWController.setI(FlyWheelConstants.flyWheelkI);
     rFWController.setD(FlyWheelConstants.flyWheelkD);
     rFWController.setIZone(FlyWheelConstants.flyWheelkIz);
-    rFWController.setFF(FlyWheelConstants.flyWheelkFF);
+    rFWController.setFF(FlyWheelConstants.flyWheelkFFR);
     rFWController.setOutputRange(FlyWheelConstants.flyWheelkMinOutput,
         FlyWheelConstants.flyWheelkMaxOutput);
 
@@ -79,12 +79,12 @@ public class FlyWheelIOReal implements FlyWheelIO {
     inputs.rightMotorConnected = !rFlyWheel.getFault(FaultID.kSensorFault);
 
     inputs.leftVel = lFWEncoder.getVelocity();
-    inputs.leftInputVolts = lFlyWheel.getAppliedOutput() * lFlyWheel.getBusVoltage();
+    inputs.leftAppliedVolts = lFlyWheel.getAppliedOutput() * lFlyWheel.getBusVoltage();
     inputs.leftMotorCurrent = lFlyWheel.getOutputCurrent();
     inputs.leftTempCelcius = lFlyWheel.getMotorTemperature();
 
     inputs.rightVel = rFWEncoder.getVelocity();
-    inputs.rightInputVolts = rFlyWheel.getAppliedOutput() * rFlyWheel.getBusVoltage();
+    inputs.rightAppliedVolts = rFlyWheel.getAppliedOutput() * rFlyWheel.getBusVoltage();
     inputs.rightMotorCurrent = rFlyWheel.getOutputCurrent();
     inputs.rightTempCelcius = rFlyWheel.getMotorTemperature();
 

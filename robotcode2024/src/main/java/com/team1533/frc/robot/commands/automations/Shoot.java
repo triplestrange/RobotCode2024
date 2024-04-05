@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.team1533.frc.robot.RobotContainer;
+import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelConstants;
 import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.superstructure.Superstructure.Goal;
 import edu.wpi.first.math.MathUtil;
@@ -61,8 +62,8 @@ public class Shoot {
     @AutoLogOutput(key = "Shoot/flywheelSetpoint")
     double flywheelSetpoint;
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
-
-    public Translation2d shuttlingTranslation2d = new Translation2d();
+    
+    public Translation2d shuttlingTranslation2d = new Translation2d(7.11 , 1.14);
 
     public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
 
@@ -80,19 +81,18 @@ public class Shoot {
         this.m_RobotContainer = m_RobotContainer;
         shootingRotation = new Rotation2d();
 
-        SmartDashboard.putNumber("compensationH", compensationHorizontal);
 
         shootingData.put(1.0, 0.0);
         shootingData.put(1.5, -3.2);
         shootingData.put(2.0, -9.5);
         shootingData.put(2.5, -16.5);
-        shootingData.put(3.0, -21.7);
-        shootingData.put(3.5, -25.85);
-        shootingData.put(4.0, -28.6);
-        shootingData.put(4.9, -30.5);
-        shootingData.put(5.6, -33.0);
-        shootingData.put(6.38, -33.4);
-        shootingData.put(7.39, -34.5);
+        shootingData.put(3.12, -23.5);
+
+        shootingData.put(3.5, -27.85);
+        shootingData.put(4.0, -30.6);
+        shootingData.put(4.9, -32.5);
+        shootingData.put(5.6, -35.0);
+        shootingData.put(6.7, -33.0);
 
         // shuttlingData.put(null, null);
         // shuttlingData.put(null, null);
@@ -116,13 +116,13 @@ public class Shoot {
     public void teleopShoot() {
         if (isAllianceRed()) {
             flywheelSetpoint = m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()) * 4850.0 / 3;
+                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()) * FlyWheelConstants.flyWheelmaxRPM;
         } else {
             flywheelSetpoint = m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                    .getDistance(speakerTranslation3d.toTranslation2d()) * 4850.0 / 3;
+                    .getDistance(speakerTranslation3d.toTranslation2d()) * FlyWheelConstants.flyWheelmaxRPM;
         }
 
-        flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
+        flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, FlyWheelConstants.flyWheelmaxRPM);
 
         m_RobotContainer.m_flywheel.setFWSpeed(-flywheelSetpoint);
         if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && pivotCheck() && flyWheelCheck()
@@ -155,7 +155,7 @@ public class Shoot {
                 : m_RobotContainer.m_robotDrive.getPose().getTranslation()
                         .getDistance(shuttlingTranslation2d));
 
-        flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
+        flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, FlyWheelConstants.flyWheelmaxRPM);
 
         m_RobotContainer.m_flywheel.setFWSpeed(-flywheelSetpoint);
 
@@ -418,7 +418,6 @@ public class Shoot {
     }
 
     public void updateSmartDashBoard() {
-        compensationHorizontal = SmartDashboard.getNumber("compensationHorizontal", 0.1);
         SmartDashboard.putBoolean("swerve check ", swerveCheck(m_RobotContainer.m_robotDrive.getPose()));
         SmartDashboard.putBoolean("roation check", rotationCheck(m_RobotContainer.m_robotDrive.getPose()));
         SmartDashboard.putBoolean("pivot check", pivotCheck());

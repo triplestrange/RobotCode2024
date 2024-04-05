@@ -1,6 +1,7 @@
 package com.team1533.frc.robot.subsystems.cannon.flywheel;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
@@ -81,6 +82,8 @@ public class FlyWheel extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
+                Logger.processInputs("Flywheel", inputs);
+
 
         // switch (mode) {
         //     case TELEOP:

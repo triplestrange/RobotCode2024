@@ -14,6 +14,7 @@ import com.team1533.frc.robot.commands.indexer.GroundToIndexer;
 import com.team1533.frc.robot.commands.indexer.GroundToIntake;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheel;
+import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelConstants;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelIO;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelIOReal;
 import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelIOSim;
@@ -278,13 +279,13 @@ public class RobotContainer {
                 if (m_shoot.isAllianceRed()) {
                         flywheelSetpoint = m_robotDrive.getPose().getTranslation().getDistance(
                                         m_shoot.flipTranslation3d(m_shoot.speakerTranslation3d).toTranslation2d())
-                                        * 4850.0 / 3;
+                                        * FlyWheelConstants.flyWheelmaxRPM / 3;
                 } else {
                         flywheelSetpoint = m_robotDrive.getPose().getTranslation()
-                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * 4850.0 / 3;
+                                        .getDistance(m_shoot.speakerTranslation3d.toTranslation2d()) * FlyWheelConstants.flyWheelmaxRPM / 3;
                 }
 
-                flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, 4850);
+                flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, FlyWheelConstants.flyWheelmaxRPM);
 
                 JoystickButtons.drBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
                                 .withName("Manual Flywheel Speed"));

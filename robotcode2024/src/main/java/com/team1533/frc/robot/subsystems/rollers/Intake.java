@@ -1,5 +1,7 @@
 package com.team1533.frc.robot.subsystems.rollers;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,6 +54,7 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         io.updateInputs(inputs);
+        Logger.processInputs("Intake", inputs);
 
     }
 

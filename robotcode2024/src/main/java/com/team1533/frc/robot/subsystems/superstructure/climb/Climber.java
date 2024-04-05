@@ -1,5 +1,7 @@
 package com.team1533.frc.robot.subsystems.superstructure.climb;
 
+import org.littletonrobotics.junction.Logger;
+
 public class Climber {
 
     public double leftPower;
@@ -74,6 +76,9 @@ public class Climber {
     }
 
     public void periodic() {
+        io.updateInputs(inputs);
+                Logger.processInputs("Climber", inputs);
+
     }
 
     public void updateSmartDashBoard() {
