@@ -21,6 +21,7 @@ public class Leds extends SubsystemBase {
     public enum LedMode {
         DEFAULT(() -> -0.93), // Rainbow Lava Palatte
         AUTO(() -> -0.57), // Fire Large
+        AUTO_ALIGN(() -> 0),
         HAS_NOTE(() -> 0.75), // Dark Green
         AUTO_SHOOT(() -> 0.35), // Strobe Color 2
         FLYWHEEL_CHECK(() -> 0.91), // Violet
