@@ -354,7 +354,7 @@ public class RobotContainer {
                 // .withName("Note Pick Up Off"));
 
                 // leds
-                        m_Leds.setDefaultCommand(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT), m_Leds));
+                        // m_Leds.setDefaultCommand(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT), m_Leds));
 
         }
 

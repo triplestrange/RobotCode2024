@@ -19,19 +19,19 @@ public class Leds extends SubsystemBase {
 
     @RequiredArgsConstructor
     public enum LedMode {
-        DEFAULT(() -> -0.93),
-        AUTO(() -> -0.57),
-        HAS_NOTE(() -> 0.75),
-        AUTO_SHOOT(() -> 0.35),
-        FLYWHEEL_CHECK(() -> 0.91),
-        PIVOT_CHECK(() -> 0.57),
-        HEADING_CHECK(() -> 0.59),
-        VELOCITY_CHECK(() -> 0.79),
-        ROTATION_CHECK(() -> 0.81),
-        SWERVE_CHECK(() -> 0.65),
-        CLIMBING(() -> -0.57),
-        AUTO_ALIGN(() -> 0.19),
-        INTAKING(() -> 0.15);
+        DEFAULT(() -> -0.93), // Rainbow Lava Palatte
+        AUTO(() -> -0.57), // Fire Large
+        HAS_NOTE(() -> 0.75), // Dark Green
+        AUTO_SHOOT(() -> 0.35), // Strobe Color 2
+        FLYWHEEL_CHECK(() -> 0.91), // Violet
+        PIVOT_CHECK(() -> 0.57), // Hot Pink
+        HEADING_CHECK(() -> 0.59), // Solid Dark Red
+        VELOCITY_CHECK(() -> 0.79), // Solid Blue - Green
+        ROTATION_CHECK(() -> 0.81), // Solid Aqua
+        SWERVE_CHECK(() -> 0.65), // Solid Orange
+        CLIMBING(() -> -0.57), // Fire Large
+
+        INTAKING(() -> 0.15); // Strobe Color 1
 
         private final DoubleSupplier ledSetpoint;
 

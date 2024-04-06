@@ -110,17 +110,17 @@ public class AutoMain extends Command {
                                                                                                 .acceptTeleopInput(0, 0,
                                                                                                                 0,
                                                                                                                 true))))
-                                                .withTimeout(1.5)));
+                                                .withTimeout(1.25)));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_Arm.setGoal(Arm.Goal.SUBWOOFER),
                                 m_robotContainer.m_superstructure)
                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676),
                                                 m_robotContainer.m_flywheel))
-                                .andThen(new WaitCommand(1.5)).andThen(new InstantCommand(
+                                .andThen(new WaitCommand(1)).andThen(new InstantCommand(
                                                 () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))
-                                .andThen(new WaitCommand(0.5)));
+                                .andThen(new WaitCommand(0.25)));
         }
 
         public Command getAutoChooser() {
