@@ -301,7 +301,7 @@ public class RobotContainer {
                                 .withName("Manual Flywheel Speed"));
 
                 m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(),
-                                m_flywheel));
+                                m_flywheel).withName("Default Flywheel Command"));
 
                 // Shooting Automations
 
