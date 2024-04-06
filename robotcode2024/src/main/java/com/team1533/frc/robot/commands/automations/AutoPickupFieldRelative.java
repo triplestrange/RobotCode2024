@@ -33,7 +33,7 @@ public class AutoPickupFieldRelative extends SequentialCommandGroup {
                 this.note2d = notePoseFieldRelative;
 
                 addCommands(
-                                new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.GROUND),
+                                new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.GROUND_TELEOP),
                                                 m_Superstructure),
                                 new GroundToIntake(m_intake,
                                                 m_Leds),
