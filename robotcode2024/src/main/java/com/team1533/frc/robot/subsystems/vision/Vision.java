@@ -60,9 +60,12 @@ public class Vision extends SubsystemBase {
 
     private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
     private Mat mDistortionCoeffients = new Mat(1, 5, CV_64FC1);
-    
-    @AutoLogOutput
+
     public Field2d m_field = new Field2d();
+    @AutoLogOutput
+    private Pose2d poseShooterActual;
+    @AutoLogOutput
+    private Pose2d poseIntakeActual;
 
     private static Comparator<Translation2d> ySort;
 
@@ -323,13 +326,17 @@ public class Vision extends SubsystemBase {
         poseShooter = getEstimatedPoseInfo(camShooter);
         poseIntake = getEstimatedPoseInfo(camIntake);
 
+        poseShooterActual = poseShooter.getPose2d();
+        poseIntakeActual = poseIntake.getPose2d();
+
+
         if (poseShooter.getNumOfTags() != 0) {
-            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
+            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseShooterActual,
                     poseShooter.getTimestampSeconds());
             m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
         }
         // if (poseIntake.getNumOfTags() != 0) {
-        // m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
+        // m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntakeActual,
         // poseIntake.getTimestampSeconds());
         // m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
         // }

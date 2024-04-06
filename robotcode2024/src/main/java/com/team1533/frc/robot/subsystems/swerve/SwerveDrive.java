@@ -279,6 +279,7 @@ public class SwerveDrive extends SubsystemBase {
    *
    * @return The pose.
    */
+  @AutoLogOutput
   public Pose2d getPose() {
     return m_odometry.getEstimatedPosition();
   }
