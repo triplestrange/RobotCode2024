@@ -42,6 +42,7 @@ import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIOReal;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
 import com.team1533.frc.robot.subsystems.swerve.GyroIO;
 import com.team1533.frc.robot.subsystems.swerve.GyroIONAVX;
+import com.team1533.frc.robot.subsystems.swerve.GyroIOPigeon2;
 import com.team1533.frc.robot.subsystems.swerve.GyroIOSim;
 import com.team1533.frc.robot.subsystems.swerve.ModuleConstants;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIO;
@@ -108,7 +109,7 @@ public class RobotContainer {
                                                         new ModuleIOReal(ModuleConstants.FR),
                                                         new ModuleIOReal(ModuleConstants.BL),
                                                         new ModuleIOReal(ModuleConstants.BR),
-                                                        new GyroIONAVX());
+                                                        new GyroIOPigeon2());
                                         m_indexer = new Indexer(new IndexerIOReal());
                                         m_elevator = new Elevator(new ElevatorIOReal());
                                         m_intake = new Intake(new IntakeIOReal(), m_elevator);
@@ -257,20 +258,22 @@ public class RobotContainer {
                                 () -> m_superstructure.setGoal(Goal.PREPARE_CLIMB))
                                 .withName("Prepare Climb Superstructure"));
 
+                JoystickButtons.drBump.whileTrue(new InstantCommand(() -> m_superstructure.setGoal(Goal.SUBWOOFER)).withName("Subwoofer Superstructure")); 
+
                 // Intake and indexer Controls
 
                 JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
                                 m_intake)
                                 .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)).withName("Run Intake"));
 
-                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake")
-                                .alongWith(new InstantCommand(() -> m_superstructure
-                                                .setGoal(Goal.STOW))));
+                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake"))
+                                .onFalse(new InstantCommand(() -> m_superstructure
+                                                .setGoal(Goal.STOW)));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new GroundToIndexer(m_indexer, m_intake, m_Leds)).withName("Intake To Indexer")
-                                                .alongWith(new InstantCommand(() -> m_superstructure
-                                                                .setGoal(Goal.STOW)))
+                                (new GroundToIndexer(m_indexer, m_intake, m_Leds)).withName("Intake To Indexer"))
+                                                .onFalse(new InstantCommand(() -> m_superstructure
+                                                                .setGoal(Goal.STOW))
                                                 .withName("Stow Superstructure"));
 
                 JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(),
@@ -323,38 +326,40 @@ public class RobotContainer {
                                                 .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
                                                 .withName("Teleop Shoot Off"));
 
-                JoystickButtons.dA.whileTrue(
-                                (new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
-                                                .alongWith(new InstantCommand(() -> m_robotDrive
-                                                                .setHeadingController(
-                                                                                m_shoot::rotationToShuttle)),
-                                                                new InstantCommand(
-                                                                                () -> m_superstructure
-                                                                                                .setGoal(Goal.SHUTTLE),
-                                                                                m_superstructure)))
-                                                .withName("Teleop Shuttle"))
-                                .onFalse((new InstantCommand(
-                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
-                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
-                                                .withName("Teleop Shuttle Off"));
+                // JoystickButtons.dA.whileTrue(
+                //                 (new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
+                //                                 .alongWith(new InstantCommand(() -> m_robotDrive
+                //                                                 .setHeadingController(
+                //                                                                 m_shoot::rotationToShuttle)),
+                //                                                 new InstantCommand(
+                //                                                                 () -> m_superstructure
+                //                                                                                 .setGoal(Goal.SHUTTLE),
+                //                                                                 m_superstructure)))
+                //                                 .withName("Teleop Shuttle"))
+                //                 .onFalse((new InstantCommand(
+                //                                 () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
+                //                                 .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
+                //                                 .withName("Teleop Shuttle Off"));
 
                 // Amp Automations
 
                 // JoystickButtons.dB
                 // .whileTrue(new Pathfind(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
 
-                JoystickButtons.dB.whileTrue(
-                                (new RunCommand(() -> m_robotDrive
-                                                .setAutoAlignController(Constants.FieldPositions.AMP)))
-                                                .withName("Drive To Amp"))
-                                .onFalse((new InstantCommand(
-                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)))
-                                                .withName("Drive To Amp Off"));
+                // JoystickButtons.dB.whileTrue(
+                //                 (new RunCommand(() -> m_robotDrive
+                //                                 .setAutoAlignController(Constants.FieldPositions.AMP)))
+                //                                 .withName("Drive To Amp"))
+                //                 .onFalse((new InstantCommand(
+                //                                 () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)))
+                //                                 .withName("Drive To Amp Off"));
 
                 // Note Pick Automation
+
+                if (m_vision.getBestObject(m_robotDrive.getPose()) != null)     {
                 JoystickButtons.dY.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
                                 m_superstructure, m_intake,
-                                m_Leds, m_vision.getObjectToField(m_robotDrive.getPose()).getTranslation())
+                                m_Leds, m_vision.getBestObject(m_robotDrive.getPose()).getTranslation())
                                 .withName("Pick Up Note")).onFalse(
                                                 (new InstantCommand(
                                                                 () -> m_Leds.setMode(LedMode.DEFAULT)))
@@ -362,7 +367,7 @@ public class RobotContainer {
                                                                 .alongWith(new InstantCommand(() -> m_superstructure
                                                                                 .setGoal(Goal.STOW)))
                                                                 .withName("Stow Superstructure"));
-
+                }
                 // leds
                 // m_Leds.setDefaultCommand(new InstantCommand(() ->
                 // m_Leds.setMode(LedMode.DEFAULT), m_Leds));

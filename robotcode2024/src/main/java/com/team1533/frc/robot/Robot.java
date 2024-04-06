@@ -16,6 +16,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.team1533.frc.robot.subsystems.vision.VisionConstants;
+import com.team1533.frc.robot.util.Alert;
+import com.team1533.frc.robot.util.Alert.AlertType;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -67,8 +69,23 @@ public class Robot extends LoggedRobot {
     switch (Constants.LoggerConstants.getMode()) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        // Logger.addDataReceiver(new WPILOGWriter());
+        try { 
+          Logger.addDataReceiver(new WPILOGWriter());
+        }
+
+        catch(Exception e) {
+           new Alert("The USB Flash Drive is unplugged.", AlertType.WARNING)
+            .set(true);
+        }
+
+        try {
         Logger.addDataReceiver(new NT4Publisher());
+
+        }
+
+        catch(Exception e)  {
+          new Alert("The Logger is not publsihing to Network Tables", AlertType.WARNING).set(true);
+        }
         break;
 
       case SIM:

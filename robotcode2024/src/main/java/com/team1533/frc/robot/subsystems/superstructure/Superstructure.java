@@ -1,5 +1,7 @@
 package com.team1533.frc.robot.subsystems.superstructure;
 
+import javax.lang.model.element.ElementKind;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -46,6 +48,7 @@ public class Superstructure extends SubsystemBase {
     PREPARE_CLIMB,
     GROUND,
     SOURCE,
+    SUBWOOFER,
     FEEDER,
     SHUTTLE,
     STOP
@@ -109,6 +112,10 @@ public class Superstructure extends SubsystemBase {
       case GROUND -> {
         m_Arm.setGoal(Arm.Goal.AIM);
         m_Elevator.setGoal(Elevator.Goal.GROUND);
+      }
+      case SUBWOOFER -> {
+        m_Arm.setGoal(Arm.Goal.SUBWOOFER);
+        m_Elevator.setGoal(Elevator.Goal.STOW);
       }
       case SOURCE -> {
         m_Arm.setGoal(Arm.Goal.STOW);

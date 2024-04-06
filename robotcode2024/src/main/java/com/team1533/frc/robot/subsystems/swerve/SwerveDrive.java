@@ -21,6 +21,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -183,8 +184,8 @@ public class SwerveDrive extends SubsystemBase {
     return gyroInputs.yawPosition.times(SwerveConstants.kGyroReversed ? 1.0 : -1.0);
   }
 
-  public Rotation2d getGyroTotalRotations() {
-    return gyroInputs.totalDistanceYaw;
+  public double getGyroTotalDegrees() {
+    return gyroInputs.totalDistanceYawDegrees;
   }
 
   public boolean getGyroReset() {
@@ -339,7 +340,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 @AutoLogOutput
   public double getWheelOffsetExperimental() {
-    double offset = getModuleRotations().getDegrees() / Math.abs(getGyroTotalRotations().getDegrees());
+    double offset = getModuleRotations().getDegrees() / Math.abs(getGyroTotalDegrees());
 
     return offset;
   }
@@ -555,6 +556,13 @@ public class SwerveDrive extends SubsystemBase {
     autoAlignController.setGoal(desiredPose);
     currentDriveMode = DriveMode.AUTO_ALIGN;
 
+  }
+
+  public void setAutoAlignController(Translation2d desiredTranslation2d)  {
+        m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
+    autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
+    autoAlignController.setGoal(new Pose2d(desiredTranslation2d, desiredTranslation2d.minus(getPose().getTranslation()).getAngle()));
+    currentDriveMode = DriveMode.AUTO_ALIGN;
   }
 
   public void disableAutoAlignController() {

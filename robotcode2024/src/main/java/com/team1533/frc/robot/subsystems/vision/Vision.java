@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -59,7 +60,8 @@ public class Vision extends SubsystemBase {
 
     private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
     private Mat mDistortionCoeffients = new Mat(1, 5, CV_64FC1);
-
+    
+    @AutoLogOutput
     public Field2d m_field = new Field2d();
 
     private static Comparator<Translation2d> ySort;
@@ -112,9 +114,13 @@ public class Vision extends SubsystemBase {
         return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
     }
 
-    public Pose2d getBestObject(PhotonCamera camera, Pose2d robotPose) {
-        PhotonCamera cam = camera;
+    public Pose2d getBestObject(Pose2d robotPose) {
+        PhotonCamera cam = camIntake;
         PhotonTrackedTarget target = cam.getLatestResult().getBestTarget();
+
+        if (target == null) {
+            return  null;
+        }
 
         return getObjectToField(getObjectToRobot(target, cam, robotPose));
     }
