@@ -39,9 +39,10 @@ public class Superstructure extends SubsystemBase {
     AUTO_AIM,
     AIM,
     AMP,
-    TRAP,
+    PREPARE_TRAP,
     STOW,
     CLIMB,
+    TRAP,
     PREPARE_CLIMB,
     GROUND,
     SOURCE,
@@ -80,9 +81,14 @@ public class Superstructure extends SubsystemBase {
         m_Arm.setGoal(Arm.Goal.AIM);
         m_Elevator.setGoal(Elevator.Goal.STOW);
       }
+      case PREPARE_TRAP -> {
+        m_Arm.setGoal(Arm.Goal.PREPARE_TRAP);
+        m_Elevator.setGoal(Elevator.Goal.TRAP);
+      }
       case TRAP -> {
         m_Arm.setGoal(Arm.Goal.CLIMB);
         m_Elevator.setGoal(Elevator.Goal.TRAP);
+
       }
       case AMP -> {
         m_Arm.setGoal(Arm.Goal.PREPARE_CLIMB);

@@ -41,7 +41,7 @@ import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIOReal;
 import com.team1533.frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
 import com.team1533.frc.robot.subsystems.swerve.GyroIO;
-import com.team1533.frc.robot.subsystems.swerve.GyroIOReal;
+import com.team1533.frc.robot.subsystems.swerve.GyroIONAVX;
 import com.team1533.frc.robot.subsystems.swerve.GyroIOSim;
 import com.team1533.frc.robot.subsystems.swerve.ModuleConstants;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIO;
@@ -108,10 +108,10 @@ public class RobotContainer {
                                                         new ModuleIOReal(ModuleConstants.FR),
                                                         new ModuleIOReal(ModuleConstants.BL),
                                                         new ModuleIOReal(ModuleConstants.BR),
-                                                        new GyroIOReal());
+                                                        new GyroIONAVX());
                                         m_indexer = new Indexer(new IndexerIOReal());
                                         m_elevator = new Elevator(new ElevatorIOReal());
-                                        m_intake = new Intake(new IntakeIOReal());
+                                        m_intake = new Intake(new IntakeIOReal(), m_elevator);
                                         m_flywheel = new FlyWheel(new FlyWheelIOReal());
                                         m_climb = new Climber(new ClimberIOReal());
                                         m_Arm = new Arm(new ArmIOReal(), m_robotDrive, m_shoot);
@@ -123,7 +123,7 @@ public class RobotContainer {
                                                         new ModuleIOSim(ModuleConstants.BR),
                                                         new GyroIOSim());
                                         m_elevator = new Elevator(new ElevatorIOSim());
-                                        m_intake = new Intake(new IntakeIOSim());
+                                        m_intake = new Intake(new IntakeIOSim(), m_elevator);
                                         m_indexer = new Indexer(new IndexerIOSim());
                                         m_flywheel = new FlyWheel(new FlyWheelIOSim());
                                         m_climb = new Climber(new ClimberIOSim());
@@ -152,7 +152,7 @@ public class RobotContainer {
                 }
                 if (m_intake == null) {
                         m_intake = new Intake(new IntakeIO() {
-                        });
+                        }, m_elevator);
                 }
                 if (m_indexer == null) {
                         m_indexer = new Indexer(new IndexerIO() {
@@ -231,7 +231,7 @@ public class RobotContainer {
                                 (new RunCommand(() -> {
                                         m_elevator.moveElev(
                                                         0.3 * JoystickButtons.m_operatorController.getRightY(),
-                                                        0.3 * (JoystickButtons.m_operatorController
+                                                        0.15 * (JoystickButtons.m_operatorController
                                                                         .getRightTriggerAxis()
                                                                         - JoystickButtons.m_operatorController
                                                                                         .getLeftTriggerAxis()));
@@ -250,7 +250,8 @@ public class RobotContainer {
                                 () -> m_superstructure.setGoal(Goal.GROUND)).withName("Ground Intake Superstructure"));
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.CLIMB)).withName("Climb Superstructure"));
+                                () -> m_superstructure.setGoal(Goal.TRAP))
+                                .withName("Prepare Trap Superstructure"));
 
                 JoystickButtons.opX.whileTrue(new InstantCommand(
                                 () -> m_superstructure.setGoal(Goal.PREPARE_CLIMB))
@@ -258,10 +259,9 @@ public class RobotContainer {
 
                 // Intake and indexer Controls
 
-                // JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
-                // m_intake)
-                // .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)).withName("Run
-                // Intake"));
+                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_intake.runIntake(),
+                                m_intake)
+                                .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)).withName("Run Intake"));
 
                 JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake")
                                 .alongWith(new InstantCommand(() -> m_superstructure
@@ -273,10 +273,11 @@ public class RobotContainer {
                                                                 .setGoal(Goal.STOW)))
                                                 .withName("Stow Superstructure"));
 
-                // JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(),
-                // m_intake)
-                // .alongWith(new RunCommand(() -> m_indexer.runOut(),
-                // m_indexer))).withName("Outtake"));
+                JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(),
+                                m_intake)
+                                .alongWith(new RunCommand(() -> m_indexer.runOut(),
+                                                m_indexer)))
+                                .withName("Outtake"));
 
                 m_intake.setDefaultCommand(
                                 new InstantCommand(() -> m_intake.intakeOff(), m_intake).withName("Intake Off"));
@@ -298,7 +299,7 @@ public class RobotContainer {
 
                 flywheelSetpoint = MathUtil.clamp(flywheelSetpoint, 2500, FlyWheelConstants.flyWheelmaxRPM);
 
-                JoystickButtons.oprBump.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
+                JoystickButtons.opY.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
                                 .withName("Manual Flywheel Speed"));
 
                 m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(),
@@ -351,7 +352,7 @@ public class RobotContainer {
                                                 .withName("Drive To Amp Off"));
 
                 // Note Pick Automation
-                JoystickButtons.oplBump.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
+                JoystickButtons.dY.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
                                 m_superstructure, m_intake,
                                 m_Leds, m_vision.getObjectToField(m_robotDrive.getPose()).getTranslation())
                                 .withName("Pick Up Note")).onFalse(
@@ -363,7 +364,8 @@ public class RobotContainer {
                                                                 .withName("Stow Superstructure"));
 
                 // leds
-                        // m_Leds.setDefaultCommand(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT), m_Leds));
+                // m_Leds.setDefaultCommand(new InstantCommand(() ->
+                // m_Leds.setMode(LedMode.DEFAULT), m_Leds));
 
         }
 

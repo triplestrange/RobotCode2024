@@ -9,14 +9,14 @@ import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
 /** IO implementation for Pigeon2 */
-public class GyroIOReal implements GyroIO {
+public class GyroIONAVX implements GyroIO {
     private final AHRS navX;
     private DoubleSupplier totalDistanceYaw;
     private DoubleSupplier yaw;
     private DoubleSupplier roll;
     private DoubleSupplier pitch;
 
-    public GyroIOReal() {
+    public GyroIONAVX() {
         navX = new AHRS(SPI.Port.kMXP);
 
         totalDistanceYaw = () -> navX.getAngle();
