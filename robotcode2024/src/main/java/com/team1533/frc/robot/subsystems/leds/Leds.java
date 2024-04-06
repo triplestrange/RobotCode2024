@@ -31,7 +31,6 @@ public class Leds extends SubsystemBase {
         ROTATION_CHECK(() -> 0.81), // Solid Aqua
         SWERVE_CHECK(() -> 0.65), // Solid Orange
         CLIMBING(() -> -0.57), // Fire Large
-
         INTAKING(() -> 0.15); // Strobe Color 1
 
         private final DoubleSupplier ledSetpoint;
