@@ -248,7 +248,7 @@ public class RobotContainer {
                 JoystickButtons.opDpadU.onTrue(new InstantCommand(
                                 () -> m_superstructure.setGoal(Goal.AMP)).withName("Amp Superstructure"));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.GROUND)).withName("Ground Intake Superstructure"));
+                                () -> m_superstructure.setGoal(Goal.GROUND_TELEOP)).withName("Ground Intake Superstructure"));
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
                                 () -> m_superstructure.setGoal(Goal.TRAP))
@@ -266,15 +266,10 @@ public class RobotContainer {
                                 m_intake)
                                 .alongWith(new RunCommand(() -> m_indexer.runIn(), m_indexer)).withName("Run Intake"));
 
-                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake"))
-                                .onFalse(new InstantCommand(() -> m_superstructure
-                                                .setGoal(Goal.STOW)));
+                JoystickButtons.opDpadR.whileTrue(new GroundToIntake(m_intake, m_Leds).withName("Ground To Intake"));
 
                 JoystickButtons.opDpadL.whileTrue(
-                                (new GroundToIndexer(m_indexer, m_intake, m_Leds)).withName("Intake To Indexer"))
-                                                .onFalse(new InstantCommand(() -> m_superstructure
-                                                                .setGoal(Goal.STOW))
-                                                .withName("Stow Superstructure"));
+                                (new GroundToIndexer(m_indexer, m_intake, m_Leds)).withName("Intake To Indexer"));
 
                 JoystickButtons.oplBump.whileTrue((new RunCommand(() -> m_intake.runOutake(),
                                 m_intake)
@@ -306,7 +301,7 @@ public class RobotContainer {
                                 .withName("Manual Flywheel Speed"));
 
                 m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(),
-                                m_flywheel));
+                                m_flywheel).withName("Default Flywheel Command"));
 
                 // Shooting Automations
 

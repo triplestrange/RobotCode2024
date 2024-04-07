@@ -55,7 +55,7 @@ public class AutoMain extends Command {
                                                 Superstructure.Goal.AMP),
                                                 m_robotContainer.m_superstructure));
                 NamedCommands.registerCommand("ground", new InstantCommand(
-                                () -> m_robotContainer.m_superstructure.setGoal(Superstructure.Goal.GROUND),
+                                () -> m_robotContainer.m_superstructure.setGoal(Superstructure.Goal.GROUND_AUTO),
                                 m_robotContainer.m_superstructure));
 
                 NamedCommands.registerCommand("stowElev",
