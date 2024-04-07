@@ -13,7 +13,7 @@ public class ModuleConstants {
 
         // adjust for calibration
         // 2/25/21 - 0.12584
-        public static final double offsetRatio = 1.043;
+        public static final double offsetRatio = 1.045;
         public static final double kWheelDiameterMeters = .1016 * 1./offsetRatio;
         public static final double kDriveEncoderDistancePerPulse =
                         // Assumes the encoders are directly mounted on the wheel shafts
