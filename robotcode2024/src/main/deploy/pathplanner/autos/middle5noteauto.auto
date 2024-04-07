@@ -5,7 +5,7 @@
       "x": 1.3242789506912231,
       "y": 5.588408470153809
     },
-    "rotation": 1.7920569775088034e-25
+    "rotation": 4.458478794126739e-21
   },
   "command": {
     "type": "sequential",
@@ -63,24 +63,6 @@
           "type": "path",
           "data": {
             "pathName": "mid5note.3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "indexerOff"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "mid5note.4"
           }
         },
         {

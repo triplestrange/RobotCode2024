@@ -300,8 +300,8 @@ public class RobotContainer {
                 JoystickButtons.opY.whileTrue(new RunCommand(() -> m_flywheel.setFWSpeed(-flywheelSetpoint))
                                 .withName("Manual Flywheel Speed"));
 
-                // m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(),
-                //                 m_flywheel).withName("Default Flywheel Command"));
+                m_flywheel.setDefaultCommand(new RunCommand(() -> m_flywheel.flyWheelOn(),
+                                m_flywheel).withName("Default Flywheel Command"));
 
                 // Shooting Automations
 
