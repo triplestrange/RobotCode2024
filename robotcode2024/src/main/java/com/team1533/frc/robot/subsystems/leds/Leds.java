@@ -26,7 +26,6 @@ public class Leds extends SubsystemBase {
         AUTO_SHOOT(() -> 0.35), // Strobe Color 2
         FLYWHEEL_CHECK(() -> 0.91), // Violet
         PIVOT_CHECK(() -> 0.57), // Hot Pink
-        HEADING_CHECK(() -> 0.59), // Solid Dark Red
         VELOCITY_CHECK(() -> 0.79), // Solid Blue - Green
         ROTATION_CHECK(() -> 0.81), // Solid Aqua
         SWERVE_CHECK(() -> 0.65), // Solid Orange
