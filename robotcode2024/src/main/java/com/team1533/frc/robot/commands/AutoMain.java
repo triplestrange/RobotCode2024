@@ -121,6 +121,10 @@ public class AutoMain extends Command {
                                                 () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.25)));
+
+                NamedCommands.registerCommand("Aim Off",
+                                new InstantCommand(() -> m_robotContainer.m_robotDrive.disableHeadingController(),
+                                                m_robotContainer.m_robotDrive));
         }
 
         public Command getAutoChooser() {

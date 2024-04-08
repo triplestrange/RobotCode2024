@@ -6,6 +6,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.team1533.frc.robot.Constants;
 import com.revrobotics.RelativeEncoder;
+
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeIOReal implements IntakeIO {
@@ -13,6 +16,8 @@ public class IntakeIOReal implements IntakeIO {
 
   public RelativeEncoder intakeRelativeEncoder = intake.getEncoder();
   private final DigitalInput intakeSensor;
+
+  private final Debouncer debouncer = new Debouncer(0.1, DebounceType.kRising);
 
   private double intakeInput;
 
@@ -47,7 +52,12 @@ public class IntakeIOReal implements IntakeIO {
     inputs.motorCurrent = intake.getOutputCurrent();
     inputs.tempCelcius = intake.getMotorTemperature();
     inputs.inputVolts = intakeInput;
-    inputs.intakeSensor = !intakeSensor.get();
+
+    // check if the debouncer inputs needs to be inversed
+    if (debouncer.calculate(intakeSensor.get())) {
+      inputs.sensor = !intakeSensor.get();
+    }
+
   }
 
   @Override
