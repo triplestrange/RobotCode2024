@@ -79,6 +79,8 @@ public class Vision extends SubsystemBase {
 
     }
 
+    @AutoLogOutput
+
     public EstimatedPoseInfo getEstimatedPoseInfo(PhotonCamera camera) {
         Pose3d cameraOffset;
         int i = 0;
@@ -117,16 +119,20 @@ public class Vision extends SubsystemBase {
         return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
     }
 
+    @AutoLogOutput
+
     public Pose2d getBestObject(Pose2d robotPose) {
         PhotonCamera cam = camIntake;
         PhotonTrackedTarget target = cam.getLatestResult().getBestTarget();
 
         if (target == null) {
-            return  null;
+            return null;
         }
 
         return getObjectToField(getObjectToRobot(target, cam, robotPose));
     }
+
+    @AutoLogOutput
 
     public Pose2d getRobotToField(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
         Pose3d tagPose;
@@ -204,6 +210,8 @@ public class Vision extends SubsystemBase {
         return robotToField;
     }
 
+    @AutoLogOutput
+
     public Pose2d getObjectToRobot(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
         Translation2d cameraToTarget;
         ArrayList<Translation2d> robotToPoints = new ArrayList<Translation2d>();
@@ -228,7 +236,7 @@ public class Vision extends SubsystemBase {
 
         else if (cam.getName().equals("camIntake")) {
             cameraOffset = new Pose3d(new Translation3d(Units.inchesToMeters(5.75), 0, getIntakeVisionOffset()),
-                    new Rotation3d(Math.PI/2.0, -Units.degreesToRadians(2), 0));
+                    new Rotation3d(Math.PI / 2.0, -Units.degreesToRadians(2), 0));
 
         } else {
             cameraOffset = new Pose3d();
@@ -278,6 +286,8 @@ public class Vision extends SubsystemBase {
         return robotToTargetPose2d;
 
     }
+
+    @AutoLogOutput
 
     public Pose2d getObjectToField(Pose2d objectToRobot) {
         return new Pose2d(
@@ -329,7 +339,6 @@ public class Vision extends SubsystemBase {
         poseShooterActual = poseShooter.getPose2d();
         poseIntakeActual = poseIntake.getPose2d();
 
-
         if (poseShooter.getNumOfTags() != 0) {
             m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseShooterActual,
                     poseShooter.getTimestampSeconds());
@@ -343,6 +352,8 @@ public class Vision extends SubsystemBase {
         m_field.setRobotPose(m_RobotContainer.m_robotDrive.getPose());
 
     }
+
+    @AutoLogOutput
 
     public double getIntakeVisionOffset() {
         if (m_RobotContainer.m_elevator.getIntakePos().getHeight() > 14) {
@@ -395,6 +406,8 @@ public class Vision extends SubsystemBase {
         }
 
     }
+
+    @AutoLogOutput
 
     public void testPoseCalculations() {
         double pitch_deg = -15;
