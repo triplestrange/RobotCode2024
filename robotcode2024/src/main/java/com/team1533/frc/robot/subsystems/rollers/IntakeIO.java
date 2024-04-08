@@ -18,6 +18,8 @@ public interface IntakeIO {
 
         public double tempCelcius = 0.0;
 
+        public boolean sensor = false;
+
     }
 
     default void updateInputs(IntakeIOInputs inputs) {
@@ -29,10 +31,6 @@ public interface IntakeIO {
 
     /** Set brake mode enabled */
     default void setIdleMode(IdleMode idleMode) {
-    }
-
-    default boolean getSensor() {
-        return false;
     }
 
     default boolean getBlocked(DigitalInput proxInput) {

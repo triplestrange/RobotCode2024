@@ -161,6 +161,8 @@ public final class Constants {
     public static final int BL_STEER = 1;
     public static final int BR_STEER = 14;
 
+    public static final int PIGEON = 25;
+
     public static final int ELEVATOR = 9;
 
     public static final int ROLLERS = 5;

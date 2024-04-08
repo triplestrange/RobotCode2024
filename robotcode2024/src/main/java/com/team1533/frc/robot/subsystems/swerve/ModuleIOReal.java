@@ -134,6 +134,8 @@ public class ModuleIOReal implements ModuleIO {
                 driveSupplyCurrent,
                 driveTorqueCurrent);
 
+        driveMotor.optimizeBusUtilization();
+
     }
 
     @Override

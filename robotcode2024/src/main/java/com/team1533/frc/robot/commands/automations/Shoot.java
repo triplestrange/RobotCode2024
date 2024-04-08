@@ -62,8 +62,8 @@ public class Shoot {
     @AutoLogOutput(key = "Shoot/flywheelSetpoint")
     double flywheelSetpoint;
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
-    
-    public Translation2d shuttlingTranslation2d = new Translation2d(7.11 , 1.14);
+
+    public Translation2d shuttlingTranslation2d = new Translation2d(7.11, 1.14);
 
     public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
 
@@ -80,7 +80,6 @@ public class Shoot {
 
         this.m_RobotContainer = m_RobotContainer;
         shootingRotation = new Rotation2d();
-
 
         shootingData.put(1.0, 0.0);
         shootingData.put(1.5, -3.2);
@@ -116,7 +115,8 @@ public class Shoot {
     public void teleopShoot() {
         if (isAllianceRed()) {
             flywheelSetpoint = m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d()) * FlyWheelConstants.flyWheelmaxRPM;
+                    .getDistance(flipTranslation3d(speakerTranslation3d).toTranslation2d())
+                    * FlyWheelConstants.flyWheelmaxRPM;
         } else {
             flywheelSetpoint = m_RobotContainer.m_robotDrive.getPose().getTranslation()
                     .getDistance(speakerTranslation3d.toTranslation2d()) * FlyWheelConstants.flyWheelmaxRPM;
@@ -144,6 +144,11 @@ public class Shoot {
         } else if (!flyWheelCheck()) {
             m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
 
+        }
+
+        if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && velocityCheck() && pivotCheck()
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) && flyWheelCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.AUTO_SHOOT);
         }
 
     }

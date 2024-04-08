@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -61,6 +62,10 @@ public class Vision extends SubsystemBase {
     private Mat mDistortionCoeffients = new Mat(1, 5, CV_64FC1);
 
     public Field2d m_field = new Field2d();
+    @AutoLogOutput
+    private Pose2d poseShooterActual;
+    @AutoLogOutput
+    private Pose2d poseIntakeActual;
 
     private static Comparator<Translation2d> ySort;
 
@@ -73,6 +78,8 @@ public class Vision extends SubsystemBase {
         ySort = Comparator.comparingDouble(Translation2d::getY);
 
     }
+
+    @AutoLogOutput
 
     public EstimatedPoseInfo getEstimatedPoseInfo(PhotonCamera camera) {
         Pose3d cameraOffset;
@@ -112,12 +119,20 @@ public class Vision extends SubsystemBase {
         return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
     }
 
-    public Pose2d getBestObject(PhotonCamera camera, Pose2d robotPose) {
-        PhotonCamera cam = camera;
+    @AutoLogOutput
+
+    public Pose2d getBestObject(Pose2d robotPose) {
+        PhotonCamera cam = camIntake;
         PhotonTrackedTarget target = cam.getLatestResult().getBestTarget();
+
+        if (target == null) {
+            return null;
+        }
 
         return getObjectToField(getObjectToRobot(target, cam, robotPose));
     }
+
+    @AutoLogOutput
 
     public Pose2d getRobotToField(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
         Pose3d tagPose;
@@ -195,6 +210,8 @@ public class Vision extends SubsystemBase {
         return robotToField;
     }
 
+    @AutoLogOutput
+
     public Pose2d getObjectToRobot(PhotonTrackedTarget target, PhotonCamera cam, Pose2d robotPose2d) {
         Translation2d cameraToTarget;
         ArrayList<Translation2d> robotToPoints = new ArrayList<Translation2d>();
@@ -218,8 +235,8 @@ public class Vision extends SubsystemBase {
         }
 
         else if (cam.getName().equals("camIntake")) {
-            cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
-                    new Rotation3d(Math.PI, -Units.degreesToRadians(40), 0));
+            cameraOffset = new Pose3d(new Translation3d(Units.inchesToMeters(5.75), 0, getIntakeVisionOffset()),
+                    new Rotation3d(Math.PI / 2.0, -Units.degreesToRadians(2), 0));
 
         } else {
             cameraOffset = new Pose3d();
@@ -270,6 +287,8 @@ public class Vision extends SubsystemBase {
 
     }
 
+    @AutoLogOutput
+
     public Pose2d getObjectToField(Pose2d objectToRobot) {
         return new Pose2d(
                 objectToRobot.getTranslation()
@@ -317,19 +336,24 @@ public class Vision extends SubsystemBase {
         poseShooter = getEstimatedPoseInfo(camShooter);
         poseIntake = getEstimatedPoseInfo(camIntake);
 
+        poseShooterActual = poseShooter.getPose2d();
+        poseIntakeActual = poseIntake.getPose2d();
+
         if (poseShooter.getNumOfTags() != 0) {
-            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseShooter.getPose2d(),
+            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseShooterActual,
                     poseShooter.getTimestampSeconds());
             m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
         }
         // if (poseIntake.getNumOfTags() != 0) {
-        // m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntake.getPose2d(),
+        // m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntakeActual,
         // poseIntake.getTimestampSeconds());
         // m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
         // }
         m_field.setRobotPose(m_RobotContainer.m_robotDrive.getPose());
 
     }
+
+    @AutoLogOutput
 
     public double getIntakeVisionOffset() {
         if (m_RobotContainer.m_elevator.getIntakePos().getHeight() > 14) {
@@ -382,6 +406,8 @@ public class Vision extends SubsystemBase {
         }
 
     }
+
+    @AutoLogOutput
 
     public void testPoseCalculations() {
         double pitch_deg = -15;

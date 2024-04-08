@@ -55,7 +55,7 @@ public class AutoMain extends Command {
                                                 Superstructure.Goal.AMP),
                                                 m_robotContainer.m_superstructure));
                 NamedCommands.registerCommand("ground", new InstantCommand(
-                                () -> m_robotContainer.m_superstructure.setGoal(Superstructure.Goal.GROUND),
+                                () -> m_robotContainer.m_superstructure.setGoal(Superstructure.Goal.GROUND_AUTO),
                                 m_robotContainer.m_superstructure));
 
                 NamedCommands.registerCommand("stowElev",
@@ -121,6 +121,10 @@ public class AutoMain extends Command {
                                                 () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.25)));
+
+                NamedCommands.registerCommand("Aim Off",
+                                new InstantCommand(() -> m_robotContainer.m_robotDrive.disableHeadingController(),
+                                                m_robotContainer.m_robotDrive));
         }
 
         public Command getAutoChooser() {

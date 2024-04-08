@@ -3,10 +3,14 @@ package com.team1533.frc.robot.subsystems.rollers;
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.team1533.frc.robot.subsystems.superstructure.elevator.Elevator;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
+
+    private static Elevator m_Elevator;
 
     private static Intake instance;
 
@@ -19,19 +23,21 @@ public class Intake extends SubsystemBase {
 
     public static Intake initialize(IntakeIO io) {
         if (instance == null) {
-            instance = new Intake(io);
+            instance = new Intake(io, m_Elevator);
         }
         return instance;
     }
 
     /** Creates a new Intake. */
-    public Intake(IntakeIO intakeIO) {
+    public Intake(IntakeIO intakeIO, Elevator m_Elevator) {
         super();
 
         io = intakeIO;
         io.updateInputs(inputs);
 
         io.setIdleMode(IdleMode.kBrake);
+
+        this.m_Elevator = m_Elevator;
     }
 
     public void runIntake() {
@@ -39,7 +45,11 @@ public class Intake extends SubsystemBase {
     }
 
     public void runOutake() {
-        io.runVolts(-12);
+        if (m_Elevator.getIntakePos().getAngle() < -50) {
+            io.runVolts(-12);
+        } else {
+            io.runVolts(-4);
+        }
     }
 
     public void intakeOff() {
@@ -47,7 +57,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean getIntakeSensor() {
-        return io.getSensor();
+        return inputs.sensor;
     }
 
     @Override

@@ -20,6 +20,8 @@ public interface IndexerIO {
 
         public double tempCelcius = 0.0;
 
+        public boolean sensor = false;
+
     }
 
     default void updateInputs(IndexerIOInputs inputs) {
@@ -34,14 +36,6 @@ public interface IndexerIO {
 
     /** Set brake mode enabled */
     default void setIdleMode(IdleMode idleMode) {
-    }
-
-    default boolean getSensor() {
-        return false;
-    }
-
-    default boolean getBlocked(DigitalInput proxInput) {
-        return false;
     }
 
     /** Stops motors */

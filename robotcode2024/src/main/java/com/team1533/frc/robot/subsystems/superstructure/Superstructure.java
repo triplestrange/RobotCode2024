@@ -1,5 +1,7 @@
 package com.team1533.frc.robot.subsystems.superstructure;
 
+import javax.lang.model.element.ElementKind;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -39,12 +41,15 @@ public class Superstructure extends SubsystemBase {
     AUTO_AIM,
     AIM,
     AMP,
-    TRAP,
+    PREPARE_TRAP,
     STOW,
     CLIMB,
+    TRAP,
     PREPARE_CLIMB,
-    GROUND,
+    GROUND_AUTO,
+    GROUND_TELEOP,
     SOURCE,
+    SUBWOOFER,
     FEEDER,
     SHUTTLE,
     STOP
@@ -80,9 +85,14 @@ public class Superstructure extends SubsystemBase {
         m_Arm.setGoal(Arm.Goal.AIM);
         m_Elevator.setGoal(Elevator.Goal.STOW);
       }
+      case PREPARE_TRAP -> {
+        m_Arm.setGoal(Arm.Goal.PREPARE_TRAP);
+        m_Elevator.setGoal(Elevator.Goal.TRAP);
+      }
       case TRAP -> {
         m_Arm.setGoal(Arm.Goal.CLIMB);
         m_Elevator.setGoal(Elevator.Goal.TRAP);
+
       }
       case AMP -> {
         m_Arm.setGoal(Arm.Goal.PREPARE_CLIMB);
@@ -100,9 +110,17 @@ public class Superstructure extends SubsystemBase {
         m_Arm.setGoal(Arm.Goal.PREPARE_CLIMB);
         m_Elevator.setGoal(Elevator.Goal.STOW);
       }
-      case GROUND -> {
-        m_Arm.setGoal(Arm.Goal.AIM);
+      case GROUND_AUTO -> {
+        m_Arm.setGoal(Arm.Goal.STOW);
         m_Elevator.setGoal(Elevator.Goal.GROUND);
+      }
+      case GROUND_TELEOP -> {
+        m_Arm.setGoal(Arm.Goal.STOW);
+        m_Elevator.setGoal(Elevator.Goal.GROUND);
+      }
+      case SUBWOOFER -> {
+        m_Arm.setGoal(Arm.Goal.SUBWOOFER);
+        m_Elevator.setGoal(Elevator.Goal.STOW);
       }
       case SOURCE -> {
         m_Arm.setGoal(Arm.Goal.STOW);
