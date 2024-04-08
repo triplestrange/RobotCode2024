@@ -9,10 +9,10 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IndexerIOReal implements IndexerIO {
-  public CANSparkMax Indexer = new CANSparkMax(Constants.CAN.INDEXER, MotorType.kBrushless);
+  public CANSparkMax indexer = new CANSparkMax(Constants.CAN.INDEXER, MotorType.kBrushless);
 
-  public RelativeEncoder IndexerRelativeEncoder = Indexer.getEncoder();
-  private final DigitalInput IndexerSensor;
+  public RelativeEncoder IndexerRelativeEncoder = indexer.getEncoder();
+  private final DigitalInput indexerSensor;
 
   private double IndexerInput;
 
@@ -20,58 +20,55 @@ public class IndexerIOReal implements IndexerIO {
 
   public IndexerIOReal() {
 
-    Indexer.setIdleMode(IdleMode.kBrake);
-    Indexer.setSmartCurrentLimit(Constants.ELECTRICAL.rollerCurrentLimit);
+    indexer.setIdleMode(IdleMode.kBrake);
+    indexer.setSmartCurrentLimit(Constants.ELECTRICAL.rollerCurrentLimit);
 
-    Indexer.burnFlash();
+    indexer.burnFlash();
 
     IndexerRelativeEncoder.setVelocityConversionFactor(
         IndexerConstants.rollerDiameterMeters * Math.PI / IndexerConstants.rollerGearing / 60);
 
-    double motorCurrent = Indexer.getOutputCurrent();
-    double appliedVolts = Indexer.getAppliedOutput() * Indexer.getBusVoltage();
+    double motorCurrent = indexer.getOutputCurrent();
+    double appliedVolts = indexer.getAppliedOutput() * indexer.getBusVoltage();
 
     double linearVEl = IndexerRelativeEncoder.getVelocity();
 
-    double tempCelcius = Indexer.getMotorTemperature();
+    double tempCelcius = indexer.getMotorTemperature();
 
-    IndexerSensor = new DigitalInput(Constants.ELECTRICAL.indexerDigitalInput);
+    indexerSensor = new DigitalInput(Constants.ELECTRICAL.indexerDigitalInput);
   }
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
-    inputs.motorConnected = !Indexer.getFault(FaultID.kSensorFault);
+    inputs.motorConnected = !indexer.getFault(FaultID.kSensorFault);
 
     inputs.linearVel = IndexerRelativeEncoder.getVelocity();
-    inputs.inputVolts = Indexer.getAppliedOutput() * Indexer.getBusVoltage();
-    inputs.motorCurrent = Indexer.getOutputCurrent();
-    inputs.tempCelcius = Indexer.getMotorTemperature();
+    inputs.inputVolts = indexer.getAppliedOutput() * indexer.getBusVoltage();
+    inputs.motorCurrent = indexer.getOutputCurrent();
+    inputs.tempCelcius = indexer.getMotorTemperature();
     inputs.inputVolts = IndexerInput;
+
+    inputs.sensor = !indexerSensor.get();
 
   }
 
   @Override
   public void runVolts(double IndexerVolts) {
-    Indexer.setVoltage(IndexerVolts);
+    indexer.setVoltage(IndexerVolts);
   }
 
   @Override
   public void runSpeed(double speed) {
-    Indexer.set(speed);
+    indexer.set(speed);
   }
 
   @Override
   public void setIdleMode(IdleMode IndexerIdleMode) {
-    Indexer.setIdleMode(IndexerIdleMode);
-  }
-
-  @Override
-  public boolean getSensor() {
-    return IndexerSensor.get();
+    indexer.setIdleMode(IndexerIdleMode);
   }
 
   @Override
   public void stop() {
-    Indexer.stopMotor();
+    indexer.stopMotor();
   }
 }

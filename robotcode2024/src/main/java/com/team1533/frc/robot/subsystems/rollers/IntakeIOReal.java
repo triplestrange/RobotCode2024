@@ -47,11 +47,7 @@ public class IntakeIOReal implements IntakeIO {
     inputs.motorCurrent = intake.getOutputCurrent();
     inputs.tempCelcius = intake.getMotorTemperature();
     inputs.inputVolts = intakeInput;
-
-    /*
-     * inputs.joinVelDegPerSecond =
-     */
-
+    inputs.intakeSensor = !intakeSensor.get();
   }
 
   @Override
@@ -62,11 +58,6 @@ public class IntakeIOReal implements IntakeIO {
   @Override
   public void setIdleMode(IdleMode intakeIdleMode) {
     intake.setIdleMode(intakeIdleMode);
-  }
-
-  @Override
-  public boolean getSensor() {
-    return !intakeSensor.get();
   }
 
   @Override

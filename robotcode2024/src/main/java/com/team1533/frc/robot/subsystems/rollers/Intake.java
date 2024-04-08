@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean getIntakeSensor() {
-        return io.getSensor();
+        return inputs.intakeSensor;
     }
 
     @Override
