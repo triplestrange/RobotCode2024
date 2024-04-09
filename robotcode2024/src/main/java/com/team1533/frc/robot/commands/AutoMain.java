@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
 import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
@@ -37,15 +38,7 @@ public class AutoMain extends Command {
         }
 
         public Optional<Rotation2d> getRotationTargetOverride() {
-                // Some condition that should decide if we want to override rotation
-                if (m_robotContainer.m_indexer.getIndexerSensor()) {
-                        // Return an optional containing the rotation override (this should be a field
-                        // relative rotation)
-                        return Optional.of(m_robotContainer.m_shoot.rotationToSpeaker());
-                } else {
-                        // return an empty optional when we don't want to override the path's rotation
-                        return Optional.empty();
-                }
+                return Optional.of(m_robotContainer.m_shoot.rotationToSpeaker());
         }
 
         public void registerCommands() {
@@ -100,8 +93,7 @@ public class AutoMain extends Command {
                 // Shooter
                 NamedCommands.registerCommand("shoot",
                                 (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(),
-                                                m_robotContainer.m_indexer,
-                                                m_robotContainer.m_superstructure, m_robotContainer.m_flywheel)
+                                                m_robotContainer.m_indexer)
                                                 .alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive
                                                                 .setHeadingControllerInAuto(
                                                                                 m_robotContainer.m_shoot::rotationToSpeaker))
@@ -111,6 +103,9 @@ public class AutoMain extends Command {
                                                                                                                 0,
                                                                                                                 true))))
                                                 .withTimeout(1.25)));
+
+                NamedCommands.registerCommand("shoot move", new RunCommand(
+                                () -> m_robotContainer.m_shoot.autoShootMove(), m_robotContainer.m_indexer));
 
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_Arm.setGoal(Arm.Goal.SUBWOOFER),
@@ -122,9 +117,12 @@ public class AutoMain extends Command {
                                                 m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.25)));
 
-                NamedCommands.registerCommand("aim off",
-                                new InstantCommand(() -> m_robotContainer.m_robotDrive.disableHeadingController(),
-                                                m_robotContainer.m_robotDrive));
+                NamedCommands.registerCommand("aim off", new InstantCommand(
+                                () -> PPHolonomicDriveController
+                                                .setRotationTargetOverride(null)));
+                NamedCommands.registerCommand("aim on", new InstantCommand(
+                                () -> PPHolonomicDriveController
+                                                .setRotationTargetOverride(() -> getRotationTargetOverride())));
         }
 
         public Command getAutoChooser() {

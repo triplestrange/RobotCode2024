@@ -111,7 +111,7 @@ public class Superstructure extends SubsystemBase {
         m_Elevator.setGoal(Elevator.Goal.STOW);
       }
       case GROUND_AUTO -> {
-        m_Arm.setGoal(Arm.Goal.STOW);
+        m_Arm.setGoal(Arm.Goal.AIM);
         m_Elevator.setGoal(Elevator.Goal.GROUND);
       }
       case GROUND_TELEOP -> {

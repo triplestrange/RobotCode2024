@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.signals.DifferentialControlModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.team1533.frc.robot.Constants;
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
@@ -339,7 +340,8 @@ public class SwerveDrive extends SubsystemBase {
     currentDriveMode = DriveMode.WHEEL_RADIUS_CHARACTERIZATION;
     characterizationInput = omegaSpeed;
   }
-@AutoLogOutput
+
+  @AutoLogOutput
   public double getWheelOffsetExperimental() {
     double offset = getModuleRotations().getDegrees() / Math.abs(getGyroTotalDegrees());
 
@@ -559,10 +561,11 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
-  public void setAutoAlignController(Translation2d desiredTranslation2d)  {
-        m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
+  public void setAutoAlignController(Translation2d desiredTranslation2d) {
+    m_RobotContainer.m_Leds.setMode(LedMode.AUTO_ALIGN);
     autoAlignController.setM_AutoAlignControllerState(AutoAlignControllerState.AUTO_ALIGN_FAST);
-    autoAlignController.setGoal(new Pose2d(desiredTranslation2d, desiredTranslation2d.minus(getPose().getTranslation()).getAngle()));
+    autoAlignController
+        .setGoal(new Pose2d(desiredTranslation2d, desiredTranslation2d.minus(getPose().getTranslation()).getAngle()));
     currentDriveMode = DriveMode.AUTO_ALIGN;
   }
 
@@ -585,7 +588,7 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("y", getPose().getTranslation().getY());
     SmartDashboard.putNumber("r", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GYRO ANGLE", gyroInputs.yawPosition.getDegrees());
-    SmartDashboard.putNumber("wheel offset" ,getWheelOffsetExperimental());
+    SmartDashboard.putNumber("wheel offset", getWheelOffsetExperimental());
 
     SmartDashboard.putNumber("BRsteering", modules[0].getPosition().angle.getDegrees());
     SmartDashboard.putNumber("FRsteering", modules[1].getPosition().angle.getDegrees());

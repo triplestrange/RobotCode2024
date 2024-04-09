@@ -189,7 +189,6 @@ public class Shoot {
     }
 
     public void autoShoot() {
-        m_RobotContainer.m_superstructure.setGoal(Goal.AUTO_AIM);
         if (pivotCheck()
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose())
                 && velocityCheck()) {
@@ -211,6 +210,37 @@ public class Shoot {
         } else if (!flyWheelCheck()) {
             m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
 
+        }
+
+        if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && velocityCheck() && pivotCheck()
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) && flyWheelCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.AUTO_SHOOT);
+        }
+
+    }
+
+    public void autoShootMove() {
+
+        m_RobotContainer.m_indexer.runIn();
+
+        if (!swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.SWERVE_CHECK);
+        } else if (!velocityCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.VELOCITY_CHECK);
+        } else if (!pivotCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.PIVOT_CHECK);
+
+        } else if (!rotationCheck(m_RobotContainer.m_robotDrive.getPose())) {
+            m_RobotContainer.m_Leds.setMode(LedMode.ROTATION_CHECK);
+
+        } else if (!flyWheelCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.FLYWHEEL_CHECK);
+
+        }
+
+        if (swerveCheck(m_RobotContainer.m_robotDrive.getPose()) && velocityCheck() && pivotCheck()
+                && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) && flyWheelCheck()) {
+            m_RobotContainer.m_Leds.setMode(LedMode.AUTO_SHOOT);
         }
 
     }
