@@ -11,13 +11,14 @@ import edu.wpi.first.math.util.Units;
 
 import java.security.PrivilegedAction;
 import java.util.Queue;
+import java.util.function.DoubleSupplier;
 
 /** IO implementation for Pigeon2 */
 public class GyroIOPigeon2 implements GyroIO {
     private final Pigeon2 pigeon;
     private final StatusSignal<Double> yaw;
     private final StatusSignal<Double> yawVelocity;
-    private final double totalDistanceYaw;
+    private final DoubleSupplier totalDistanceYaw;
     private final StatusSignal<Double> pitchPosition;
     private final StatusSignal<Double> rollPosition;
     private final StatusSignal<Double> tempCelcius;
@@ -28,7 +29,7 @@ public class GyroIOPigeon2 implements GyroIO {
 
         yawVelocity = pigeon.getAngularVelocityZWorld();
 
-        totalDistanceYaw = pigeon.getAngle();
+        totalDistanceYaw = () -> pigeon.getAngle();
 
         pitchPosition = pigeon.getPitch();
 
@@ -42,8 +43,6 @@ public class GyroIOPigeon2 implements GyroIO {
         yaw.setUpdateFrequency(100.0);
         tempCelcius.setUpdateFrequency(100.0);
 
-
-
         pigeon.optimizeBusUtilization();
 
     }
@@ -53,7 +52,7 @@ public class GyroIOPigeon2 implements GyroIO {
         inputs.connected = BaseStatusSignal.refreshAll(yaw, yawVelocity).isOK();
         inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
         inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
-        inputs.totalDistanceYawDegrees = totalDistanceYaw;
+        inputs.totalDistanceYawDegrees = totalDistanceYaw.getAsDouble();
         inputs.pitchPosition = Rotation2d.fromDegrees(pitchPosition.getValueAsDouble());
         inputs.rollPosition = Rotation2d.fromDegrees(rollPosition.getValueAsDouble());
         inputs.tempCelcius = tempCelcius.getValueAsDouble();
