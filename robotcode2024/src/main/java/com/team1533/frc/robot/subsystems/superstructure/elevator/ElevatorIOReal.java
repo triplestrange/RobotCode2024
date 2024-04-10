@@ -18,6 +18,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
   public RelativeEncoder elevRelativeEncoder = elev.getEncoder();
   public DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.intakeAbsInput);
+  public RelativeEncoder intakeRelEncoder = intake.getEncoder();
 
   private double winchInput;
   private double intakeInputVolts;
@@ -53,6 +54,9 @@ public class ElevatorIOReal implements ElevatorIO {
     elevRelativeEncoder.setVelocityConversionFactor(
         ElevatorConstants.elevDrumRadiusMeters * ElevatorConstants.elevSimPosConv / 60);
     elevRelativeEncoder.setPosition(0);
+
+    intakeRelEncoder.setPositionConversionFactor(1);
+    intakeRelEncoder.setPosition(0);
   }
 
   @Override
@@ -68,9 +72,15 @@ public class ElevatorIOReal implements ElevatorIO {
     inputs.winchMotorCurrent = elev.getOutputCurrent();
     inputs.winchTempCelcius = elev.getMotorTemperature();
     inputs.winchInputVolts = winchInput;
+    if (!inputs.jointAbsoluteEncoderConnected) {
+      inputs.jointPosDeg = MathUtil
+          .inputModulus(-intakeRelEncoder.getPosition() * 180 - JointConstants.intakeAbsOffset - offset, -160, 20);
+    } else {
+      inputs.jointPosDeg = MathUtil.inputModulus(
+          -intakeEncoder.getAbsolutePosition() * 180 - JointConstants.intakeAbsOffset - offset, -160, 20);
+      intakeRelEncoder.setPosition(inputs.jointPosDeg);
 
-    inputs.jointPosDeg = MathUtil.inputModulus(
-        -intakeEncoder.getAbsolutePosition() * 180 - JointConstants.intakeAbsOffset - offset, -160, 20);
+    }
     inputs.jointAppliedVolts = intake.getAppliedOutput() * intake.getBusVoltage();
     inputs.jointMotorCurrent = intake.getOutputCurrent();
     inputs.jointTempCelcius = intake.getMotorTemperature();

@@ -3,6 +3,7 @@ package com.team1533.frc.robot.subsystems.superstructure.arm;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.team1533.frc.robot.Constants;
 import edu.wpi.first.math.MathUtil;
@@ -13,6 +14,7 @@ public class ArmIOReal implements ArmIO {
   private CANSparkMax rPivot;
 
   private DutyCycleEncoder pivotEncoder;
+  private RelativeEncoder leftEncoder;
 
   private double inputVolts;
   private double inputSpeed;
@@ -30,9 +32,14 @@ public class ArmIOReal implements ArmIO {
 
     pivotEncoder = new DutyCycleEncoder(Constants.ELECTRICAL.pivotAbsInput);
 
+    leftEncoder = lPivot.getEncoder();
+
     pivotEncoder.setPositionOffset(ArmConstants.pivotAbsOffset);
 
     lPivot.setInverted(true);
+
+    leftEncoder.setPositionConversionFactor(1);
+    leftEncoder.setPosition(0);
   }
 
   @Override
@@ -45,9 +52,15 @@ public class ArmIOReal implements ArmIO {
     inputs.leftMotorCurrent = lPivot.getOutputCurrent();
     inputs.leftAppliedVolts = lPivot.getAppliedOutput() * lPivot.getBusVoltage();
 
-    inputs.posDeg = MathUtil.inputModulus(
-        -pivotEncoder.getAbsolutePosition() * 360 - ArmConstants.pivotAbsOffset, 30, -330);
+    if (!inputs.absoluteEncoderConnected) {
+      inputs.posDeg = MathUtil.inputModulus(
+          -leftEncoder.getPosition() * 360 - ArmConstants.pivotAbsOffset, 30, -330);
 
+    } else {
+      inputs.posDeg = MathUtil.inputModulus(
+          -pivotEncoder.getAbsolutePosition() * 360 - ArmConstants.pivotAbsOffset, 30, -330);
+      leftEncoder.setPosition(inputs.posDeg);
+    }
     inputs.leftTempCelcius = lPivot.getMotorTemperature();
 
     inputs.rightMotorConnected = !rPivot.getFault(FaultID.kSensorFault);
