@@ -7,8 +7,10 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.team1533.frc.robot.RobotContainer;
 import com.team1533.frc.robot.commands.indexer.IntakeToIndexer;
+import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelConstants;
 import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.superstructure.Superstructure;
+import com.team1533.frc.robot.subsystems.superstructure.Superstructure.Goal;
 import com.team1533.frc.robot.subsystems.superstructure.arm.Arm;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -101,17 +103,14 @@ public class AutoMain extends Command {
                                                                                 () -> m_robotContainer.m_robotDrive
                                                                                                 .acceptTeleopInput(0, 0,
                                                                                                                 0,
-                                                                                                                true))))
-                                                .withTimeout(1.25)));
+                                                                                                                true)))
+                ).withTimeout(1.25)));
 
                 NamedCommands.registerCommand("shoot move", new RunCommand(
                                 () -> m_robotContainer.m_shoot.autoShootMove(), m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("shoot fixed", new InstantCommand(
-                                () -> m_robotContainer.m_Arm.setGoal(Arm.Goal.SUBWOOFER),
-                                m_robotContainer.m_superstructure)
-                                .alongWith(new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-5676),
-                                                m_robotContainer.m_flywheel))
+                NamedCommands.registerCommand("shoot fixed", new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-FlyWheelConstants.flyWheelmaxRPM),
+                                                m_robotContainer.m_flywheel)
                                 .andThen(new WaitCommand(0.25)).andThen(new InstantCommand(
                                                 () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))

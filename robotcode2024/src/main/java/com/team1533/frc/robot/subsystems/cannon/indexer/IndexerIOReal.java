@@ -54,9 +54,8 @@ public class IndexerIOReal implements IndexerIO {
     inputs.inputVolts = IndexerInput;
 
     // check if the debouncer inputs needs to be inversed
-    if (debouncer.calculate(indexerSensor.get())) {
-      inputs.sensor = !indexerSensor.get();
-    }
+      inputs.sensor = debouncer.calculate(indexerSensor.get());
+    
 
   }
 

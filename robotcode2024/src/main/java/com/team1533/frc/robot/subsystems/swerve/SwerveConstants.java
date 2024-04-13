@@ -40,7 +40,7 @@ public class SwerveConstants {
         public static final double kSnapSwerveHeadingKi = 0.17;
         public static final double kSnapSwerveHeadingKd = 0.005;
 
-        public static final double kMaintainSwerveHeadingKpHighVelocity = 0.05;
+        public static final double kMaintainSwerveHeadingKpHighVelocity = 0.1;
         public static final double kMaintainSwerveHeadingKiHighVelocity = 0.1;
         public static final double kMaintainSwerveHeadingKdHighVelocity = 0.0025;
 

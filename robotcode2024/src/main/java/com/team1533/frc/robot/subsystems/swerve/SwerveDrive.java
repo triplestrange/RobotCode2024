@@ -248,8 +248,8 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         if (currentDriveMode == DriveMode.SHOOTING) {
-          desiredMovement.vxMetersPerSecond = MathUtil.clamp(desiredMovement.vxMetersPerSecond, -1, 1);
-          desiredMovement.vxMetersPerSecond = MathUtil.clamp(desiredMovement.vyMetersPerSecond, -1, 1);
+          desiredMovement.vxMetersPerSecond = MathUtil.clamp(desiredMovement.vxMetersPerSecond, -1.5, 1.5);
+          desiredMovement.vyMetersPerSecond = MathUtil.clamp(desiredMovement.vyMetersPerSecond, -1.5, 1.5);
         }
         break;
 

@@ -153,14 +153,11 @@ public class Vision extends SubsystemBase {
         rotation = robotPose2d.getRotation();
 
         if (cam.getName().equals("camShooter")) {
-            cameraOffset = new Pose3d(new Translation3d(0, 0, 0.66),
-                    new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-30), Math.PI));
+            cameraOffset = VisionConstants.shooterCamOffset;
         }
 
         else if (cam.getName().equals("camIntake")) {
-            cameraOffset = new Pose3d(new Translation3d(.152, 0, getIntakeVisionOffset()),
-                    new Rotation3d(Math.PI, -Units.degreesToRadians(40), 0));
-
+            cameraOffset = VisionConstants.intakeCamOffset;
         } else {
             cameraOffset = new Pose3d();
         }
@@ -230,13 +227,11 @@ public class Vision extends SubsystemBase {
         rotation = robotPose2d.getRotation();
 
         if (cam.getName().equals("camShooter")) {
-            cameraOffset = new Pose3d(new Translation3d(0, 0, 0.66),
-                    new Rotation3d(0, Units.degreesToRadians(30), Math.PI));
+            cameraOffset = VisionConstants.shooterCamOffset;
         }
 
         else if (cam.getName().equals("camIntake")) {
-            cameraOffset = new Pose3d(new Translation3d(Units.inchesToMeters(5), 0, getIntakeVisionOffset()),
-                    new Rotation3d(Math.PI / 2.0, -Units.degreesToRadians(2), 0));
+            cameraOffset = VisionConstants.intakeCamOffset;
 
         } else {
             cameraOffset = new Pose3d();

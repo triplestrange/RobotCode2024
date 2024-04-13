@@ -19,7 +19,7 @@ public class FlyWheelConstants {
 
     public final static double flyWheelkMaxOutput = 1;
     public final static double flyWheelkMinOutput = -1;
-    public final static double flyWheelmaxRPM = 4700.0;
+    public final static double flyWheelmaxRPM = 7763.0/2.0;
     public final static double flyWheelallowedErr = 0;
     public final static double flyWheelmaxVel = 5767;
     public final static double flyWheelminVel = -5767;

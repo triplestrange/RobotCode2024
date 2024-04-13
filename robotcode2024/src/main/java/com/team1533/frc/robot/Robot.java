@@ -70,7 +70,7 @@ public class Robot extends LoggedRobot {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
         try { 
-          Logger.addDataReceiver(new WPILOGWriter());
+          // Logger.addDataReceiver(new WPILOGWriter());
         }
 
         catch(Exception e) {

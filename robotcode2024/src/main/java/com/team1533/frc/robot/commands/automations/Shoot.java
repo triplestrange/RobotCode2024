@@ -13,6 +13,7 @@ import com.team1533.frc.robot.subsystems.cannon.flywheel.FlyWheelConstants;
 import com.team1533.frc.robot.subsystems.leds.Leds.LedMode;
 import com.team1533.frc.robot.subsystems.superstructure.Superstructure.Goal;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -72,8 +73,11 @@ public class Shoot {
     // double speedR;
     // double rot;
 
-    double compensationHorizontal = 0.1;
-    double compensationVertical = 0.1;
+    private Debouncer debouncer = new Debouncer(0.1);
+    private boolean pivotCheck = false;
+
+    double compensationHorizontal = 0.0125;
+    double compensationVertical = 0.35;
 
     public Shoot(RobotContainer m_RobotContainer) {
         // Use addRequirements() here to declare subsystem dependencies.
@@ -81,17 +85,18 @@ public class Shoot {
         this.m_RobotContainer = m_RobotContainer;
         shootingRotation = new Rotation2d();
 
+        shootingData.put(0.0, 0.0);
         shootingData.put(1.0, 0.0);
         shootingData.put(1.5, -3.2);
         shootingData.put(2.0, -9.5);
         shootingData.put(2.5, -16.5);
-        shootingData.put(3.12, -23.5);
+        shootingData.put(3.0, -23.5);
 
-        shootingData.put(3.5, -27.85);
         shootingData.put(4.0, -30.6);
-        shootingData.put(4.9, -32.5);
-        shootingData.put(5.6, -35.0);
-        shootingData.put(6.7, -33.0);
+        shootingData.put(5.0, -31.5);
+        shootingData.put(6.0, -33.5);
+        shootingData.put(7.0, -36.0);
+        shootingData.put(8.0, -37.5);
 
         // shuttlingData.put(null, null);
         // shuttlingData.put(null, null);
@@ -342,7 +347,7 @@ public class Shoot {
             robotPose2dInches = new Translation2d(Units.metersToInches(robotPose2d.getX()),
                     Units.metersToInches(robotPose2d.getY()));
         }
-        if (robotPose2dInches.getX() > 263) {
+        if (robotPose2dInches.getX() > 0) {
             canShoot = false;
         } else if (robotPose2dInches.getX() >= 230.763) {
             lowerY = 107.484;
@@ -368,7 +373,7 @@ public class Shoot {
 
         if (canShoot) {
         }
-        return canShoot;
+        return true;
     }
 
     public Boolean velocityCheck() {
@@ -379,23 +384,32 @@ public class Shoot {
     }
 
     public Boolean pivotCheck() {
-        boolean pivotCheck = Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < .5;
-        if (pivotCheck) {
-
+        if (Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond, m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond) > 1) {
+            pivotCheck = Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < 2;
+        }   else {
+        
+        pivotCheck = Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < .5;
         }
-        return pivotCheck;
+        return debouncer.calculate(pivotCheck);
     }
 
     public Boolean rotationCheck(Pose2d robotPose2d) {
-        boolean rotationCheck = robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 3;
-        if (rotationCheck) {
+         boolean rotationCheck;
+                if (Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond, m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond) > 1) {
 
-        }
-        return rotationCheck;
+      rotationCheck  = robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 3;
+               
+    } else {
+
+        rotationCheck = robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 1;
+
     }
+        return rotationCheck;
+
+}
 
     public Boolean flyWheelCheck() {
-        boolean flyWheelCheck = Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 300;
+        boolean flyWheelCheck = Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 100;
         if (flyWheelCheck) {
 
         }

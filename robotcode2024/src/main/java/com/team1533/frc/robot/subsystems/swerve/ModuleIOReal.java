@@ -106,7 +106,7 @@ public class ModuleIOReal implements ModuleIO {
         driveMotor.getConfigurator().apply(new CurrentLimitsConfigs()
                 .withSupplyCurrentLimit(Constants.ELECTRICAL.swerveDrivingCurrentLimit)
                 .withSupplyCurrentLimitEnable(true)
-                .withStatorCurrentLimit(40)
+                .withStatorCurrentLimit(60)
                 .withStatorCurrentLimitEnable(true));
         driveMotor.getConfigurator()
                 .apply(new TorqueCurrentConfigs().withPeakForwardTorqueCurrent(40.0)

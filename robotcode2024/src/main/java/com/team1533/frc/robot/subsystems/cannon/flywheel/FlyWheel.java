@@ -73,6 +73,11 @@ public class FlyWheel extends SubsystemBase {
         io.setRightSpeed(900);
     }
 
+    public void cleaningMode()  {
+        io.setLeftSpeed(100);
+        io.setRightSpeed(-100);
+    }
+
     public void flyWheelOff() {
         io.setLeftSpeed(0);
         io.setRightSpeed(0);

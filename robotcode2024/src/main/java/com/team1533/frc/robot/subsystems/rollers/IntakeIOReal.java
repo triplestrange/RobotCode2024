@@ -54,9 +54,9 @@ public class IntakeIOReal implements IntakeIO {
     inputs.inputVolts = intakeInput;
 
     // check if the debouncer inputs needs to be inversed
-    if (debouncer.calculate(intakeSensor.get())) {
-      inputs.sensor = !intakeSensor.get();
-    }
+    
+      inputs.sensor = !debouncer.calculate(intakeSensor.get());
+    
 
   }
 

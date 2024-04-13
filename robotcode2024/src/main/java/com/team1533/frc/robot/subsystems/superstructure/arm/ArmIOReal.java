@@ -52,15 +52,15 @@ public class ArmIOReal implements ArmIO {
     inputs.leftMotorCurrent = lPivot.getOutputCurrent();
     inputs.leftAppliedVolts = lPivot.getAppliedOutput() * lPivot.getBusVoltage();
 
-    if (!inputs.absoluteEncoderConnected) {
-      inputs.posDeg = MathUtil.inputModulus(
-          -leftEncoder.getPosition() * 360 - ArmConstants.pivotAbsOffset, 30, -330);
+    // if (!inputs.absoluteEncoderConnected) {
+    //   inputs.posDeg = MathUtil.inputModulus(
+    //       -leftEncoder.getPosition() * 360 - ArmConstants.pivotAbsOffset, 30, -330);
 
-    } else {
+    // } else {
       inputs.posDeg = MathUtil.inputModulus(
           -pivotEncoder.getAbsolutePosition() * 360 - ArmConstants.pivotAbsOffset, 30, -330);
       leftEncoder.setPosition(inputs.posDeg);
-    }
+    // }
     inputs.leftTempCelcius = lPivot.getMotorTemperature();
 
     inputs.rightMotorConnected = !rPivot.getFault(FaultID.kSensorFault);
