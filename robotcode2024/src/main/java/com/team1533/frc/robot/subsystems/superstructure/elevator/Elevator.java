@@ -64,10 +64,9 @@ public class Elevator {
     @RequiredArgsConstructor
     public enum Goal {
         STOP(new IntakePosition(0, 0)),
-        AMP(new IntakePosition(34.649467, -136)),
+        AMP(new IntakePosition(5.5, -12.3)),
         STOW(new IntakePosition(0, 0)),
         GROUND(new IntakePosition(0, -132)),
-        TRAP(new IntakePosition(33, -136)),
         FEEDER(new IntakePosition(10, -60)),
         UNTRAP(new IntakePosition(0, 0)),
         MANUAL(new IntakePosition(0, 0));

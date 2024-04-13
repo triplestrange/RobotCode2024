@@ -231,11 +231,11 @@ public class Vision extends SubsystemBase {
 
         if (cam.getName().equals("camShooter")) {
             cameraOffset = new Pose3d(new Translation3d(0, 0, 0.66),
-                    new Rotation3d(Units.degreesToRadians(-2.7), 0, Math.PI));
+                    new Rotation3d(0, Units.degreesToRadians(-30), Math.PI));
         }
 
         else if (cam.getName().equals("camIntake")) {
-            cameraOffset = new Pose3d(new Translation3d(Units.inchesToMeters(5.75), 0, getIntakeVisionOffset()),
+            cameraOffset = new Pose3d(new Translation3d(Units.inchesToMeters(5), 0, getIntakeVisionOffset()),
                     new Rotation3d(Math.PI / 2.0, -Units.degreesToRadians(2), 0));
 
         } else {

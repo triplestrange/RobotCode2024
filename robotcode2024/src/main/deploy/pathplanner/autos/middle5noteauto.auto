@@ -10,74 +10,7 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "ground"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot fixed"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "mid5note.1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "indexerOff"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "mid5note.2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "indexerOff"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "mid5note.3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "indexerOff"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        }
-      ]
+      "commands": []
     }
   },
   "folder": "Choreo",

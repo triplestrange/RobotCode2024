@@ -6,7 +6,7 @@ public class JointConstants {
 
     public final static double intakeAbsOffset = -78.33 + 10.7 - 22;
 
-    public final static double kP = 0.045 * .5;
+    public final static double kP = 0.035 * .5;
     public final static double kI = 0;
     public final static double kD = 0;
 

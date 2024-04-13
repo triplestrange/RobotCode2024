@@ -7,11 +7,11 @@ public class ElevatorConstants {
     public final static double kMaxSpeedInchesPerSecond = 24.5;
     public final static double kMaxAccelerationInchesPerSecondSquared = 100;
 
-    public final static double maxHeightInches = 33;
+    public final static double maxHeightInches = 10.75;
     public final static double minHeightInches = 0;
     public final static double safeZoneInches = 0;
 
-    public final static double elevPosConv = 33 / 101.5;
+    public final static double elevPosConv = maxHeightInches  / 47.358;
     public final static double elevSimPosConv = 15;
     public final static double elevCarraigeKG = Units.lbsToKilograms(13.667);
     public final static double elevDrumRadiusMeters = Units.inchesToMeters(1.25);
