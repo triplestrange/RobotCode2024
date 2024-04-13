@@ -97,14 +97,20 @@ public class Vision extends SubsystemBase {
             boolean rotatingTooFast = Math
                     .abs(m_RobotContainer.m_robotDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
+            boolean movingTooFast = Math.abs(Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond, m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond)) >= 2.121;
             if (rotatingTooFast) {
                 continue;
             }
 
-            if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
-                filteredResults.add(
-                        getRobotToField(target, cam, m_RobotContainer.m_robotDrive.getPose()));
+            if (movingTooFast)  {
+                continue;
             }
+            
+
+            // if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
+            //     filteredResults.add(
+            //             getRobotToField(target, cam, m_RobotContainer.m_robotDrive.getPose()));
+            // }
         }
 
         for (i = 0; i < filteredResults.size(); i++) {

@@ -211,19 +211,19 @@ public class RobotContainer {
 
                 JoystickButtons.dDpadL.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 90 : -90)))
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? -90 : 90)))
                                 .withName("Rotate Left"));
                 JoystickButtons.dDpadU.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 0 : 180)))
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 180 : 0)))
                                 .withName("Rotate Up"));
                 JoystickButtons.dDpadR.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? -90 : 90)))
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 90 : -90)))
                                 .withName("Rotate Right"));
                 JoystickButtons.dDpadD.onTrue(new InstantCommand(
                                 () -> m_robotDrive.setHeadingController(
-                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 180 : 0)))
+                                                Rotation2d.fromDegrees(m_robotDrive.isAllianceRed() ? 0 : 180)))
                                 .withName("Rotate Down"));
 
                 // superstructure commands

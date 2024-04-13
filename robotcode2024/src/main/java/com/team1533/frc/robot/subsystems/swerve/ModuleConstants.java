@@ -37,11 +37,11 @@ public class ModuleConstants {
         public final static double dffkV = 12 / SwerveConstants.kMaxSpeedMetersPerSecond;
 
         public final static ModuleConfig FL = new ModuleConfig(Constants.CAN.FL_DRIVE, Constants.CAN.FL_STEER, 1,
-                        false, 56 - 4);
+                        false, 54- 2.6); // 52
         public final static ModuleConfig FR = new ModuleConfig(Constants.CAN.FR_DRIVE, Constants.CAN.FR_STEER, 0,
-                        false, 13 - 4);
+                        false, 13.4- 2.6); // 9
         public final static ModuleConfig BL = new ModuleConfig(Constants.CAN.BL_DRIVE, Constants.CAN.BL_STEER, 3,
-                        false, Units.radiansToDegrees(2.642752) - 4);
+                        false, 150.2- 2.6); // 147.4
         public final static ModuleConfig BR = new ModuleConfig(Constants.CAN.BR_DRIVE, Constants.CAN.BR_STEER, 2,
-                        false, 326 - 4);
+                        false, 323.2 - 2.6); // 322
 }

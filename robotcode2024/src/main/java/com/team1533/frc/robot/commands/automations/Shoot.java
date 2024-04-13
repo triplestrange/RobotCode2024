@@ -401,7 +401,7 @@ public class Shoot {
                
     } else {
 
-        rotationCheck = robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 1;
+        rotationCheck = robotPose2d.getRotation().minus(shootingRotation).getDegrees() < 2;
 
     }
         return rotationCheck;
