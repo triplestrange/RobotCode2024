@@ -104,7 +104,20 @@ public class AutoMain extends Command {
                                                                                                 .acceptTeleopInput(0, 0,
                                                                                                                 0,
                                                                                                                 true)))
-                ).withTimeout(1.25)));
+                ).withTimeout(1.75)));
+
+                NamedCommands.registerCommand("shoot preload",
+                                (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(),
+                                                m_robotContainer.m_indexer)
+                                                .alongWith(new InstantCommand(() -> m_robotContainer.m_robotDrive
+                                                                .setHeadingControllerInAuto(
+                                                                                m_robotContainer.m_shoot::rotationToSpeaker))
+                                                                .alongWith(new InstantCommand(
+                                                                                () -> m_robotContainer.m_robotDrive
+                                                                                                .acceptTeleopInput(0, 0,
+                                                                                                                0,
+                                                                                                                true)))
+                ).withTimeout(1.5)));
 
                 NamedCommands.registerCommand("shoot move", new RunCommand(
                                 () -> m_robotContainer.m_shoot.autoShootMove(), m_robotContainer.m_indexer));
@@ -115,6 +128,9 @@ public class AutoMain extends Command {
                                                 () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.25)));
+
+                NamedCommands.registerCommand("flywheel on", new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-FlyWheelConstants.flyWheelmaxRPM),
+                                                m_robotContainer.m_flywheel));
 
                 NamedCommands.registerCommand("aim off", new InstantCommand(
                                 () -> PPHolonomicDriveController

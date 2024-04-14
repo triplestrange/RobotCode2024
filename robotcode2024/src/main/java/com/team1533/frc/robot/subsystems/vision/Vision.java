@@ -107,10 +107,10 @@ public class Vision extends SubsystemBase {
             }
             
 
-            // if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
-            //     filteredResults.add(
-            //             getRobotToField(target, cam, m_RobotContainer.m_robotDrive.getPose()));
-            // }
+            if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
+                filteredResults.add(
+                        getRobotToField(target, cam, m_RobotContainer.m_robotDrive.getPose()));
+            }
         }
 
         for (i = 0; i < filteredResults.size(); i++) {

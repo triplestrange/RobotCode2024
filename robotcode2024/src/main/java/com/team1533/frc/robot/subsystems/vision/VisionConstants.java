@@ -12,7 +12,7 @@ import edu.wpi.first.math.util.Units;
 public class VisionConstants {
 
     public static final Vector<N3> STATE_STD_DEVS = VecBuilder.fill(0.1, 0.1, 1);
-    public static final Vector<N3> VISION_MEASUREMENT_STD_DEVS = VecBuilder.fill(2, 2, 1000000000);
+    public static final Vector<N3> VISION_MEASUREMENT_STD_DEVS = VecBuilder.fill(1.5, 1.5, 1000000000);
 
 
     public static final Pose3d  shooterCamOffset = new Pose3d(new Translation3d(0, 0, 0.66),

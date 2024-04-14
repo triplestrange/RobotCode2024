@@ -2,19 +2,91 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3242789506912231,
-      "y": 5.588408470153809
+      "x": 1.472619652748108,
+      "y": 7.351883411407471
     },
-    "rotation": -6.539590302408762e-20
+    "rotation": 9.708048449509064e-26
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "flywheel on"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ground"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot preload"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "mid4note.1"
+            "pathName": "ampmid4note.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ampmid4note.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ampmid4note.3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
           }
         }
       ]

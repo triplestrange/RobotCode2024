@@ -69,7 +69,7 @@ public class Arm {
         PREPARE_TRAP(() -> -10),
         CLIMB(() -> 0),
         UNTRAP(() -> 0),
-        SHUTTLE(() -> 0),
+        SHUTTLE(() -> -12.5),
         CUSTOM(() -> -20);
 
         private final DoubleSupplier armSetpointSupplier;

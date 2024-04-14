@@ -60,6 +60,11 @@ public class FlyWheel extends SubsystemBase {
         io.runSpeed(RPM);
     }
 
+    public void setFWSpeed(double RPM, double rotationalSpeed)  {
+        io.setLeftSpeed(RPM);
+        io.setRightSpeed(Math.abs(RPM) - rotationalSpeed);
+    }
+
     public void setLeftSpeed(double RPM) {
         io.setLeftSpeed(RPM);
     }

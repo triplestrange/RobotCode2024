@@ -321,20 +321,20 @@ public class RobotContainer {
                                                 .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
                                                 .withName("Teleop Shoot Off"));
 
-                // JoystickButtons.dA.whileTrue(
-                //                 (new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
-                //                                 .alongWith(new InstantCommand(() -> m_robotDrive
-                //                                                 .setHeadingController(
-                //                                                                 m_shoot::rotationToShuttle)),
-                //                                                 new InstantCommand(
-                //                                                                 () -> m_superstructure
-                //                                                                                 .setGoal(Goal.SHUTTLE),
-                //                                                                 m_superstructure)))
-                //                                 .withName("Teleop Shuttle"))
-                //                 .onFalse((new InstantCommand(
-                //                                 () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
-                //                                 .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
-                //                                 .withName("Teleop Shuttle Off"));
+                JoystickButtons.dA.whileTrue(
+                                (new RunCommand(() -> m_shoot.teleopShuttle(), m_indexer, m_flywheel)
+                                                .alongWith(new InstantCommand(() -> m_robotDrive
+                                                                .setHeadingController(
+                                                                                m_shoot::rotationToShuttle)),
+                                                                new InstantCommand(
+                                                                                () -> m_superstructure
+                                                                                                .setGoal(Goal.SHUTTLE),
+                                                                                m_superstructure)))
+                                                .withName("Teleop Shuttle"))
+                                .onFalse((new InstantCommand(
+                                                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP))
+                                                .alongWith(new InstantCommand(() -> m_Leds.setMode(LedMode.DEFAULT))))
+                                                .withName("Teleop Shuttle Off"));
 
                 // Amp Automations
 

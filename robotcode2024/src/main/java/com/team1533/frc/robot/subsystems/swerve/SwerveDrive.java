@@ -200,6 +200,9 @@ public class SwerveDrive extends SubsystemBase {
   public Boolean isMovingXY() {
     return (currentMovement.vxMetersPerSecond < 2) && (currentMovement.vyMetersPerSecond < 2);
   }
+  public Boolean isMovingXYAuto() {
+    return (currentMovement.vxMetersPerSecond < 0.1) && (currentMovement.vyMetersPerSecond < 0.1);
+  }
 
   public void acceptTeleopInput(double x, double y, double omega, boolean robotRelative) {
     controllerX = x;
