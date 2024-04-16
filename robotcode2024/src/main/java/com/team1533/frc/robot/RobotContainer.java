@@ -354,7 +354,7 @@ public class RobotContainer {
                 if (m_vision.getBestObject(m_robotDrive.getPose()) != null)     {
                 JoystickButtons.dY.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
                                 m_superstructure, m_intake,
-                                m_Leds, m_vision.getBestObject(m_robotDrive.getPose()).getTranslation())
+                                m_Leds, () -> m_vision.getBestObject(m_robotDrive.getPose()).getTranslation())
                                 .withName("Pick Up Note")).onFalse(
                                                 (new InstantCommand(
                                                                 () -> m_Leds.setMode(LedMode.DEFAULT)))

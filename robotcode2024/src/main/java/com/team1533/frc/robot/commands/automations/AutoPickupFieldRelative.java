@@ -1,5 +1,7 @@
 package com.team1533.frc.robot.commands.automations;
 
+import java.util.function.Supplier;
+
 import com.team1533.frc.robot.commands.indexer.GroundToIntake;
 import com.team1533.frc.robot.subsystems.leds.Leds;
 import com.team1533.frc.robot.subsystems.rollers.Intake;
@@ -23,14 +25,14 @@ public class AutoPickupFieldRelative extends SequentialCommandGroup {
 
         public AutoPickupFieldRelative(SwerveDrive m_swerve, Superstructure m_Superstructure, Intake m_intake,
                         Leds m_Leds,
-                        Translation2d notePoseFieldRelative) {
+                        Supplier<Translation2d> notePoseFieldRelative) {
                 addRequirements(m_intake, m_swerve, m_Superstructure);
 
                 this.m_swerve = m_swerve;
                 this.m_Superstructure = m_Superstructure;
                 this.m_intake = m_intake;
                 this.m_Leds = m_Leds;
-                this.note2d = notePoseFieldRelative;
+                this.note2d = notePoseFieldRelative.get();
 
                 addCommands(
                                 new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.GROUND_TELEOP),
@@ -38,7 +40,7 @@ public class AutoPickupFieldRelative extends SequentialCommandGroup {
                                 new GroundToIntake(m_intake,
                                                 m_Leds),
                                 new InstantCommand(() -> m_swerve
-                                                .setAutoAlignController(new Pose2d(notePoseFieldRelative,
+                                                .setAutoAlignController(new Pose2d(notePoseFieldRelative.get(),
                                                                 Rotation2d.fromDegrees(0)))),
                                 new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.STOW))
 
