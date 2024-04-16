@@ -246,7 +246,7 @@ public class Shoot {
         }
 
     }
-
+ @AutoLogOutput
     public Rotation2d rotationToSpeaker() {
         if (isAllianceRed()) {
             shootingRotation = new Translation2d(flipTranslation3d(speakerTranslation3d).getX(),
@@ -275,7 +275,7 @@ public class Shoot {
         return shootingRotation;
 
     }
-
+ @AutoLogOutput
     public Rotation2d rotationToShuttle() {
         if (isAllianceRed()) {
             shootingRotation = flipTranslation2d(shuttlingTranslation2d)
@@ -303,7 +303,7 @@ public class Shoot {
         return shootingRotation;
 
     }
-
+ @AutoLogOutput
     public double degToSpeaker() {
         if (isAllianceRed()) {
             shootingAngle = shootingData.get(m_RobotContainer.m_robotDrive.getPose().getTranslation()
@@ -322,7 +322,7 @@ public class Shoot {
         }
         return shootingAngle;
     }
-
+ 
     public Optional<Rotation2d> getRotationTargetOverride() {
         // Some condition that should decide if we want to override rotation
         if (m_RobotContainer.m_indexer.getIndexerSensor()) {
@@ -334,7 +334,7 @@ public class Shoot {
             return Optional.empty();
         }
     }
-
+//  @AutoLogOutput
     public Boolean shuttleCheck(Pose2d robotPose2d) {
           if (isAllianceRed()) {
             robotPose2dInches = new Translation2d(Units.metersToInches(flipPose(robotPose2d).getX()),
@@ -349,6 +349,7 @@ public class Shoot {
     }
     return false;
     }
+    //  @AutoLogOutput
     public Boolean swerveCheck(Pose2d robotPose2d) {
 
         if (isAllianceRed()) {
@@ -386,21 +387,21 @@ public class Shoot {
         }
         return true;
     }
-
+ @AutoLogOutput
     public Boolean velocityCheckTeleop() {
         boolean isSlowEnough = m_RobotContainer.m_robotDrive.isMovingXY();
         if (isSlowEnough) {
         }
         return isSlowEnough;
     }
-
+ @AutoLogOutput
     public Boolean velocityCheckAuto()  {
          boolean isSlowEnough = m_RobotContainer.m_robotDrive.isMovingXYAuto();
         if (isSlowEnough) {
         }
         return isSlowEnough;
     }
-
+ @AutoLogOutput
     public Boolean pivotShootCheck() {
         if (Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond, m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond) > 1) {
             pivotCheck = Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.shootingAngle) < 2;
@@ -410,11 +411,11 @@ public class Shoot {
         }
         return pDebouncer.calculate(pivotCheck);
     }
-
+ @AutoLogOutput
     public Boolean pivotShuttleCheck()  {
         return Math.abs(m_RobotContainer.m_Arm.getAngle() + 12.5) < 0.5;
     }
-
+//  @AutoLogOutput
     public Boolean rotationCheck(Pose2d robotPose2d) {
                 if (Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond, m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond) > 1) {
 
@@ -428,7 +429,7 @@ public class Shoot {
         return rDebouncer.calculate(rotationCheck);
 
 }
-
+ @AutoLogOutput
     public Boolean flyWheelCheck() {
         boolean flyWheelCheck = Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 100;
         if (flyWheelCheck) {
@@ -436,21 +437,21 @@ public class Shoot {
         }
         return flyWheelCheck;
     }
-
+//  @AutoLogOutput
     public Pose2d flipPose(Pose2d pose) {
         return new Pose2d(16.54 - pose.getX(), pose.getY(),
                 pose.getRotation().rotateBy(new Rotation2d().fromRadians(Math.PI / 2)));
     }
-
+//  @AutoLogOutput
     public Translation2d flipTranslation2d(Translation2d translation) {
         return new Translation2d(16.54 - translation.getX(), translation.getY());
     }
-
+//  @AutoLogOutput
     public Translation3d flipTranslation3d(Translation3d translation) {
         return new Translation3d(16.54 - translation.getX(), translation.getY(), translation.getZ());
 
     }
-
+ @AutoLogOutput
     public boolean isAllianceRed() {
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
@@ -458,7 +459,7 @@ public class Shoot {
         }
         return false;
     }
-
+//  @AutoLogOutput
     public double getRelativeVerticalSpeedMetersPerSecond(ChassisSpeeds robotSpeeds, Pose2d robotPose) {
         Rotation2d robotRot = getSpeakerForCurrentAlliance().toTranslation2d().minus(robotPose.getTranslation())
                 .getAngle();
