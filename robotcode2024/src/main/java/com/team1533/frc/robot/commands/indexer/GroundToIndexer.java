@@ -36,6 +36,10 @@ public class GroundToIndexer extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        if (!m_Intake.getIntakeSensor()) {
+            m_Leds.setMode(LedMode.HAS_NOTE);
+
+        }
     }
 
     // Called once the command ends or is interrupted.
@@ -43,7 +47,6 @@ public class GroundToIndexer extends Command {
     public void end(boolean interrupted) {
         m_indexer.indexerOff();
         m_Intake.intakeOff();
-        m_Leds.setMode(LedMode.HAS_NOTE);
     }
 
     // Returns true when the command should end.
