@@ -26,7 +26,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "amp3note.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp3note.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
           }
         }
       ]
