@@ -26,6 +26,8 @@ public class Arm {
 
     @AutoLogOutput
     public static double shootingAngle = 0;
+    @AutoLogOutput
+    public static double shootingAngleNoComp = 0;
 
     @AutoLogOutput
     private boolean shooterPIDEnabled;
@@ -61,6 +63,7 @@ public class Arm {
     public enum Goal {
         STOP(() -> 0),
         AIM(() -> shootingAngle),
+        AIM_NO_COMP(() -> shootingAngleNoComp),
         STOW(() -> 0),
         MANUAL(() -> 0),
         SUBWOOFER(() -> -5),
@@ -74,7 +77,7 @@ public class Arm {
 
         private final DoubleSupplier armSetpointSupplier;
 
-        private double getDeg() {
+        public double getDeg() {
             return armSetpointSupplier.getAsDouble();
         }
     }
@@ -152,6 +155,10 @@ public class Arm {
         shootingAngle = m_shoot.degToSpeaker();
     }
 
+    public void updateShootAngleDegNoComp() {
+        shootingAngleNoComp = m_shoot.degToSpeakerNoComp();
+    }
+
     public void enableAutoShooting(boolean enable) {
         pivotSetpoint = shootingAngle;
         shooterPIDEnabled = enable;
@@ -167,6 +174,7 @@ public class Arm {
         Logger.processInputs("Arm", inputs);
 
         updateShootAngleDeg();
+        updateShootAngleDegNoComp();
 
         if (goal != Goal.MANUAL) {
             pivotSetpoint = goal.getDeg();

@@ -12,6 +12,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,8 +44,9 @@ public class Vision extends SubsystemBase {
     // Front and Back are close to swerve encoders
 
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-
+    @Getter
     private PhotonCamera camShooter;
+    @Getter
     private PhotonCamera camIntake;
 
     public EstimatedPoseInfo poseShooter;
@@ -97,15 +99,16 @@ public class Vision extends SubsystemBase {
             boolean rotatingTooFast = Math
                     .abs(m_RobotContainer.m_robotDrive.currentMovement.omegaRadiansPerSecond) >= Math.PI;
 
-            boolean movingTooFast = Math.abs(Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond, m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond)) >= 2.121;
+            boolean movingTooFast = Math
+                    .abs(Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond,
+                            m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond)) >= 2.121;
             if (rotatingTooFast) {
                 continue;
             }
 
-            if (movingTooFast)  {
+            if (movingTooFast) {
                 continue;
             }
-            
 
             if (cam.getCameraMatrix().isPresent() && cam.getDistCoeffs().isPresent()) {
                 filteredResults.add(
@@ -122,7 +125,7 @@ public class Vision extends SubsystemBase {
         averageEstimatedPose2d = new Pose2d(totalEstimatedTranslation2d.div(i),
                 m_RobotContainer.m_robotDrive.getPose().getRotation());
 
-        return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size());
+        return new EstimatedPoseInfo(averageEstimatedPose2d, result.getTimestampSeconds(), filteredResults.size(), cam);
     }
 
     @AutoLogOutput
@@ -132,6 +135,10 @@ public class Vision extends SubsystemBase {
         PhotonTrackedTarget target = cam.getLatestResult().getBestTarget();
 
         if (target == null) {
+            return null;
+        }
+
+        if (m_RobotContainer.m_robotDrive.getPose() == null) {
             return null;
         }
 
@@ -345,13 +352,19 @@ public class Vision extends SubsystemBase {
                     poseShooter.getTimestampSeconds());
             m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
         }
-        // if (poseIntake.getNumOfTags() != 0) {
-        // m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntakeActual,
-        // poseIntake.getTimestampSeconds());
-        // m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
-        // }
+
+        // double check pipeline index
+        if (poseIntake.getNumOfTags() != 0 && poseIntake.getCamera().getPipelineIndex() == 0) {
+            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntakeActual,
+                    poseIntake.getTimestampSeconds());
+            m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
+        }
         m_field.setRobotPose(m_RobotContainer.m_robotDrive.getPose());
 
+    }
+
+    public void setPiplineIndex(PhotonCamera cam, int index) {
+        cam.setPipelineIndex(index);
     }
 
     @AutoLogOutput
@@ -387,11 +400,13 @@ public class Vision extends SubsystemBase {
         private Pose2d pos;
         private double timestampSeconds;
         private double numOfTags;
+        private PhotonCamera camera;
 
-        public EstimatedPoseInfo(Pose2d pos, double timestampSeconds, double numOfTags) {
+        public EstimatedPoseInfo(Pose2d pos, double timestampSeconds, double numOfTags, PhotonCamera camera) {
             this.pos = pos;
             this.timestampSeconds = timestampSeconds;
             this.numOfTags = numOfTags;
+            this.camera = camera;
         }
 
         public Pose2d getPose2d() {
@@ -404,6 +419,10 @@ public class Vision extends SubsystemBase {
 
         public double getNumOfTags() {
             return numOfTags;
+        }
+
+        public PhotonCamera getCamera() {
+            return camera;
         }
 
     }

@@ -1,0 +1,85 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3242789506912231,
+      "y": 5.588408470153809
+    },
+    "rotation": -6.539590302408762e-20
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ground"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot fixed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid4note.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid4note.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid4note.3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "indexerOff"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Choreo",
+  "choreoAuto": true
+}

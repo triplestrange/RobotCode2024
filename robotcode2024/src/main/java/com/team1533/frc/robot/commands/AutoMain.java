@@ -50,6 +50,11 @@ public class AutoMain extends Command {
                                                 Superstructure.Goal.AMP),
                                                 m_robotContainer.m_superstructure));
                 NamedCommands.registerCommand("ground", new InstantCommand(
+                                () -> m_robotContainer.m_superstructure
+                                                .setGoal(Superstructure.Goal.GROUND_AUTO_NO_COMP),
+                                m_robotContainer.m_superstructure));
+
+                NamedCommands.registerCommand("groundWithComp", new InstantCommand(
                                 () -> m_robotContainer.m_superstructure.setGoal(Superstructure.Goal.GROUND_AUTO),
                                 m_robotContainer.m_superstructure));
 
@@ -103,8 +108,8 @@ public class AutoMain extends Command {
                                                                                 () -> m_robotContainer.m_robotDrive
                                                                                                 .acceptTeleopInput(0, 0,
                                                                                                                 0,
-                                                                                                                true)))
-                ).withTimeout(1.75)));
+                                                                                                                true))))
+                                                .withTimeout(1.75)));
 
                 NamedCommands.registerCommand("shoot preload",
                                 (new RunCommand(() -> m_robotContainer.m_shoot.autoShoot(),
@@ -116,21 +121,23 @@ public class AutoMain extends Command {
                                                                                 () -> m_robotContainer.m_robotDrive
                                                                                                 .acceptTeleopInput(0, 0,
                                                                                                                 0,
-                                                                                                                true)))
-                ).withTimeout(1.5)));
+                                                                                                                true))))
+                                                .withTimeout(1.5)));
 
                 NamedCommands.registerCommand("shoot move", new RunCommand(
                                 () -> m_robotContainer.m_shoot.autoShootMove(), m_robotContainer.m_indexer));
 
-                NamedCommands.registerCommand("shoot fixed", new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-FlyWheelConstants.flyWheelmaxRPM),
-                                                m_robotContainer.m_flywheel)
+                NamedCommands.registerCommand("shoot fixed", new InstantCommand(
+                                () -> m_robotContainer.m_flywheel.setFWSpeed(-FlyWheelConstants.flyWheelmaxRPM),
+                                m_robotContainer.m_flywheel)
                                 .andThen(new WaitCommand(0.25)).andThen(new InstantCommand(
                                                 () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.25)));
 
-                NamedCommands.registerCommand("flywheel on", new InstantCommand(() -> m_robotContainer.m_flywheel.setFWSpeed(-FlyWheelConstants.flyWheelmaxRPM),
-                                                m_robotContainer.m_flywheel));
+                NamedCommands.registerCommand("flywheel on", new InstantCommand(
+                                () -> m_robotContainer.m_flywheel.setFWSpeed(-FlyWheelConstants.flyWheelmaxRPM),
+                                m_robotContainer.m_flywheel));
 
                 NamedCommands.registerCommand("aim off", new InstantCommand(
                                 () -> PPHolonomicDriveController

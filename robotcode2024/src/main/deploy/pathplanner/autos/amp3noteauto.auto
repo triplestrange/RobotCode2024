@@ -10,7 +10,26 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ground"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot fixed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": null
+          }
+        }
+      ]
     }
   },
   "folder": "Choreo",

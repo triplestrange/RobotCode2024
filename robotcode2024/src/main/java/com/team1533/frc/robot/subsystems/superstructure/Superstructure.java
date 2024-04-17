@@ -47,6 +47,7 @@ public class Superstructure extends SubsystemBase {
     TRAP,
     PREPARE_CLIMB,
     GROUND_AUTO,
+    GROUND_AUTO_NO_COMP,
     GROUND_TELEOP,
     SOURCE,
     SUBWOOFER,
@@ -103,6 +104,10 @@ public class Superstructure extends SubsystemBase {
       }
       case GROUND_AUTO -> {
         m_Arm.setGoal(Arm.Goal.AIM);
+        m_Elevator.setGoal(Elevator.Goal.GROUND);
+      }
+      case GROUND_AUTO_NO_COMP -> {
+        m_Arm.setGoal(Arm.Goal.AIM_NO_COMP);
         m_Elevator.setGoal(Elevator.Goal.GROUND);
       }
       case GROUND_TELEOP -> {

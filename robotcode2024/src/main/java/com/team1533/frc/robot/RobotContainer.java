@@ -248,7 +248,8 @@ public class RobotContainer {
                 JoystickButtons.opDpadU.onTrue(new InstantCommand(
                                 () -> m_superstructure.setGoal(Goal.AMP)).withName("Amp Superstructure"));
                 JoystickButtons.opDpadD.onTrue(new InstantCommand(
-                                () -> m_superstructure.setGoal(Goal.GROUND_TELEOP)).withName("Ground Intake Superstructure"));
+                                () -> m_superstructure.setGoal(Goal.GROUND_TELEOP))
+                                .withName("Ground Intake Superstructure"));
 
                 JoystickButtons.opB.onTrue(new InstantCommand(
                                 () -> m_superstructure.setGoal(Goal.TRAP))
@@ -258,7 +259,8 @@ public class RobotContainer {
                                 () -> m_superstructure.setGoal(Goal.PREPARE_CLIMB))
                                 .withName("Prepare Climb Superstructure"));
 
-                JoystickButtons.drBump.whileTrue(new InstantCommand(() -> m_superstructure.setGoal(Goal.SUBWOOFER)).withName("Subwoofer Superstructure")); 
+                JoystickButtons.drBump.whileTrue(new InstantCommand(() -> m_superstructure.setGoal(Goal.SUBWOOFER))
+                                .withName("Subwoofer Superstructure"));
 
                 // Intake and indexer Controls
 
@@ -342,19 +344,18 @@ public class RobotContainer {
                 // .whileTrue(new Pathfind(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
 
                 // JoystickButtons.dB.whileTrue(
-                //                 (new RunCommand(() -> m_robotDrive
-                //                                 .setAutoAlignController(Constants.FieldPositions.AMP)))
-                //                                 .withName("Drive To Amp"))
-                //                 .onFalse((new InstantCommand(
-                //                                 () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)))
-                //                                 .withName("Drive To Amp Off"));
+                // (new RunCommand(() -> m_robotDrive
+                // .setAutoAlignController(Constants.FieldPositions.AMP)))
+                // .withName("Drive To Amp"))
+                // .onFalse((new InstantCommand(
+                // () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)))
+                // .withName("Drive To Amp Off"));
 
                 // Note Pick Automation
 
-                if (m_vision.getBestObject(m_robotDrive.getPose()) != null)     {
                 JoystickButtons.dY.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
                                 m_superstructure, m_intake,
-                                m_Leds, () -> m_vision.getBestObject(m_robotDrive.getPose()).getTranslation())
+                                m_Leds, m_vision, () -> m_vision.getBestObject(m_robotDrive.getPose()).getTranslation())
                                 .withName("Pick Up Note")).onFalse(
                                                 (new InstantCommand(
                                                                 () -> m_Leds.setMode(LedMode.DEFAULT)))
@@ -362,7 +363,7 @@ public class RobotContainer {
                                                                 .alongWith(new InstantCommand(() -> m_superstructure
                                                                                 .setGoal(Goal.STOW)))
                                                                 .withName("Stow Superstructure"));
-                }
+
                 // leds
                 // m_Leds.setDefaultCommand(new InstantCommand(() ->
                 // m_Leds.setMode(LedMode.DEFAULT), m_Leds));
