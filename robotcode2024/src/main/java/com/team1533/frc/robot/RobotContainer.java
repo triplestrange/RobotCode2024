@@ -50,6 +50,7 @@ import com.team1533.frc.robot.subsystems.swerve.ModuleIOReal;
 import com.team1533.frc.robot.subsystems.swerve.ModuleIOSim;
 import com.team1533.frc.robot.subsystems.swerve.SwerveConstants;
 import com.team1533.frc.robot.subsystems.swerve.SwerveDrive;
+import com.team1533.frc.robot.subsystems.swerve.SwerveDrive.DriveMode;
 import com.team1533.frc.robot.subsystems.vision.Vision;
 import com.team1533.frc.robot.util.Alert;
 import com.team1533.frc.robot.util.Alert.AlertType;
@@ -192,12 +193,12 @@ public class RobotContainer {
                 // Swerve Controls
 
                 m_robotDrive.setDefaultCommand(
-                                new DefaultDrive(m_robotDrive, SwerveConstants.kMaxSpeedMetersPerSecond, 8)
+                                new DefaultDrive(m_robotDrive, 0.85, 8)
                                                 .withName("Normal Drive"));// 2.5,
                 // 1));
 
                 JoystickButtons.dlBump.whileTrue(
-                                new DefaultDrive(m_robotDrive, 0.85, 1).withName("Slow Drive"));
+                                new DefaultDrive(m_robotDrive, SwerveConstants.kMaxSpeedMetersPerSecond, 8).withName("Turbo Drive"));
 
                 // JoystickButtons.dlBump.whileTrue(
                 // new RunCommand(() ->
@@ -355,15 +356,11 @@ public class RobotContainer {
 
                 JoystickButtons.dY.whileTrue(new AutoPickupFieldRelative(m_robotDrive,
                                 m_superstructure, m_intake,
-                                m_Leds, m_vision, () -> m_vision.getBestObject(m_robotDrive.getPose()).getTranslation())
-                                .withName("Pick Up Note")).onFalse(
+                                m_Leds, m_vision, () -> m_vision.getBestObject(m_robotDrive.getPose()))
+                                .withName("Pick Up Note").finallyDo(() -> m_robotDrive.setCurrentDriveMode(DriveMode.TELEOP)).withName("Normal Drive")).onFalse(
                                                 (new InstantCommand(
                                                                 () -> m_Leds.setMode(LedMode.DEFAULT)))
-                                                                .withName("Note Pick Up Off")
-                                                                .alongWith(new InstantCommand(() -> m_superstructure
-                                                                                .setGoal(Goal.STOW)))
-                                                                .withName("Stow Superstructure"));
-
+                                                                .withName("Note Pick Up Off"));
                 // leds
                 // m_Leds.setDefaultCommand(new InstantCommand(() ->
                 // m_Leds.setMode(LedMode.DEFAULT), m_Leds));

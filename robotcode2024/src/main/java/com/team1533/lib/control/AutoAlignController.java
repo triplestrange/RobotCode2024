@@ -19,9 +19,9 @@ public class AutoAlignController {
         public double xAutoSpeed = 0;
         public double yAutoSpeed = 0;
         public double rAutoSpeed = 0;
-        public PIDController xController = new PIDController(5, 0.01, 0);
-        public PIDController yController = new PIDController(3, 0.01, 0);
-        public PIDController omegaController = new PIDController(7, 0.01, 0);
+        public PIDController xController = new PIDController(1, 0.01, 0);
+        public PIDController yController = new PIDController(1, 0.01, 0);
+        public PIDController omegaController = new PIDController(1, 0.01, 0);
         private SwerveDrive m_swerve;
         public Supplier<Pose2d> m_Setpoint;
 
@@ -88,10 +88,12 @@ public class AutoAlignController {
                         case OFF:
                                 return ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, 0.0, Rotation2d.fromDegrees(0));
                         case AUTO_ALIGN_FAST:
+                          maxOmegaOutput = 0.5;
+                                maxTranslationOutput = 0.5;
                                 break;
                         case AUTO_ALIGN_SLOW:
-                                maxOmegaOutput = 1.0;
-                                maxTranslationOutput = 1.0;
+                                maxOmegaOutput = 0.2;
+                                maxTranslationOutput = 0.2;
                                 break;
                 }
                 return ChassisSpeeds.fromFieldRelativeSpeeds(

@@ -69,7 +69,7 @@ public class Vision extends SubsystemBase {
     @AutoLogOutput
     private Pose2d poseIntakeActual;
 
-    private static Comparator<Translation2d> ySort;
+    private static Comparator<Translation2d> xSort;
 
     public Vision(RobotContainer m_RobotContainer) {
         camShooter = new PhotonCamera("camShooter");
@@ -77,7 +77,7 @@ public class Vision extends SubsystemBase {
 
         this.m_RobotContainer = m_RobotContainer;
 
-        ySort = Comparator.comparingDouble(Translation2d::getY);
+        xSort = Comparator.comparingDouble(Translation2d::getX);
 
     }
 
@@ -134,15 +134,16 @@ public class Vision extends SubsystemBase {
         PhotonCamera cam = camIntake;
         PhotonTrackedTarget target = cam.getLatestResult().getBestTarget();
 
+
         if (target == null) {
-            return null;
+            return m_RobotContainer.m_robotDrive.getPose();
         }
 
-        if (m_RobotContainer.m_robotDrive.getPose() == null) {
-            return null;
-        }
 
-        return getObjectToField(getObjectToRobot(target, cam, robotPose));
+        Pose2d notePos2d = getObjectToField(getObjectToRobot(target, cam, robotPose));
+
+
+        return notePos2d;
     }
 
     @AutoLogOutput
@@ -250,16 +251,17 @@ public class Vision extends SubsystemBase {
             cameraOffset = new Pose3d();
         }
 
-        for (TargetCorner corner : target.getDetectedCorners()) {
+
+        for (TargetCorner corner : target.getMinAreaRectCorners()) {
 
             desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
         }
 
-        desiredTargetPixel.sort(ySort);
+        desiredTargetPixel.sort(xSort);
 
-        double yOffset = (desiredTargetPixel.get(2).getY() - desiredTargetPixel.get(0).getY()) / 2;
+        // double yOffset = (desiredTargetPixel.get(2).getY() - desiredTargetPixel.get(0).getY()) / 2;
 
-        int i = 0;
+        // int i = 0;
 
         for (Translation2d point : desiredTargetPixel) {
 
@@ -272,15 +274,15 @@ public class Vision extends SubsystemBase {
             y = xyz_plane_translation.getY();
             z = xyz_plane_translation.getZ();
 
-            double offset = i == 2 || i == 3 ? yOffset : -yOffset;
+            // double offset = i == 2 || i == 3 ? yOffset : -yOffset;
 
-            cameraToTarget = new Translation2d(x, y).times((0 - cameraOffset.getZ() + offset) / z);
+            cameraToTarget = new Translation2d(x, y).times((0 - cameraOffset.getZ()) / z);
 
             robotToPoints.add(new Translation2d(cameraToTarget.getX() + cameraOffset.getX(),
                     cameraToTarget.getY() + cameraOffset.getY())
                     .rotateBy(rotation));
 
-            i++;
+            // i++;
 
         }
 
@@ -291,6 +293,9 @@ public class Vision extends SubsystemBase {
         robotToTargetPose2d = new Pose2d(((robotToTarget.div(4))),
                 rotation);
 
+                if (robotToTargetPose2d.getTranslation().getNorm() > 1.5) {
+                    return new Pose2d(0,0, Rotation2d.fromDegrees(0));
+                }
         return robotToTargetPose2d;
 
     }
@@ -300,8 +305,8 @@ public class Vision extends SubsystemBase {
     public Pose2d getObjectToField(Pose2d objectToRobot) {
         return new Pose2d(
                 objectToRobot.getTranslation()
-                        .minus(m_RobotContainer.m_robotDrive.getPose().getTranslation()),
-                m_RobotContainer.m_robotDrive.getPose().getRotation());
+                        .plus(m_RobotContainer.m_robotDrive.getPose().getTranslation()),
+                objectToRobot.getTranslation().getAngle());
     }
 
     public Translation2d undistortFromOpenCV(Translation2d point, PhotonCamera cam) {
@@ -352,13 +357,6 @@ public class Vision extends SubsystemBase {
                     poseShooter.getTimestampSeconds());
             m_field.getObject("poseShooter").setPose(poseShooter.getPose2d());
         }
-
-        // double check pipeline index
-        if (poseIntake.getNumOfTags() != 0 && poseIntake.getCamera().getPipelineIndex() == 0) {
-            m_RobotContainer.m_robotDrive.m_odometry.addVisionMeasurement(poseIntakeActual,
-                    poseIntake.getTimestampSeconds());
-            m_field.getObject("poseIntake").setPose(poseIntake.getPose2d());
-        }
         m_field.setRobotPose(m_RobotContainer.m_robotDrive.getPose());
 
     }
@@ -393,6 +391,9 @@ public class Vision extends SubsystemBase {
     public void periodic() {
 
         addVisionMeasurement();
+
+                m_field.getObject("note").setPose(getBestObject(m_RobotContainer.m_robotDrive.getPose()));
+
 
     }
 

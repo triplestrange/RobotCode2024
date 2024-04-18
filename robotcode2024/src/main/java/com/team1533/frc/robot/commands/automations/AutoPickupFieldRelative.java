@@ -25,11 +25,11 @@ public class AutoPickupFieldRelative extends SequentialCommandGroup {
         Intake m_intake;
         Leds m_Leds;
         Vision m_Vision;
-        Translation2d note2d;
+        Pose2d note2d;
 
         public AutoPickupFieldRelative(SwerveDrive m_swerve, Superstructure m_Superstructure, Intake m_intake,
                         Leds m_Leds, Vision m_Vision,
-                        Supplier<Translation2d> notePoseFieldRelative) {
+                        Supplier<Pose2d> notePoseFieldRelative) {
                 addRequirements(m_intake, m_swerve, m_Superstructure, m_Leds);
 
                 this.m_swerve = m_swerve;
@@ -39,17 +39,13 @@ public class AutoPickupFieldRelative extends SequentialCommandGroup {
                 this.m_Vision = m_Vision;
                 this.note2d = notePoseFieldRelative.get();
 
-                addCommands(new InstantCommand(() -> m_Vision.setPiplineIndex(m_Vision.getCamIntake(), 1)),
+                addCommands(
                                 new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.GROUND_TELEOP),
                                                 m_Superstructure),
                                 new InstantCommand(() -> m_swerve
-                                                .setAutoAlignController(new Pose2d(notePoseFieldRelative.get(),
-                                                                Rotation2d.fromDegrees(0)))),
+                                                .setAutoAlignController(notePoseFieldRelative.get())),
                                 new GroundToIntake(m_intake,
-                                                m_Leds),
-                                new InstantCommand(() -> m_Superstructure.setGoalCommand(Goal.STOW)),
-                                new InstantCommand(() -> m_Vision.setPiplineIndex(m_Vision.getCamIntake(), 0))
-
+                                                m_Leds)
                 );
         }
 }

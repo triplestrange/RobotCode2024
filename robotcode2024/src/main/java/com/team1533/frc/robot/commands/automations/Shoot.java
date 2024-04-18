@@ -354,7 +354,7 @@ public class Shoot {
     }
 
     // @AutoLogOutput
-    public Boolean shuttleCheck(Pose2d robotPose2d) {
+    public boolean shuttleCheck(Pose2d robotPose2d) {
         if (isAllianceRed()) {
             robotPose2dInches = new Translation2d(Units.metersToInches(flipPose(robotPose2d).getX()),
                     Units.metersToInches(flipPose(robotPose2d).getY()));
@@ -370,7 +370,7 @@ public class Shoot {
     }
 
     // @AutoLogOutput
-    public Boolean swerveCheck(Pose2d robotPose2d) {
+    public boolean swerveCheck(Pose2d robotPose2d) {
 
         if (isAllianceRed()) {
             robotPose2dInches = new Translation2d(Units.metersToInches(flipPose(robotPose2d).getX()),
@@ -409,7 +409,7 @@ public class Shoot {
     }
 
     @AutoLogOutput
-    public Boolean velocityCheckTeleop() {
+    public boolean velocityCheckTeleop() {
         boolean isSlowEnough = m_RobotContainer.m_robotDrive.isMovingXY();
         if (isSlowEnough) {
         }
@@ -417,7 +417,7 @@ public class Shoot {
     }
 
     @AutoLogOutput
-    public Boolean velocityCheckAuto() {
+    public boolean velocityCheckAuto() {
         boolean isSlowEnough = m_RobotContainer.m_robotDrive.isMovingXYAuto();
         if (isSlowEnough) {
         }
@@ -425,7 +425,7 @@ public class Shoot {
     }
 
     @AutoLogOutput
-    public Boolean pivotShootCheck() {
+    public boolean pivotShootCheck() {
         if (Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond,
                 m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond) > 1) {
             pivotCheck = Math.abs(m_RobotContainer.m_Arm.getAngle() - m_RobotContainer.m_Arm.getGoal().getDeg()) < 2;
@@ -437,12 +437,12 @@ public class Shoot {
     }
 
     @AutoLogOutput
-    public Boolean pivotShuttleCheck() {
+    public boolean pivotShuttleCheck() {
         return Math.abs(m_RobotContainer.m_Arm.getAngle() + 12.5) < 0.5;
     }
 
     // @AutoLogOutput
-    public Boolean rotationCheck(Pose2d robotPose2d) {
+    public boolean rotationCheck(Pose2d robotPose2d) {
         if (Math.hypot(m_RobotContainer.m_robotDrive.getChassisSpeeds().vxMetersPerSecond,
                 m_RobotContainer.m_robotDrive.getChassisSpeeds().vyMetersPerSecond) > 1) {
 
@@ -458,7 +458,7 @@ public class Shoot {
     }
 
     @AutoLogOutput
-    public Boolean flyWheelCheck() {
+    public boolean flyWheelCheck() {
         boolean flyWheelCheck = Math.abs(m_RobotContainer.m_flywheel.getLeftSpeed() - (-flywheelSetpoint)) < 100;
         if (flyWheelCheck) {
 
@@ -535,7 +535,7 @@ public class Shoot {
         SmartDashboard.putNumber("target z", flipTranslation3d(speakerTranslation3d).getZ());
 
         SmartDashboard.putNumber("normalized distance", m_RobotContainer.m_robotDrive.getPose().getTranslation()
-                .getDistance(shuttlingTranslation2d));
+                .getDistance(getSpeakerForCurrentAlliance().toTranslation2d()));
 
         SmartDashboard.putNumber("relativeH", getRelativeHorizontalSpeedMetersPerSecond(
                 m_RobotContainer.m_robotDrive.getChassisSpeeds(), m_RobotContainer.m_robotDrive.getPose()));

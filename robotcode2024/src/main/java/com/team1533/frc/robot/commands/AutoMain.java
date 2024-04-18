@@ -130,7 +130,7 @@ public class AutoMain extends Command {
                 NamedCommands.registerCommand("shoot fixed", new InstantCommand(
                                 () -> m_robotContainer.m_flywheel.setFWSpeed(-FlyWheelConstants.flyWheelmaxRPM),
                                 m_robotContainer.m_flywheel)
-                                .andThen(new WaitCommand(0.25)).andThen(new InstantCommand(
+                                .andThen(new WaitCommand(0.5)).andThen(new InstantCommand(
                                                 () -> m_robotContainer.m_indexer.runIn(),
                                                 m_robotContainer.m_indexer))
                                 .andThen(new WaitCommand(0.25)));

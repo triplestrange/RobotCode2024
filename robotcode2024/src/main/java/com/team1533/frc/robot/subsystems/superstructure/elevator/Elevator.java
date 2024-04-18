@@ -24,13 +24,9 @@ public class Elevator {
 
     @AutoLogOutput
     public Mechanism2d intakeMech;
-    @AutoLogOutput
     public MechanismRoot2d elevatorRoot2d;
-    @AutoLogOutput
     public MechanismLigament2d elevator;
-    @AutoLogOutput
     public MechanismLigament2d intakeStatic;
-    @AutoLogOutput
     public MechanismLigament2d intakeJoint;
 
     private ProfiledPIDController intakeController;
