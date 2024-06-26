@@ -69,21 +69,21 @@ public class Robot extends LoggedRobot {
     switch (Constants.LoggerConstants.getMode()) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        try { 
+        try {
           Logger.addDataReceiver(new WPILOGWriter());
         }
 
-        catch(Exception e) {
-           new Alert("The USB Flash Drive is unplugged.", AlertType.WARNING)
-            .set(true);
+        catch (Exception e) {
+          new Alert("The USB Flash Drive is unplugged.", AlertType.WARNING)
+              .set(true);
         }
 
         try {
-        Logger.addDataReceiver(new NT4Publisher());
+          Logger.addDataReceiver(new NT4Publisher());
 
         }
 
-        catch(Exception e)  {
+        catch (Exception e) {
           new Alert("The Logger is not publsihing to Network Tables", AlertType.WARNING).set(true);
         }
         break;
@@ -142,7 +142,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    i++;
     if (i % 10 == 0) {
       m_robotContainer.m_climb.updateSmartDashBoard();
       m_robotContainer.m_elevator.updateSmartDashBoard();
@@ -154,6 +153,7 @@ public class Robot extends LoggedRobot {
       m_robotContainer.m_vision.updateSmartDashBoard();
       m_robotContainer.m_shoot.updateSmartDashBoard();
     }
+    i++;
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

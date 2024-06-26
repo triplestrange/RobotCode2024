@@ -57,7 +57,7 @@ public class ElevatorIOReal implements ElevatorIO {
         ElevatorConstants.elevDrumRadiusMeters * ElevatorConstants.elevSimPosConv / 60);
     elevRelativeEncoder.setPosition(0);
 
-    intakeRelEncoder.setPositionConversionFactor(1.0/40.0);
+    intakeRelEncoder.setPositionConversionFactor(1.0 / 40.0);
     intakeRelEncoder.setPosition(relAngle);
   }
 
@@ -75,12 +75,12 @@ public class ElevatorIOReal implements ElevatorIO {
     inputs.winchTempCelcius = elev.getMotorTemperature();
     inputs.winchInputVolts = winchInput;
     // if (!inputs.jointAbsoluteEncoderConnected) {
-    //   inputs.jointPosDeg = MathUtil
-    //       .inputModulus(-intakeRelEncoder.getPosition() * 180, -160, 20) + relAngle;
+    // inputs.jointPosDeg = MathUtil
+    // .inputModulus(-intakeRelEncoder.getPosition() * 180, -160, 20) + relAngle;
     // } else {
-      inputs.jointPosDeg = MathUtil.inputModulus(
-          -intakeEncoder.getAbsolutePosition() * 180 - JointConstants.intakeAbsOffset - offset, -160, 20);
-      relAngle = inputs.jointPosDeg;
+    inputs.jointPosDeg = MathUtil.inputModulus(
+        -intakeEncoder.getAbsolutePosition() * 180 - JointConstants.intakeAbsOffset - offset, -160, 20);
+    relAngle = inputs.jointPosDeg;
 
     // }
     inputs.jointAppliedVolts = intake.getAppliedOutput() * intake.getBusVoltage();

@@ -65,9 +65,9 @@ public class Vision extends SubsystemBase {
 
     public Field2d m_field = new Field2d();
     @AutoLogOutput
-    private Pose2d poseShooterActual = new Pose2d();
+    private Pose2d poseShooterActual;
     @AutoLogOutput
-    private Pose2d poseIntakeActual = new Pose2d();
+    private Pose2d poseIntakeActual;
 
     private static Comparator<Translation2d> xSort;
 
@@ -134,14 +134,11 @@ public class Vision extends SubsystemBase {
         PhotonCamera cam = camIntake;
         PhotonTrackedTarget target = cam.getLatestResult().getBestTarget();
 
-
         if (target == null) {
             return m_RobotContainer.m_robotDrive.getPose();
         }
 
-
         Pose2d notePos2d = getObjectToField(getObjectToRobot(target, cam, robotPose));
-
 
         return notePos2d;
     }
@@ -251,7 +248,6 @@ public class Vision extends SubsystemBase {
             cameraOffset = new Pose3d();
         }
 
-
         for (TargetCorner corner : target.getMinAreaRectCorners()) {
 
             desiredTargetPixel.add(undistortFromOpenCV((new Translation2d(corner.x, corner.y)), cam));
@@ -259,7 +255,8 @@ public class Vision extends SubsystemBase {
 
         desiredTargetPixel.sort(xSort);
 
-        // double yOffset = (desiredTargetPixel.get(2).getY() - desiredTargetPixel.get(0).getY()) / 2;
+        // double yOffset = (desiredTargetPixel.get(2).getY() -
+        // desiredTargetPixel.get(0).getY()) / 2;
 
         // int i = 0;
 
@@ -293,9 +290,9 @@ public class Vision extends SubsystemBase {
         robotToTargetPose2d = new Pose2d(((robotToTarget.div(4))),
                 rotation);
 
-                if (robotToTargetPose2d.getTranslation().getNorm() > 3) {
-                    return new Pose2d(0,0, Rotation2d.fromDegrees(0));
-                }
+        if (robotToTargetPose2d.getTranslation().getNorm() > 1.5) {
+            return new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+        }
         return robotToTargetPose2d;
 
     }
@@ -392,8 +389,7 @@ public class Vision extends SubsystemBase {
 
         addVisionMeasurement();
 
-                m_field.getObject("note").setPose(getBestObject(m_RobotContainer.m_robotDrive.getPose()));
-
+        m_field.getObject("note").setPose(getBestObject(m_RobotContainer.m_robotDrive.getPose()));
 
     }
 
