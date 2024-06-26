@@ -30,13 +30,13 @@ public class Arm {
     public static double shootingAngleNoComp = 0;
 
     @AutoLogOutput
-    private boolean shooterPIDEnabled;
+    private boolean shooterPIDEnabled = true;
 
     @AutoLogOutput
-    private double pivotSetpoint;
+    private double pivotSetpoint = 0.0;
 
     @AutoLogOutput
-    private double pivotPower;
+    private double pivotPower = 0.0;
 
     public InterpolatingDoubleTreeMap shootingData = new InterpolatingDoubleTreeMap();
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);

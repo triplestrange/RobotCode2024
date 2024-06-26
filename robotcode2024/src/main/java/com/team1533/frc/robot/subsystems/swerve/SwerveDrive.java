@@ -66,13 +66,13 @@ public class SwerveDrive extends SubsystemBase {
   @Setter
   private DriveMode currentDriveMode = DriveMode.TELEOP;
   @AutoLogOutput
-  private SwerveModuleState[] desiredSwerveModuleStates;
+  private SwerveModuleState[] desiredSwerveModuleStates = new SwerveModuleState[] {};
   @AutoLogOutput
-  private SwerveModuleState[] currentSwerveModuleStates;
+  private SwerveModuleState[] currentSwerveModuleStates = new SwerveModuleState[] {};
   @AutoLogOutput
-  public ChassisSpeeds currentMovement;
+  public ChassisSpeeds currentMovement = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0 , Rotation2d.fromDegrees(0));
   @AutoLogOutput
-  public ChassisSpeeds desiredMovement;
+  public ChassisSpeeds desiredMovement = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0 , Rotation2d.fromDegrees(0));
   @AutoLogOutput
   public double characterizationInput = 0.0;
 

@@ -31,15 +31,15 @@ public class Elevator {
 
     private ProfiledPIDController intakeController;
 
-    private boolean intakePIDEnabled;
-    private boolean elevPIDEnabled;
+    private boolean intakePIDEnabled = true;
+    private boolean elevPIDEnabled = true;
 
-    public double intakeSetpoint;
+    public double intakeSetpoint = 0.0;
 
-    public double elevSetpoint;
+    public double elevSetpoint = 0.0;
 
-    public double elevPower;
-    public double intakePower;
+    public double elevPower = 0.0;
+    public double intakePower = 0.0;
 
     private BooleanSupplier disableSupplier = DriverStation::isDisabled;
 

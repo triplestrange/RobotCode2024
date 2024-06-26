@@ -21,7 +21,7 @@ public class AutoAlignController {
         public double rAutoSpeed = 0;
         public PIDController xController = new PIDController(1, 0.01, 0);
         public PIDController yController = new PIDController(1, 0.01, 0);
-        public PIDController omegaController = new PIDController(1, 0.01, 0);
+        public PIDController omegaController = new PIDController(0.1, 0.1, 0.0025);
         private SwerveDrive m_swerve;
         public Supplier<Pose2d> m_Setpoint;
 
@@ -62,7 +62,7 @@ public class AutoAlignController {
         }
 
         public boolean isAtFastGoal() {
-                return Math.hypot(xController.getPositionError(), yController.getPositionError()) < 0.25;
+                return Math.hypot(xController.getPositionError(), yController.getPositionError()) < 1;
                 // && omegaController.getPositionError() < 2;
         }
 
@@ -80,23 +80,21 @@ public class AutoAlignController {
 
                 double maxTranslationOutput = Double.POSITIVE_INFINITY;
                 double maxOmegaOutput = Double.POSITIVE_INFINITY;
-
-                if (isAtFastGoal() && getM_AutoAlignControllerState() == AutoAlignControllerState.AUTO_ALIGN_FAST) {
-                        m_AutoAlignControllerState = AutoAlignControllerState.AUTO_ALIGN_SLOW;
-                }
+            
+                
                 switch (m_AutoAlignControllerState) {
                         case OFF:
                                 return ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, 0.0, Rotation2d.fromDegrees(0));
                         case AUTO_ALIGN_FAST:
-                          maxOmegaOutput = 0.5;
-                                maxTranslationOutput = 0.5;
+                          maxOmegaOutput = 2 * Math.PI;
+                                maxTranslationOutput = 3;
                                 break;
                         case AUTO_ALIGN_SLOW:
-                                maxOmegaOutput = 0.2;
-                                maxTranslationOutput = 0.2;
+                                maxOmegaOutput = Math.PI;
+                                maxTranslationOutput = 0.5;
                                 break;
                 }
-                return ChassisSpeeds.fromFieldRelativeSpeeds(
+                ChassisSpeeds desiredSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                                 MathUtil.clamp(xController.calculate(m_swerve.getPose().getX()),
                                                 -maxTranslationOutput,
                                                 maxTranslationOutput),
@@ -107,5 +105,11 @@ public class AutoAlignController {
                                                 -maxOmegaOutput,
                                                 maxOmegaOutput),
                                 m_swerve.getPose().getRotation());
+    if (isAtFastGoal() && getM_AutoAlignControllerState() == AutoAlignControllerState.AUTO_ALIGN_FAST) {
+                        m_AutoAlignControllerState = AutoAlignControllerState.AUTO_ALIGN_SLOW;
+                }
+
+                return desiredSpeeds;
+                
         }
 }

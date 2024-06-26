@@ -310,7 +310,7 @@ public class RobotContainer {
 
                 JoystickButtons.dX.whileTrue(
                                 (new RunCommand(() -> m_shoot.teleopShoot(), m_indexer,
-                                                m_flywheel)
+                                                m_flywheel, m_intake)
                                                 .alongWith(new InstantCommand(() -> m_robotDrive
                                                                 .setHeadingController(
                                                                                 m_shoot::rotationToSpeaker)),
@@ -344,13 +344,13 @@ public class RobotContainer {
                 // JoystickButtons.dB
                 // .whileTrue(new Pathfind(Constants.FieldPositions.AMP, 0, 0, m_robotDrive));
 
-                // JoystickButtons.dB.whileTrue(
-                // (new RunCommand(() -> m_robotDrive
-                // .setAutoAlignController(Constants.FieldPositions.AMP)))
-                // .withName("Drive To Amp"))
-                // .onFalse((new InstantCommand(
-                // () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)))
-                // .withName("Drive To Amp Off"));
+                JoystickButtons.dB.whileTrue(
+                (new RunCommand(() -> m_robotDrive
+                .setAutoAlignController(Constants.FieldPositions.AMP)))
+                .withName("Drive To Amp").finallyDo(() -> m_robotDrive.setCurrentDriveMode(DriveMode.TELEOP)).withName("Normal Drive")
+                ).onFalse((new InstantCommand(
+                () -> m_robotDrive.setCurrentDriveMode(SwerveDrive.DriveMode.TELEOP)))
+                .withName("Drive To Amp Off"));
 
                 // Note Pick Automation
 

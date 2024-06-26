@@ -18,7 +18,7 @@ public class HeadingController {
 
     private SwerveDrive m_swerve;
 
-    public Pose2d centerOfGoal;
+    public Pose2d centerOfGoal = new Pose2d();
 
     public enum HeadingControllerState {
         OFF, SNAP, // for snapping to specific headings

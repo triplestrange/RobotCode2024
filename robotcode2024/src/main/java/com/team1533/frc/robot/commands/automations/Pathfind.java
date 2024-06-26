@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class Pathfind extends Command {
 
-  public Pose2d targetPose2d;
+  public Pose2d targetPose2d = new Pose2d();
   public PathPlannerPath goalPath;
-  public double endVelocity;
-  public double rotDelayDistance;
+  public double endVelocity = 0.0;
+  public double rotDelayDistance = 0.0;
   private SwerveDrive m_SwerveDrive;
   private Command pathfindingCommand;
 

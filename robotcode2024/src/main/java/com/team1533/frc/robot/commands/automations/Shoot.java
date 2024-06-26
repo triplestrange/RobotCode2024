@@ -50,16 +50,16 @@ public class Shoot {
     double upperY = 0;
 
     // slopes
-    double m;
-    double y;
+    double m = 1;
+    double y = 1;
 
     // variables for shooting
     @AutoLogOutput(key = "Shoot/shootingRotation")
-    Rotation2d shootingRotation;
+    Rotation2d shootingRotation = Rotation2d.fromDegrees(0);
     @AutoLogOutput(key = "Shoot/shootingAngle")
     double shootingAngle = 0;
     @AutoLogOutput(key = "Shoot/flywheelSetpoint")
-    double flywheelSetpoint;
+    double flywheelSetpoint = 0;
     public Translation3d speakerTranslation3d = new Translation3d(0, 5.6282082, 2 + 0.035);
 
     public Translation2d shuttlingTranslation2d = new Translation2d(1.14, 7.11);
@@ -91,7 +91,7 @@ public class Shoot {
         shootingData.put(1.5, -3.2);
         shootingData.put(2.0, -9.5);
         shootingData.put(2.5, -16.5);
-        shootingData.put(3.0, -23.5);
+        shootingData.put(3.0, -23.5); // -23.5
 
         shootingData.put(4.0, -30.6);
 
@@ -125,6 +125,7 @@ public class Shoot {
                 && rotationCheck(m_RobotContainer.m_robotDrive.getPose()) && velocityCheckTeleop()) {
 
             m_RobotContainer.m_indexer.runIn();
+            m_RobotContainer.m_intake.runIntake();
 
         }
         if (!swerveCheck(m_RobotContainer.m_robotDrive.getPose())) {

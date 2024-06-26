@@ -65,9 +65,9 @@ public class Vision extends SubsystemBase {
 
     public Field2d m_field = new Field2d();
     @AutoLogOutput
-    private Pose2d poseShooterActual;
+    private Pose2d poseShooterActual = new Pose2d();
     @AutoLogOutput
-    private Pose2d poseIntakeActual;
+    private Pose2d poseIntakeActual = new Pose2d();
 
     private static Comparator<Translation2d> xSort;
 
@@ -293,7 +293,7 @@ public class Vision extends SubsystemBase {
         robotToTargetPose2d = new Pose2d(((robotToTarget.div(4))),
                 rotation);
 
-                if (robotToTargetPose2d.getTranslation().getNorm() > 1.5) {
+                if (robotToTargetPose2d.getTranslation().getNorm() > 3) {
                     return new Pose2d(0,0, Rotation2d.fromDegrees(0));
                 }
         return robotToTargetPose2d;
